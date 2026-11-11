@@ -1,3 +1,26 @@
+
+def send_telegram_alert(message):
+    tg_token = os.getenv("TELEGRAM_BOT_TOKEN")
+    tg_chat_id = os.getenv("TELEGRAM_CHAT_ID")
+    if not tg_token or not tg_chat_id:
+        return
+    url = f"https://api.telegram.org/bot{tg_token}/sendMessage"
+    payload = {
+        "chat_id": tg_chat_id,
+        "text": message,
+        "parse_mode": "HTML"
+    }
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json", "User-Agent": "WeatherSentinel/1.0"}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            print("Telegram storm alert delivered:", resp.status)
+    except Exception as e:
+        print("Telegram alert delivery error:", e)
+
 import urllib.request
 import json
 import os
@@ -66,7 +89,7 @@ lons = ','.join(str(s['lon']) for s in STATIONS.values())
 # 1. Single-call batch query for ALL 37 stations
 url = (f"https://api.open-meteo.com/v1/forecast?latitude={lats}&longitude={lons}"
        "&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,surface_pressure,weather_code"
-       "&daily=precipitation_probability_max,precipitation_sum&forecast_days=2&timezone=auto&wind_speed_unit=ms")
+       "&daily=precipitation_probability_max,precipitation_sum,wind_gusts_10m_max&forecast_days=2&timezone=auto&wind_speed_unit=ms")
 batch_data = fetch_json(url)
 
 # 2. Fetch Air Quality for home
@@ -157,6 +180,16 @@ prob_tomorrow = probs[1] if len(probs) > 1 else 0
 precip_sums = home_daily.get('precipitation_sum', [0.0, 0.0])
 precip_today = precip_sums[0] if len(precip_sums) > 0 else 0.0
 
+gusts_daily = home_daily.get('wind_gusts_10m_max', [0.0, 0.0])
+gust_today_max = round(gusts_daily[0], 1) if len(gusts_daily) > 0 else 0.0
+gust_tomorrow_max = round(gusts_daily[1], 1) if len(gusts_daily) > 1 else 0.0
+
+wind_danger_alert = ""
+if gust_today_max >= 17.0:
+    wind_danger_alert = f" Внимание: к ночи ожидается штормовой ветер с порывами до {int(round(gust_today_max))} метров в секунду. На улице возможны опасные колебания проводов и скачки напряжения, обогреватель и технику на ночь лучше отключить от сети."
+elif gust_today_max >= 13.0:
+    wind_danger_alert = f" Обратите внимание: вечером усилится порывистый ветер до {int(round(gust_today_max))} метров в секунду, на улице может раскачивать провода."
+
 if home['weather_code'] in [0, 1]:
     sky_text = "ясно и солнечно"
 elif home['weather_code'] in [2, 3]:
@@ -201,7 +234,7 @@ elif app_round >= 9:
 else:
     cloth = "Одевайтесь теплее, на улице зябко."
 
-spoken_text = f"На Бульваре Гевгелия сейчас {t_text}, {feel_text}. На улице {sky_text}, {rain_text}. {wind_text.capitalize()}, {air_text}. {cloth}"
+spoken_text = f"На Бульваре Гевгелия сейчас {t_text}, {feel_text}. На улице {sky_text}, {rain_text}. {wind_text.capitalize()}, {air_text}. {cloth}{wind_danger_alert}"
 
 # 3. Save latest.json with all 37 nodes
 latest = {
@@ -294,3 +327,30 @@ with open("README.md", "w", encoding="utf-8") as f:
     f.write(readme)
 
 print("Full national coverage completed successfully!")
+
+
+# Check storm sentinel trigger for Telegram push
+today_iso = now_utc.strftime("%Y-%m-%d")
+alert_file = "alert_state.json"
+last_alerted = ""
+if os.path.exists(alert_file):
+    try:
+        with open(alert_file, "r", encoding="utf-8") as af:
+            last_alerted = json.load(af).get("last_wind_alert_date", "")
+    except Exception:
+        pass
+
+if gust_today_max >= 13.0 and last_alerted != today_iso:
+    urgency = "🚨 <b>ШТОРМОВОЕ ПРЕДУПРЕЖДЕНИЕ: ОПАСНОСТЬ ДЛЯ ЭЛЕКТРОСЕТИ</b>" if gust_today_max >= 17.0 else "⚠️ <b>ВНИМАНИЕ: СИЛЬНЫЙ ПОСЫВИСТЫЙ ВЕТЕР</b>"
+    tg_msg = (
+        f"{urgency}\n\n"
+        f"📍 <b>Локация:</b> Бульвар Гевгелия 18\n"
+        f"💨 <b>Прогноз порывов ветра:</b> до <b>{gust_today_max:.0f} м/с</b> ({gust_today_max*3.6:.0f} км/ч)\n\n"
+        f"⚡️ <b>Причина риска:</b> При порывах выше 13–15 м/с возникает галопирование (пляска) воздушных линий передач. "
+        f"Схлёстывание фазных проводов может вызвать скачок напряжения до 380–400 Вольт!\n\n"
+        f"🔌 <b>Рекомендация:</b> Отключите от розеток электрообогреватели, компьютеры и ценную технику на время усиления ветра."
+    )
+    send_telegram_alert(tg_msg)
+    with open(alert_file, "w", encoding="utf-8") as af:
+        json.dump({"last_wind_alert_date": today_iso, "gust_max": gust_today_max}, af)
+    print("Recorded storm alert state for today")

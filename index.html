@@ -1104,6 +1104,16 @@
       }
     }
 
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     function quickFrostQuery(tag) {
       document.getElementById('frostCustomQuestion').value = tag;
       submitFrostQuestion();
@@ -1112,8 +1122,9 @@
     function submitFrostQuestion() {
       const q = document.getElementById('frostCustomQuestion').value.trim();
       if (!q) return;
+      const safeQ = escapeHtml(q);
       const adviceEl = document.getElementById('frostAdviceText');
-      adviceEl.innerHTML = `<b>Ответ агро-эксперта по запросу «${q}»:</b><br>Для района <b>${currentCity.name_ru}</b> расчет физического ансамбля показывает сохранение безопасного температурного диапазона. Локальное ночное выхолаживание не опустится ниже опасных пороговых величин.`;
+      adviceEl.innerHTML = `<b>Ответ агро-эксперта по запросу «${safeQ}»:</b><br>Для района <b>${escapeHtml(currentCity.name_ru)}</b> расчет физического ансамбля показывает сохранение безопасного температурного диапазона. Локальное ночное выхолаживание не опустится ниже опасных пороговых величин.`;
     }
 
     // Modal Sheet Controllers

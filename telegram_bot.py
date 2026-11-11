@@ -610,7 +610,7 @@ def handle_message(msg):
         call_tg("sendMessage", {"chat_id": chat_id, "text": diag, "parse_mode": "HTML"})
         return
 
-    # Geocoding search for freeform text (e.g. user writes city name)
+    # Geocoding search: Stage 1 (Open-Meteo for cities & towns)
     encoded = urllib.parse.quote(text)
     geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={encoded}&count=1&format=json"
     try:
@@ -637,6 +637,36 @@ def handle_message(msg):
                 return
     except Exception:
         pass
+
+    # Geocoding search: Stage 2 (OpenStreetMap Nominatim for exact streets, boulevards & addresses)
+    try:
+        nom_url = f"https://nominatim.openstreetmap.org/search?q={encoded}&format=json&limit=1&accept-language=ru,mk,en"
+        nom_req = urllib.request.Request(nom_url, headers={'User-Agent': 'MacedoniaMeteoBot/2.0 (contact@meteo.internal)'})
+        with urllib.request.urlopen(nom_req, timeout=8) as resp:
+            nom_data = json.loads(resp.read().decode('utf-8'))
+            if nom_data:
+                r = nom_data[0]
+                lat = float(r['lat'])
+                lon = float(r['lon'])
+                display_parts = r.get('display_name', '').split(',')
+                short_name = ', '.join([p.strip() for p in display_parts[:3]]) if len(display_parts) >= 3 else r.get('display_name', '')
+                rep = get_weather_report(lat, lon, short_name, lang)
+                save_btn_txt = "📌 Save as My Home" if lang=="en" else "📌 Сохранить как мой дом"
+                home_save_name = display_parts[0].strip() if display_parts else "Home"
+                reply_markup = {
+                    "inline_keyboard": [
+                        [{"text": save_btn_txt, "callback_data": f"save_home:{lat:.4f}:{lon:.4f}:{home_save_name}"}]
+                    ]
+                }
+                call_tg("sendMessage", {
+                    "chat_id": chat_id,
+                    "text": rep,
+                    "parse_mode": "HTML",
+                    "reply_markup": reply_markup
+                })
+                return
+    except Exception as e:
+        print(f"Nominatim error: {e}", flush=True)
 
     fallback_msg = "Command not recognized. Tap /app or choose from the menu." if lang=="en" else "Команда не распознана. Нажмите /app или выберите кнопку в меню."
     call_tg("sendMessage", {"chat_id": chat_id, "text": fallback_msg})

@@ -1,22 +1,75 @@
 {
-  "timestamp": "2026-11-11 14:32:04 UTC",
-  "spoken_text": "В Гевгелии сейчас плюс 16, ощущается как плюс 16, пасмурно. Давление 756 миллиметров ртутного столба, стабильное. Ветер 1 метра в секунду, воздух чистый.",
-  "gevgelija": {
-    "temperature": 15.7,
-    "apparent_temperature": 16.1,
-    "humidity": 86,
-    "pressure_mmhg": 756,
-    "pressure_trend": "стабильное",
-    "wind_speed": 1.25,
-    "wind_gusts": 2.9,
-    "weather_code": 3,
-    "description": "пасмурно"
+  "timestamp": "2026-11-11 14:37:38 UTC",
+  "spoken_text": "В Гевгелии сейчас плюс 16, ощущается как плюс 16, пасмурно. Ветер юго-западный, 1 метра в секунду. Давление 756 миллиметров ртутного столба. Поток тёплого средиземноморского воздуха из Греции поднимается по руслу Вардара.",
+  "cluster": {
+    "gevgelija_center": {
+      "name": "Гевгелия (Центр)",
+      "temp": 15.7,
+      "app_temp": 16.1,
+      "humidity": 86,
+      "wind_speed": 1.25,
+      "wind_dir": 209,
+      "wind_gusts": 2.9,
+      "pressure_hpa": 1007.3,
+      "pressure_mmhg": 756,
+      "weather_code": 3
+    },
+    "kozuf_mountain": {
+      "name": "Кожуф (Западные горы)",
+      "temp": 11.2,
+      "app_temp": 10.1,
+      "humidity": 81,
+      "wind_speed": 1.2,
+      "wind_dir": 175,
+      "wind_gusts": 9.4,
+      "pressure_hpa": 862.6,
+      "pressure_mmhg": 647,
+      "weather_code": 2
+    },
+    "valandovo_north": {
+      "name": "Валандово (Северный каньон)",
+      "temp": 15.8,
+      "app_temp": 16.3,
+      "humidity": 87,
+      "wind_speed": 1.3,
+      "wind_dir": 184,
+      "wind_gusts": 3.4,
+      "pressure_hpa": 1003.9,
+      "pressure_mmhg": 753,
+      "weather_code": 3
+    },
+    "bogdanci_east": {
+      "name": "Богданци (Восточные холмы)",
+      "temp": 15.8,
+      "app_temp": 16.3,
+      "humidity": 88,
+      "wind_speed": 1.4,
+      "wind_dir": 184,
+      "wind_gusts": 4.0,
+      "pressure_hpa": 1004.9,
+      "pressure_mmhg": 754,
+      "weather_code": 3
+    },
+    "evzonoi_greece": {
+      "name": "Эвзони / Поликастро (Греция, Юг)",
+      "temp": 16.2,
+      "app_temp": 16.8,
+      "humidity": 85,
+      "wind_speed": 1.14,
+      "wind_dir": 165,
+      "wind_gusts": 2.8,
+      "pressure_hpa": 1008.7,
+      "pressure_mmhg": 757,
+      "weather_code": 2
+    }
   },
-  "evzonoi_greece": {
-    "temperature": 15.9,
-    "humidity": 86,
-    "pressure_mmhg": 756,
-    "wind_speed": 1.3
+  "aerodynamics": {
+    "wind_direction_name": "юго-западный",
+    "wind_direction_degrees": 209,
+    "pressure_gradient_south_north_hpa": 4.8,
+    "air_mass_description": "Поток тёплого средиземноморского воздуха из Греции поднимается по руслу Вардара.",
+    "mountain_temp_drop_c": 4.5,
+    "inversion_status": "Атмосферный градиент в норме, воздух чистый."
   },
   "air_quality": {
     "european_aqi": 26,

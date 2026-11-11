@@ -1014,16 +1014,7 @@
       loadWeatherData(currentCity.lat, currentCity.lon);
     });
 
-    function renderQuickChips() {
-      const rail = document.getElementById('quickCitiesRail');
-      const popular = ['gevgelija', 'skopje', 'ohrid', 'bitola', 'kavadarci', 'popova_sapka', 'mavrovo'];
-      rail.innerHTML = popular.map(id => {
-        const c = MACEDONIA_CITIES.find(x => x.id === id);
-        const name = curLang === 'en' ? c.name_en : c.name_ru;
-        const active = c.id === currentCity.id ? 'active' : '';
-        return `<div class="quick-chip ${active}" onclick="selectCityById('${c.id}')">${name}</div>`;
-      }).join('');
-    }
+    function renderQuickChips() {}
 
     function renderCitiesList(list) {
       const cont = document.getElementById('citiesScrollList');

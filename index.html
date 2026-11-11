@@ -234,36 +234,7 @@
       text-transform: none;
     }
 
-    /* 3-Day Switcher Tabs */
-    .day-tabs-bar {
-      display: flex;
-      background: #111827;
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 3px;
-      margin-bottom: 10px;
-      gap: 4px;
-    }
-    .day-tab {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 600;
-      padding: 9px 4px;
-      border-radius: 13px;
-      cursor: pointer;
-      transition: background 0.12s ease, color 0.12s ease;
-      text-align: center;
-    }
-    .day-tab.active {
-      background: rgba(56, 189, 248, 0.22);
-      color: #fff;
-      font-weight: 700;
-      border: 1px solid rgba(56, 189, 248, 0.35);
-    }
-    .day-tab:active { transform: scale(0.96); }
+    /* 3-day switcher unified into interactive day cards below */
 
     /* 3-Day Mini Overview Strip */
     .days-overview-strip {
@@ -284,8 +255,13 @@
       will-change: transform;
     }
     .day-card-preview.active {
-      background: rgba(56, 189, 248, 0.1);
-      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(56, 189, 248, 0.16);
+      border: 1.5px solid #38bdf8;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.28);
+    }
+    .day-card-preview.active .dcp-name {
+      color: #38bdf8;
+      font-weight: 800;
     }
     .day-card-preview:active { transform: scale(0.96); }
     .dcp-name { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
@@ -808,12 +784,7 @@
     <div style="font-size: 16px; color: var(--frost); font-weight: 700;">➔</div>
   </div>
 
-  <!-- 3-Day Switcher Tabs -->
-  <div class="day-tabs-bar" id="dayTabsBar">
-    <button class="day-tab active" onclick="selectDay(0)" id="tab-day-0">Сегодня</button>
-    <button class="day-tab" onclick="selectDay(1)" id="tab-day-1">Завтра</button>
-    <button class="day-tab" onclick="selectDay(2)" id="tab-day-2">Послезавтра</button>
-  </div>
+  <!-- 3-Day Interactive Weather Cards (Direct Day Switcher) -->
 
   <!-- 3-Day Mini Preview Strip -->
   <div class="days-overview-strip" id="daysOverviewStrip"></div>
@@ -1175,9 +1146,6 @@
 
     function selectDay(idx) {
       selectedDayIndex = idx;
-      document.querySelectorAll('.day-tab').forEach((t, i) => {
-        t.classList.toggle('active', i === idx);
-      });
       renderMainView();
     }
 

@@ -53,7 +53,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       gap: 8px;
       position: relative;
       z-index: 50;
@@ -119,37 +119,7 @@
     .lang-pill-btn:active { transform: scale(0.92); color: #fff; }
 
     /* Quick Popular Cities Horizontal Chips Rail */
-    .quick-cities-rail {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      margin-bottom: 12px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      contain: layout style;
-    }
-    .quick-cities-rail::-webkit-scrollbar { display: none; }
-
-    .quick-chip {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 600;
-      padding: 6px 12px;
-      border-radius: 14px;
-      white-space: nowrap;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: transform 0.12s ease;
-      will-change: transform;
-    }
-    .quick-chip.active {
-      background: rgba(56, 189, 248, 0.2);
-      border-color: rgba(56, 189, 248, 0.4);
-      color: #fff;
-    }
+    /* Quick cities rail removed for clean modern UI */
     .quick-chip:active { transform: scale(0.95); }
 
     /* Hero Main Temperature Card */
@@ -810,8 +780,6 @@
     <div class="lang-pill-btn" id="langBtn" onclick="toggleLanguage()">EN</div>
   </div>
 
-  <!-- Quick Popular Cities Rail -->
-  <div class="quick-cities-rail" id="quickCitiesRail"></div>
 
   <!-- Hero Main Card -->
   <div class="hero-card" onclick="openWeatherScene()" title="Нажмите, чтобы открыть анимацию погоды">

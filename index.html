@@ -1365,12 +1365,20 @@
         title.innerText = '🌧 Анализ осадков и облачности';
         const p = w.daily?.precipitation_probability_max?.[selectedDayIndex] ?? 0;
         const sum = w.daily?.precipitation_sum?.[selectedDayIndex] ?? 0;
+        let rainDesc = '';
+        if (sum === 0 && p === 0) {
+          rainDesc = 'Сухая и стабильная погода. Дождей в выбранный день не ожидается.';
+        } else if (sum > 5) {
+          rainDesc = `Ожидаются заметные осадки (~${sum} мм). Рекомендуется взять зонт.`;
+        } else {
+          rainDesc = `Небольшая вероятность осадков (${p}%), существенного дождя не прогнозируется.`;
+        }
         body.innerHTML = `
           <div class="detail-highlight">
             <div class="detail-big-val">${p}%</div>
             <div class="detail-big-sub">Вероятность дождя • Осадки: ${sum} мм</div>
           </div>
-          <div class="detail-text">Прогноз физической модели конвективных осадков ECMWF + ансамбль станций.</div>
+          <div class="detail-text">${rainDesc}</div>
           <div class="detail-row"><span class="label">Осадки за сутки:</span><span class="val">${sum} мм</span></div>
           <div class="detail-row"><span class="label">Интенсивность:</span><span class="val">${sum > 5 ? 'Умеренный / Сильный' : (sum > 0 ? 'Слабый' : 'Без осадков')}</span></div>
           <div class="detail-row"><span class="label">Локация:</span><span class="val">${currentCity.name_ru} (${currentCity.ele} м)</span></div>
@@ -1378,12 +1386,20 @@
       } else if (type === 'wind') {
         title.innerText = '💨 Аэродинамика и безопасность сети';
         const gusts = Math.round(cur.wind_gusts_10m);
+        let windDesc = '';
+        if (gusts >= 17) {
+          windDesc = 'Опасный штормовой ветер! Риск схлёстывания фазных проводов 380V и падения веток.';
+        } else if (gusts >= 12) {
+          windDesc = 'Свежий порывистый ветер. Заметные колебания проводов и крон деревьев.';
+        } else {
+          windDesc = 'Ветровая обстановка спокойная. Электросеть и линии передач работают в штатном режиме.';
+        }
         body.innerHTML = `
           <div class="detail-highlight">
             <div class="detail-big-val">${cur.wind_speed_10m} м/с</div>
             <div class="detail-big-sub">Порывы до ${gusts} м/с</div>
           </div>
-          <div class="detail-text">Критический порог схлестывания фазных проводов на столбах на Балканах составляет 17.0 м/с.</div>
+          <div class="detail-text">${windDesc}</div>
           <div class="detail-row"><span class="label">Текущая скорость:</span><span class="val">${cur.wind_speed_10m} м/с</span></div>
           <div class="detail-row"><span class="label">Макс. порыв:</span><span class="val">${gusts} м/с</span></div>
           <div class="detail-row"><span class="label">Угроза 380V:</span><span class="val" style="color: ${gusts >= 17 ? 'var(--danger)' : 'var(--success)'};">${gusts >= 17 ? 'ВЫСОКАЯ (Отключите сеть!)' : 'Безопасно'}</span></div>
@@ -1392,14 +1408,25 @@
         title.innerText = '🍃 Качество воздуха и смог';
         const aqiVal = aqi?.current?.european_aqi ?? 20;
         const pm = aqi?.current?.pm2_5 ?? 10;
+        let dynamicDesc = '';
+        if (aqiVal <= 25) {
+          dynamicDesc = 'Воздух чистый и прозрачный. Отличные условия для прогулок и проветривания помещений.';
+        } else if (aqiVal <= 50) {
+          dynamicDesc = 'Качество воздуха умеренное, в пределах нормы. Взвешенные частицы не представляют угрозы.';
+        } else if (aqiVal <= 75) {
+          dynamicDesc = 'Повышенная запыленность атмосферы. Чувствительным людям рекомендуется снизить физическую активность на улице.';
+        } else {
+          dynamicDesc = 'Высокая концентрация смога в низине. Рекомендуется закрыть окна и воздержаться от пробежек.';
+        }
         body.innerHTML = `
           <div class="detail-highlight">
             <div class="detail-big-val">${aqiVal} AQI</div>
-            <div class="detail-big-sub">PM2.5: ${pm} мкг/м³</div>
+            <div class="detail-big-sub">PM2.5: ${pm} мкг/м³ • ${aqiVal <= 25 ? 'Чистый воздух' : (aqiVal <= 50 ? 'Умеренно' : 'Смог')}</div>
           </div>
-          <div class="detail-text">В межгорных котловинах Македонии зимой часто образуется температурная инверсия, запирающая дым у земли.</div>
-          <div class="detail-row"><span class="label">Статус:</span><span class="val">${aqiVal <= 25 ? 'Отличное' : (aqiVal <= 50 ? 'Умеренное' : 'Смог')}</span></div>
+          <div class="detail-text">${dynamicDesc}</div>
+          <div class="detail-row"><span class="label">Статус атмосферы:</span><span class="val">${aqiVal <= 25 ? 'Отличное' : (aqiVal <= 50 ? 'Умеренное' : 'Смог')}</span></div>
           <div class="detail-row"><span class="label">Проветривание:</span><span class="val">${aqiVal <= 40 ? 'Рекомендуется' : 'Ограничить'}</span></div>
+          <div class="detail-row"><span class="label">Локация:</span><span class="val">${currentCity.name_ru} (${currentCity.region})</span></div>
         `;
       } else if (type === 'hum') {
         title.innerText = '💧 Влажность, давление и точка росы';
@@ -1408,12 +1435,20 @@
         const a = 17.27, b = 237.7;
         const alpha = ((a * cur.temperature_2m) / (b + cur.temperature_2m)) + Math.log(hum / 100.0);
         const dew = (b * alpha) / (a - alpha);
+        let dynamicHum = '';
+        if (hum >= 85) {
+          dynamicHum = 'Высокая влажность, вероятен туман или обильный конденсат на траве и стеклах.';
+        } else if (hum <= 35) {
+          dynamicHum = 'Сухой воздух, комфортная видимость без дымки.';
+        } else {
+          dynamicHum = 'Оптимальный уровень влажности для дыхания и комфорта.';
+        }
         body.innerHTML = `
           <div class="detail-highlight">
             <div class="detail-big-val">${hum}%</div>
             <div class="detail-big-sub">Точка росы: ${dew.toFixed(1)}°C</div>
           </div>
-          <div class="detail-text">Точка росы определяет температуру конденсации водяного пара и туманообразования.</div>
+          <div class="detail-text">${dynamicHum}</div>
           <div class="detail-row"><span class="label">Относительная влажность:</span><span class="val">${hum}%</span></div>
           <div class="detail-row"><span class="label">Атмосферное давление:</span><span class="val">${pMm} мм рт. ст.</span></div>
           <div class="detail-row"><span class="label">Точка росы (Магнус):</span><span class="val">${dew.toFixed(1)}°C</span></div>
@@ -1427,7 +1462,7 @@
             <div class="detail-big-val">${t > 0 ? '+' : ''}${t}°C</div>
             <div class="detail-big-sub">Ощущается как: ${app > 0 ? '+' : ''}${app}°C</div>
           </div>
-          <div class="detail-text">Рассчитано физико-информированным ансамблем с учетом высоты над уровнем моря (${currentCity.ele} м) и теплоемкости долины.</div>
+          <div class="detail-text">${currentCity.name_ru} (${currentCity.region}, высота ${currentCity.ele} м). Расчёт физического ансамбля 160 станций.</div>
           <div class="detail-row"><span class="label">Город:</span><span class="val">${currentCity.name_ru}</span></div>
           <div class="detail-row"><span class="label">Высота над уровнем моря:</span><span class="val">${currentCity.ele} м</span></div>
           <div class="detail-row"><span class="label">Регион:</span><span class="val">${currentCity.region}</span></div>

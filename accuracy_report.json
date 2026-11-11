@@ -1,0 +1,48 @@
+{
+  "timestamp_utc": "2026-11-11T19:54:59.434180Z",
+  "mesh_stations_count": 160,
+  "eval_period": "2025-01-01 to 2025-12-31",
+  "hubs_evaluation": {
+    "MK_GEVGELIJA": {
+      "target_station": "MK_GEVGELIJA",
+      "mae_celsius": 0.03,
+      "rmse_celsius": 0.07,
+      "accuracy_within_1c_percent": 100.0,
+      "accuracy_within_2c_percent": 100.0,
+      "eval_days": 365
+    },
+    "MK_SKOPJE": {
+      "target_station": "MK_SKOPJE",
+      "mae_celsius": 0.57,
+      "rmse_celsius": 1.06,
+      "accuracy_within_1c_percent": 86.0,
+      "accuracy_within_2c_percent": 99.7,
+      "eval_days": 365
+    },
+    "RS_BG_VRACAR": {
+      "target_station": "RS_BG_VRACAR",
+      "mae_celsius": 0.0,
+      "rmse_celsius": 0.0,
+      "accuracy_within_1c_percent": 100.0,
+      "accuracy_within_2c_percent": 100.0,
+      "eval_days": 365
+    },
+    "RS_NIS": {
+      "target_station": "RS_NIS",
+      "mae_celsius": 0.0,
+      "rmse_celsius": 0.0,
+      "accuracy_within_1c_percent": 100.0,
+      "accuracy_within_2c_percent": 100.0,
+      "eval_days": 365
+    },
+    "GR_THESSALONIKI_AIR": {
+      "target_station": "GR_THESSALONIKI_AIR",
+      "mae_celsius": 0.0,
+      "rmse_celsius": 0.0,
+      "accuracy_within_1c_percent": 100.0,
+      "accuracy_within_2c_percent": 100.0,
+      "eval_days": 365
+    }
+  },
+  "overall_mean_mae": 0.12
+}

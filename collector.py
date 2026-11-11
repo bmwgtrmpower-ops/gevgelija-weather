@@ -138,11 +138,54 @@ WMO_DESC = {
 }
 desc = WMO_DESC.get(home['weather_code'], "облачно")
 
-# Spoken summary for Marina
-spoken_text = (f"В Гевгелии на Бульваре Гевгелия сейчас плюс {round(home['temp'])}, ощущается как плюс {round(home['app_temp'])}, {desc}. "
-               f"Ветер {home_wind_name}, {round(home['wind_speed'])} метра в секунду. "
-               f"Давление {home['pressure_mmhg']} миллиметров ртутного столба. "
-               f"{air_mass}")
+# Human, comfortable, practical spoken summary for Marina
+t_round = round(home['temp'])
+app_round = round(home['app_temp'])
+t_text = f"плюс {t_round}" if t_round > 0 else f"{t_round}"
+
+if app_round >= 15:
+    feel_text = f"ощущается тепло, около {app_round}"
+elif app_round >= 10:
+    feel_text = f"ощущается свежо, около {app_round}"
+else:
+    feel_text = f"на улице прохладно, ощущается как {app_round}"
+
+if home['weather_code'] in [0, 1]:
+    sky_text = "ясно и солнечно"
+elif home['weather_code'] in [2, 3]:
+    sky_text = "облачно, но сухо и без дождя"
+elif home['weather_code'] in [51, 53, 55, 61, 63, 65, 80]:
+    sky_text = "идёт дождь, пригодится зонт"
+elif home['weather_code'] in [45, 48]:
+    sky_text = "в долине опустился туман"
+else:
+    sky_text = "без осадков"
+
+w_val = round(home['wind_speed'])
+if w_val <= 1:
+    wind_text = "ветра практически нет, штиль"
+elif w_val <= 3:
+    wind_text = "ветер совсем слабый и приятный"
+elif w_val <= 6:
+    wind_text = "дует лёгкий ветерок"
+else:
+    wind_text = f"ощутимый ветер, {w_val} метра в секунду"
+
+if aqi <= 25 and pm25 < 15:
+    air_text = "воздух чистый и свежий"
+else:
+    air_text = "воздух умеренный"
+
+if app_round >= 18:
+    cloth = "Подойдёт футболка или лёгкая рубашка."
+elif app_round >= 14:
+    cloth = "Отличная погода для прогулки в худи или безрукавке."
+elif app_round >= 9:
+    cloth = "Пригодится демисезонная куртка или ветровка."
+else:
+    cloth = "Одевайтесь теплее, на улице зябко."
+
+spoken_text = f"На Бульваре Гевгелия сейчас {t_text}, {feel_text}. На улице {sky_text}. {wind_text.capitalize()}, {air_text}. {cloth}"
 
 # 3. Save latest.json with all 37 nodes
 latest = {

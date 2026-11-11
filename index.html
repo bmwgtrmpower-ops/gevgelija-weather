@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Balkan Meteo | Гевгелия</title>
+  <!-- Telegram WebApp JS SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 16px;
+      padding-bottom: 32px;
+      overflow-x: hidden;
+      background: radial-gradient(circle at 50% 0%, #1e293b 0%, #0b0f19 75%);
+    }
+
+    .header {
+      text-align: center;
+      padding: 12px 0 20px 0;
+    }
+
+    .loc-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+
+    .main-temp {
+      font-size: 72px;
+      font-weight: 200;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin: 8px 0;
+      text-shadow: 0 4px 20px var(--accent-glow);
+    }
+
+    .feels-like {
+      font-size: 15px;
+      color: var(--text-muted);
+    }
+
+    .cond-text {
+      font-size: 18px;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    /* Grid Sentinel Alert Card */
+    .sentinel-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      margin: 16px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    .sentinel-card.safe {
+      border-left: 4px solid var(--success);
+    }
+
+    .sentinel-card.warning {
+      border-left: 4px solid var(--warning);
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(15, 23, 42, 0.9));
+    }
+
+    .sentinel-card.danger {
+      border-left: 4px solid var(--danger);
+      background: linear-gradient(135deg, rgba(248, 113, 113, 0.15), rgba(15, 23, 42, 0.9));
+    }
+
+    .sentinel-icon {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .sentinel-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .sentinel-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Hourly Forecast Rail */
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin: 20px 0 10px 4px;
+    }
+
+    .hourly-rail {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+    }
+    .hourly-rail::-webkit-scrollbar { display: none; }
+
+    .hourly-item {
+      flex: 0 0 68px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 12px 6px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hourly-time { font-size: 12px; color: var(--text-muted); }
+    .hourly-icon { font-size: 20px; }
+    .hourly-temp { font-size: 15px; font-weight: 600; }
+    .hourly-rain { font-size: 11px; color: var(--accent); font-weight: 500; }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 14px;
+      backdrop-filter: blur(8px);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-val {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* City selector pills */
+    .city-pills {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      margin-bottom: 16px;
+      padding: 4px 2px;
+      scrollbar-width: none;
+    }
+    .city-pills::-webkit-scrollbar { display: none; }
+
+    .city-pill {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .city-pill.active {
+      background: var(--accent);
+      color: #0b0f19;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .gps-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
+    }
+    .gps-btn:active { transform: scale(0.98); }
+
+    .voice-quote {
+      margin-top: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--accent);
+      padding: 10px 14px;
+      border-radius: 4px 12px 12px 4px;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #d1d5db;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="city-pills">
+    <div class="city-pill active" onclick="switchLocation('gevgelija')">🏠 Гевгелия (Дом)</div>
+    <div class="city-pill" onclick="switchLocation('skopje')">🏙 Скопье (Родители)</div>
+    <div class="city-pill" onclick="switchLocation('mavrovo')">🏔 Маврово (Горы)</div>
+    <div class="city-pill" onclick="switchLocation('ohrid')">🌊 Охрид (Озеро)</div>
+  </div>
+
+  <div class="header">
+    <div class="loc-tag" id="locBadge">📍 Bulevar Gevgelija 18 (63 м)</div>
+    <div class="main-temp" id="mainTemp">+14°</div>
+    <div class="cond-text" id="condText">Облачно</div>
+    <div class="feels-like" id="feelsLike">Ощущается как +15° • Сухо</div>
+  </div>
+
+  <!-- Grid Safety Sentinel Card -->
+  <div class="sentinel-card safe" id="sentinelCard">
+    <div class="sentinel-icon" id="sentinelIcon">⚡️</div>
+    <div>
+      <div class="sentinel-title" id="sentinelTitle">Электросеть в безопасности</div>
+      <div class="sentinel-desc" id="sentinelDesc">Штиль, порывы ветра до 4 м/с. Риск раскачивания и схлёстывания проводов отсутствует. Обогреватели могут работать спокойно.</div>
+    </div>
+  </div>
+
+  <div class="section-title">Почасовой прогноз и осадки</div>
+  <div class="hourly-rail" id="hourlyRail">
+    <!-- Populated by JS -->
+  </div>
+
+  <div class="voice-quote" id="voiceQuote">
+    💬 <i>«На Бульваре Гевгелия сейчас плюс 14, ощущается около 15. На улице облачно, осадков сегодня не ожидается (вероятность 8%). Ветра нет, штиль.»</i>
+  </div>
+
+  <div class="section-title">Физические параметры кластера</div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">💨 Ветер и градиент</div>
+      <div class="stat-val" id="statWind">1.5 м/с</div>
+      <div class="stat-sub" id="statVardar">Вардарец: штиль (ΔP = +0.2 гПа)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">💧 Влажность и дождь</div>
+      <div class="stat-val" id="statHum">88%</div>
+      <div class="stat-sub" id="statRain">Риск дождя: 8% (сухо)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">🏔 Вершина Кожуф</div>
+      <div class="stat-val" id="statKozuf">+8.2°C</div>
+      <div class="stat-sub">Высота 1370 м (Смрдлива Вода)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">🍃 Чистота воздуха</div>
+      <div class="stat-val" id="statAqi" style="color: var(--success);">Чистый</div>
+      <div class="stat-sub">AQI: 22 • PM2.5: 8 мкг/м³</div>
+    </div>
+  </div>
+
+  <button class="gps-btn" onclick="requestUserGPS()">
+    📍 Определить погоду там, где я сейчас гуляю
+  </button>
+
+  <script>
+    // Init Telegram WebApp
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      try { tg.enableClosingConfirmation(); } catch(e){}
+    }
+
+    const LOCATIONS = {
+      gevgelija: { name: 'Bulevar Gevgelija 18', elev: '58 м', lat: 41.1465, lon: 22.5042 },
+      skopje: { name: 'Скопье (Котловина)', elev: '240 м', lat: 41.9981, lon: 21.4254 },
+      mavrovo: { name: 'Маврово (Курорт)', elev: '1280 м', lat: 41.7011, lon: 20.7389 },
+      ohrid: { name: 'Охрид (Набережная)', elev: '695 м', lat: 41.1128, lon: 20.8019 }
+    };
+
+    let currentLocation = 'gevgelija';
+
+    async function loadWeatherData(lat, lon, label, elev) {
+      document.getElementById('locBadge').innerText = `📍 ${label} (${elev})`;
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_gusts_10m,weather_code&hourly=temperature_2m,precipitation_probability,weather_code&daily=wind_gusts_10m_max,precipitation_probability_max&forecast_days=2&timezone=auto&wind_speed_unit=ms`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+
+        const cur = data.current;
+        const daily = data.daily;
+        const temp = Math.round(cur.temperature_2m);
+        const app = Math.round(cur.apparent_temperature);
+        const gusts = Math.round(daily.wind_gusts_10m_max[0]);
+        const rainProb = daily.precipitation_probability_max[0];
+
+        document.getElementById('mainTemp').innerText = `${temp > 0 ? '+' : ''}${temp}°`;
+        document.getElementById('feelsLike').innerText = `Ощущается как ${app > 0 ? '+' : ''}${app}° • Влажность ${cur.relative_humidity_2m}%`;
+
+        // Weather condition
+        const wcode = cur.weather_code;
+        let condDesc = "Ясно";
+        if ([1, 2, 3].includes(wcode)) condDesc = wcode <= 2 ? "Переменная облачность" : "Пасмурно";
+        else if ([45, 48].includes(wcode)) condDesc = "Туман";
+        else if ([51, 53, 55, 61, 63, 65, 80].includes(wcode)) condDesc = "Дождь";
+        document.getElementById('condText').innerText = condDesc;
+
+        // Sentinel Card (Power Grid & Wind Protection)
+        const sc = document.getElementById('sentinelCard');
+        const st = document.getElementById('sentinelTitle');
+        const sd = document.getElementById('sentinelDesc');
+        const si = document.getElementById('sentinelIcon');
+
+        if (gusts >= 17) {
+          sc.className = 'sentinel-card danger';
+          si.innerText = '🚨';
+          st.innerText = `ШТОРМ: Порывы до ${gusts} м/с! Опасность проводов`;
+          sd.innerText = `Критический риск галопирования и схлёстывания фаз на столбах. Возможны скачки до 380V. Выключите обогреватели и технику из розеток!`;
+        } else if (gusts >= 13) {
+          sc.className = 'sentinel-card warning';
+          si.innerText = '⚠️';
+          st.innerText = `Усиление ветра: порывы до ${gusts} м/с`;
+          sd.innerText = `На улице ожидается крепкий ветер. Провода может раскачивать, контролируйте электроприборы.`;
+        } else {
+          sc.className = 'sentinel-card safe';
+          si.innerText = '⚡️';
+          st.innerText = 'Электросеть в безопасности';
+          sd.innerText = `Штиль, порывы ветра до ${gusts} м/с. Риск раскачивания проводов отсутствует. Обогреватели работают спокойно.`;
+        }
+
+        // Stats
+        document.getElementById('statWind').innerText = `${cur.wind_speed_10m} м/с`;
+        document.getElementById('statHum').innerText = `${cur.relative_humidity_2m}%`;
+        document.getElementById('statRain').innerText = `Шанс дождя: ${rainProb}%`;
+
+        // Hourly Rail
+        const rail = document.getElementById('hourlyRail');
+        rail.innerHTML = '';
+        const nowIdx = new Date().getHours();
+        for (let i = nowIdx; i < nowIdx + 12; i++) {
+          if (!data.hourly.time[i]) break;
+          const hTime = data.hourly.time[i].split('T')[1];
+          const hTemp = Math.round(data.hourly.temperature_2m[i]);
+          const hRain = data.hourly.precipitation_probability[i];
+          const hCode = data.hourly.weather_code[i];
+
+          let icon = '☀️';
+          if ([1, 2, 3].includes(hCode)) icon = '⛅️';
+          if ([51, 61, 80].includes(hCode)) icon = '🌧';
+
+          const card = document.createElement('div');
+          card.className = 'hourly-item';
+          card.innerHTML = `
+            <div class="hourly-time">${hTime}</div>
+            <div class="hourly-icon">${icon}</div>
+            <div class="hourly-temp">${hTemp > 0 ? '+' : ''}${hTemp}°</div>
+            <div class="hourly-rain">${hRain > 0 ? hRain + '%' : '—'}</div>
+          `;
+          rail.appendChild(card);
+        }
+      } catch (err) {
+        console.error("Load weather failed:", err);
+      }
+    }
+
+    function switchLocation(key) {
+      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+      currentLocation = key;
+      document.querySelectorAll('.city-pill').forEach(el => el.classList.remove('active'));
+      event.target.classList.add('active');
+      const loc = LOCATIONS[key];
+      loadWeatherData(loc.lat, loc.lon, loc.name, loc.elev);
+    }
+
+    function requestUserGPS() {
+      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+      if (!navigator.geolocation) {
+        alert("Геолокация не поддерживается вашим устройством");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          loadWeatherData(lat, lon, "Точка на прогулке (GPS)", "авто");
+        },
+        (err) => {
+          alert("Не удалось определить координаты: " + err.message);
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
+    // Initial load
+    loadWeatherData(LOCATIONS.gevgelija.lat, LOCATIONS.gevgelija.lon, LOCATIONS.gevgelija.name, LOCATIONS.gevgelija.elev);
+  </script>
+</body>
+</html>

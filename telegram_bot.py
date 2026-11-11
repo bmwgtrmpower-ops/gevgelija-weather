@@ -641,8 +641,43 @@ def handle_callback_query(cq):
             })
         return
 
-    # Reset Data (GDPR) in-place
+    # Reset Confirmation Prompt (Protection against accidental deletion)
     if data == "menu_reset":
+        if lang == "en":
+            text = (
+                "⚠️ <b>Are you sure you want to delete all your data?</b>\n\n"
+                "This action will permanently erase your language settings, saved home address, and activity history from the bot.\n\n"
+                "Under GDPR Art. 17 (Right to Erasure), this cannot be undone."
+            )
+            confirm_btn = "🗑 Yes, delete permanently"
+            cancel_btn = "❌ Cancel, keep my data"
+        else:
+            text = (
+                "⚠️ <b>Вы точно уверены, что хотите удалить свои данные?</b>\n\n"
+                "Это действие безвозвратно сотрёт ваш сохранённый домашний адрес, языковые настройки и историю из базы бота.\n\n"
+                "В соответствии с GDPR (Право на забвение), данные будут уничтожены навсегда."
+            )
+            confirm_btn = "🗑 Да, удалить навсегда"
+            cancel_btn = "❌ Отмена, оставить данные"
+
+        markup = {
+            "inline_keyboard": [
+                [{"text": confirm_btn, "callback_data": "confirm_reset"}],
+                [{"text": cancel_btn, "callback_data": "menu_settings"}]
+            ]
+        }
+        if msg_id:
+            call_tg("editMessageText", {
+                "chat_id": chat_id,
+                "message_id": msg_id,
+                "text": text,
+                "parse_mode": "HTML",
+                "reply_markup": markup
+            })
+        return
+
+    # Confirmed Data Erasure
+    if data == "confirm_reset":
         reset_user_data(chat_id)
         text = (
             "🗑 <b>Your personal profile and saved location have been permanently erased.</b>\n\n"

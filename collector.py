@@ -66,7 +66,7 @@ lons = ','.join(str(s['lon']) for s in STATIONS.values())
 # 1. Single-call batch query for ALL 37 stations
 url = (f"https://api.open-meteo.com/v1/forecast?latitude={lats}&longitude={lons}"
        "&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,surface_pressure,weather_code"
-       "&timezone=auto&wind_speed_unit=ms")
+       "&daily=precipitation_probability_max,precipitation_sum&forecast_days=2&timezone=auto&wind_speed_unit=ms")
 batch_data = fetch_json(url)
 
 # 2. Fetch Air Quality for home
@@ -150,16 +150,32 @@ elif app_round >= 10:
 else:
     feel_text = f"на улице прохладно, ощущается как {app_round}"
 
+home_daily = batch_data[0].get('daily', {})
+probs = home_daily.get('precipitation_probability_max', [0, 0])
+prob_today = probs[0] if len(probs) > 0 else 0
+prob_tomorrow = probs[1] if len(probs) > 1 else 0
+precip_sums = home_daily.get('precipitation_sum', [0.0, 0.0])
+precip_today = precip_sums[0] if len(precip_sums) > 0 else 0.0
+
 if home['weather_code'] in [0, 1]:
     sky_text = "ясно и солнечно"
 elif home['weather_code'] in [2, 3]:
-    sky_text = "облачно, но сухо и без дождя"
-elif home['weather_code'] in [51, 53, 55, 61, 63, 65, 80]:
-    sky_text = "идёт дождь, пригодится зонт"
+    sky_text = "облачно"
 elif home['weather_code'] in [45, 48]:
     sky_text = "в долине опустился туман"
 else:
-    sky_text = "без осадков"
+    sky_text = "пасмурно"
+
+if home['weather_code'] in [51, 53, 55, 61, 63, 65, 80]:
+    rain_text = "на улице идёт дождь, обязательно захватите зонт"
+elif prob_today >= 70:
+    rain_text = f"сегодня высокая вероятность дождя, около {prob_today}%, ожидаются осадки до {precip_today:.1f} мм, обязательно возьмите зонт"
+elif prob_today >= 40:
+    rain_text = f"во второй половине дня возможен дождь, вероятность {prob_today}%, зонт лучше прихватить"
+elif prob_today >= 15:
+    rain_text = f"вероятность осадков сегодня небольшая, около {prob_today}%, в целом сухо"
+else:
+    rain_text = f"осадков сегодня не ожидается, вероятность дождя всего {prob_today}%"
 
 w_val = round(home['wind_speed'])
 if w_val <= 1:
@@ -185,7 +201,7 @@ elif app_round >= 9:
 else:
     cloth = "Одевайтесь теплее, на улице зябко."
 
-spoken_text = f"На Бульваре Гевгелия сейчас {t_text}, {feel_text}. На улице {sky_text}. {wind_text.capitalize()}, {air_text}. {cloth}"
+spoken_text = f"На Бульваре Гевгелия сейчас {t_text}, {feel_text}. На улице {sky_text}, {rain_text}. {wind_text.capitalize()}, {air_text}. {cloth}"
 
 # 3. Save latest.json with all 37 nodes
 latest = {

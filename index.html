@@ -344,149 +344,166 @@
     }
 
     /* Modal / Bottom Sheet Framework (Hardware Accelerated) */
+    /* NATIVE FULL-SCREEN PAGE MODAL ARCHITECTURE */
     .sheet-backdrop {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.65);
-      z-index: 998;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 9998;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s ease;
-      will-change: opacity;
+      display: none;
     }
     .sheet-backdrop.active {
       opacity: 1;
       pointer-events: auto;
+      display: block;
     }
 
     .bottom-sheet {
       position: fixed;
-      left: 12px;
-      right: 12px;
-      bottom: 16px;
-      background: #111827;
-      border: 1px solid rgba(255, 255, 255, 0.24);
-      border-radius: 26px;
-      padding: 16px 18px 20px 18px;
-      z-index: 1000;
-      max-height: 86vh;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      width: 100dvw;
+      height: 100vh;
+      height: 100dvh;
+      background: #090e17; /* deep luxury dark */
+      z-index: 9999;
       display: none;
       flex-direction: column;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
-      opacity: 0;
-      transform: translateY(24px) scale(0.97);
-      transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: max(16px, env(safe-area-inset-top, 16px)) 18px max(24px, env(safe-area-inset-bottom, 24px)) 18px;
+      border-radius: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+      box-sizing: border-box;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
     .bottom-sheet.open {
-      display: flex;
-      opacity: 1;
-      transform: translateY(0) scale(1);
+      display: flex !important;
+      opacity: 1 !important;
+      transform: translateY(0) !important;
     }
 
+    /* Remove drag handle completely for full-screen pages */
     .sheet-handle-wrap {
-      width: 100%;
-      padding: 6px 0 10px 0;
-      display: flex;
-      justify-content: center;
-      cursor: pointer;
-      touch-action: manipulation;
-    }
-    .sheet-handle {
-      width: 48px;
-      height: 5px;
-      background: rgba(255, 255, 255, 0.4);
-      border-radius: 3px;
+      display: none !important;
     }
 
+    /* Full-Screen Page Header */
     .sheet-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 4px 0 16px 0;
       margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       flex-shrink: 0;
     }
+
     .sheet-title {
-      font-size: 17px;
-      font-weight: 700;
-      color: #fff;
+      font-size: 19px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    /* BIG 44x44px touch target close button */
+
+    /* Huge 50x50px Touch Target Close Button */
     .sheet-close-btn {
-      background: rgba(255, 255, 255, 0.16);
-      border: 1px solid rgba(255, 255, 255, 0.28);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
       color: #ffffff;
       border-radius: 50%;
-      width: 48px;
-      height: 48px;
-      min-width: 48px;
-      min-height: 48px;
+      width: 50px;
+      height: 50px;
+      min-width: 50px;
+      min-height: 50px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
-      font-weight: 800;
+      font-size: 26px;
+      font-weight: 700;
       line-height: 1;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
-      transition: transform 0.1s, background 0.1s;
-      z-index: 1002;
-    }
-    .sheet-close-btn:active {
-      transform: scale(0.88);
-      background: #ef4444 !important;
-      color: #fff !important;
+      transition: background 0.15s, transform 0.1s;
+      flex-shrink: 0;
     }
 
-    /* Big Close Button at Bottom of Sheet */
+    .sheet-close-btn:active {
+      transform: scale(0.9);
+      background: #ef4444 !important;
+      border-color: #ef4444 !important;
+      color: #ffffff !important;
+    }
+
+    /* Full-width Friendly Bottom Action Button */
     .sheet-action-close-btn {
       width: 100%;
-      padding: 14px 16px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 14px;
-      color: #fff;
-      font-size: 15px;
+      padding: 16px 20px;
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 16px;
+      color: #ffffff;
+      font-size: 16px;
       font-weight: 700;
       cursor: pointer;
-      margin-top: 16px;
-      margin-bottom: 8px;
+      margin-top: 24px;
+      margin-bottom: 20px;
+      flex-shrink: 0;
       touch-action: manipulation;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      transition: background 0.12s, transform 0.12s;
+      gap: 10px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      transition: background 0.15s, transform 0.1s;
     }
+
     .sheet-action-close-btn:active {
-      background: rgba(255, 255, 255, 0.2);
+      background: #ef4444 !important;
+      border-color: #ef4444 !important;
       transform: scale(0.98);
     }
 
     /* City Search Input */
     .search-box-wrap {
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       flex-shrink: 0;
     }
     .search-input {
       width: 100%;
       background: #1e293b;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 14px;
-      padding: 12px 14px;
-      font-size: 15px;
+      padding: 14px 16px;
+      font-size: 16px;
       color: #fff;
       outline: none;
+      box-sizing: border-box;
     }
     .search-input:focus {
       border-color: var(--accent);
+      background: #253349;
     }
 
     .cities-scroll-list {
@@ -496,7 +513,8 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      padding: 4px 6px 140px 4px; /* Generous 140px bottom padding so cities NEVER get blocked by system navigation bar! */
+      padding: 4px 4px 20px 4px;
+      min-height: 250px;
     }
 
     .city-item {
@@ -648,7 +666,7 @@
     /* Weather Stage & Atmospheric Animations */
     .weather-stage {
       width: 100%;
-      height: 180px;
+      height: 240px;
       border-radius: 18px;
       position: relative;
       overflow: hidden;
@@ -676,11 +694,11 @@
     @keyframes raindropFall {
       0% { transform: translateY(-20px) rotate(14deg); opacity: 0; }
       20% { opacity: 0.95; }
-      100% { transform: translateY(220px) rotate(14deg); opacity: 0.15; }
+      100% { transform: translateY(290px) rotate(14deg); opacity: 0.15; }
     }
 
     /* Cloud Scene */
-    .weather-stage.cloud-scene {
+    .weather-stage.cloud-scene, .weather-stage.clouds-scene {
       background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
     }
     .cloud-shape {
@@ -842,39 +860,36 @@
   </div>
 
   <!-- Backdrop -->
-  <div class="sheet-backdrop" id="sheetBackdrop" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault();}"></div>
+  <div class="sheet-backdrop" id="sheetBackdrop" onclick="closeAllSheets()" aria-label="Закрыть"></div>
 
-  <!-- Bottom Sheet 1: City Search & List -->
+  <!-- Sheet 1: City Search Full Screen -->
   <div class="bottom-sheet" id="citySearchSheet">
-    <div class="sheet-handle-wrap" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" title="Нажмите, чтобы закрыть"><div class="sheet-handle"></div></div>
     <div class="sheet-header">
-      <div class="sheet-title" id="citySheetTitle">Города Северной Македонии</div>
-      <button type="button" class="sheet-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}" aria-label="Закрыть">✕</button>
+      <div class="sheet-title" id="citySheetTitle">📍 Выбор города Македонии</div>
+      <button type="button" class="sheet-close-btn" onclick="closeAllSheets()" aria-label="Закрыть">✕</button>
     </div>
     <div class="search-box-wrap">
-      <input type="text" class="search-input" id="citySearchInput" placeholder="🔍 Введите название города (напр. Скопье, Охрид...)" oninput="filterCities(this.value)">
+      <input type="text" class="search-input" id="citySearchInput" placeholder="🔍 Введите название города (Скопье, Охрид...)" oninput="filterCities(this.value)">
     </div>
     <div class="cities-scroll-list" id="citiesScrollList"></div>
-    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}">✕ Закрыть список городов</button>
+    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()">✕ Вернуться к прогнозу</button>
   </div>
 
-  <!-- Bottom Sheet 2: Metric Detail Modal -->
+  <!-- Sheet 2: Metric Detail Modal Full Screen -->
   <div class="bottom-sheet" id="metricDetailSheet">
-    <div class="sheet-handle-wrap" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" title="Нажмите, чтобы закрыть"><div class="sheet-handle"></div></div>
     <div class="sheet-header">
       <div class="sheet-title" id="detailModalTitle">Детальный отчет</div>
-      <button type="button" class="sheet-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}" aria-label="Закрыть">✕</button>
+      <button type="button" class="sheet-close-btn" onclick="closeAllSheets()" aria-label="Закрыть">✕</button>
     </div>
     <div class="detail-body" id="detailModalBody"></div>
-    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}">✕ Закрыть отчет</button>
+    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()">✕ Вернуться к прогнозу</button>
   </div>
 
-  <!-- Bottom Sheet 3: Frost & Agro Calculator Modal -->
+  <!-- Sheet 3: Frost & Agro Calculator Modal Full Screen -->
   <div class="bottom-sheet" id="frostSheet">
-    <div class="sheet-handle-wrap" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" title="Нажмите, чтобы закрыть"><div class="sheet-handle"></div></div>
     <div class="sheet-header">
       <div class="sheet-title">❄️ Агропрогноз заморозков</div>
-      <button type="button" class="sheet-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}" aria-label="Закрыть">✕</button>
+      <button type="button" class="sheet-close-btn" onclick="closeAllSheets()" aria-label="Закрыть">✕</button>
     </div>
     <div class="frost-tag-chips">
       <div class="frost-tag" onclick="quickFrostQuery('Ближайшие 3 дня')">📅 Ближайшие 3 дня</div>
@@ -911,21 +926,19 @@
         <span class="val">Штатный полив, укрытие не требуется</span>
       </div>
     </div>
-    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}">✕ Закрыть агропрогноз</button>
+    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()">✕ Вернуться к прогнозу</button>
   </div>
 
-  <!-- Bottom Sheet 4: Weather Scene Animated Modal -->
+  <!-- Sheet 4: Weather Scene Animated Modal Full Screen -->
   <div class="bottom-sheet" id="weatherSceneSheet">
-    <div class="sheet-handle-wrap" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" title="Нажмите, чтобы закрыть"><div class="sheet-handle"></div></div>
     <div class="sheet-header">
       <div class="sheet-title" id="weatherSceneTitle">Атмосферная визуализация</div>
-      <button type="button" class="sheet-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}" aria-label="Закрыть">✕</button>
+      <button type="button" class="sheet-close-btn" onclick="closeAllSheets()" aria-label="Закрыть">✕</button>
     </div>
     <div class="weather-stage" id="weatherStage"></div>
     <div class="detail-body" id="weatherSceneBody"></div>
-    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}">✕ Закрыть окно</button>
+    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()">✕ Вернуться к прогнозу</button>
   </div>
-
 
   <script>
     // -------------------------------------------------------------
@@ -1476,26 +1489,87 @@
       openSheetById('frostSheet');
     }
 
-    // Touch & Click Bindings for Modals (Zero Lag, No Stuck Sheets)
+    // Robust Full-Screen Modal Management (Zero Latency, Bulletproof Closing)
+    function openSheetById(id) {
+      closeAllSheets();
+      const sheet = document.getElementById(id);
+      const backdrop = document.getElementById('sheetBackdrop');
+      if (!sheet) return;
+
+      document.body.style.overflow = 'hidden';
+      if (backdrop) {
+        backdrop.style.display = 'block';
+        void backdrop.offsetWidth;
+        backdrop.classList.add('active');
+      }
+
+      sheet.style.display = 'flex';
+      void sheet.offsetWidth;
+      sheet.classList.add('open');
+      sheet.scrollTop = 0;
+
+      // Telegram Native Back Button Integration
+      try {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.BackButton) {
+          window.Telegram.WebApp.BackButton.show();
+          window.Telegram.WebApp.BackButton.offClick(closeAllSheets);
+          window.Telegram.WebApp.BackButton.onClick(closeAllSheets);
+        }
+      } catch (e) {}
+    }
+
+    function closeAllSheets() {
+      document.body.style.overflow = '';
+      const backdrop = document.getElementById('sheetBackdrop');
+      if (backdrop) {
+        backdrop.classList.remove('active');
+        backdrop.style.display = 'none';
+      }
+
+      document.querySelectorAll('.bottom-sheet').forEach(s => {
+        s.classList.remove('open');
+        s.style.display = 'none';
+      });
+
+      // Hide Telegram Native Back Button
+      try {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.BackButton) {
+          window.Telegram.WebApp.BackButton.hide();
+        }
+      } catch (e) {}
+    }
+
+    // Event Listeners: Backdrop Click, Outside Content Click, ESC Key, and Touch Bindings
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeAllSheets();
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
-      // Direct touch and click binding on all close buttons
-      document.querySelectorAll('.sheet-close-btn, .sheet-action-close-btn, .sheet-handle-wrap').forEach(btn => {
-        btn.addEventListener('touchstart', e => {
+      // Tap outside interactive content in the modal closes it
+      document.querySelectorAll('.bottom-sheet').forEach(sheet => {
+        sheet.addEventListener('click', (e) => {
+          if (e.target === sheet) {
+            closeAllSheets();
+          }
+        });
+      });
+
+      const backdrop = document.getElementById('sheetBackdrop');
+      if (backdrop) {
+        backdrop.addEventListener('click', closeAllSheets);
+      }
+
+      // Fast touch/click binding on close buttons
+      document.querySelectorAll('.sheet-close-btn, .sheet-action-close-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
           e.stopPropagation();
-        }, { passive: true });
-        btn.addEventListener('touchend', e => {
+          closeAllSheets();
+        });
+        btn.addEventListener('touchend', (e) => {
           e.preventDefault();
           e.stopPropagation();
           closeAllSheets();
         }, { passive: false });
-        btn.addEventListener('pointerdown', e => {
-          e.stopPropagation();
-          closeAllSheets();
-        });
-        btn.addEventListener('click', e => {
-          e.stopPropagation();
-          closeAllSheets();
-        });
       });
     });
 

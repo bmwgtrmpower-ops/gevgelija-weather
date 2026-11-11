@@ -692,7 +692,104 @@
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
     }
+  
+    /* Weather Stage & Atmospheric Animations */
+    .weather-stage {
+      width: 100%;
+      height: 180px;
+      border-radius: 18px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.4);
+      contain: paint;
+    }
+
+    /* Rain Scene */
+    .weather-stage.rain-scene {
+      background: linear-gradient(180deg, #091124 0%, #172554 100%);
+    }
+    .raindrop {
+      position: absolute;
+      top: -20px;
+      width: 2px;
+      height: 24px;
+      background: linear-gradient(180deg, transparent, rgba(56, 189, 248, 0.9));
+      border-radius: 1px;
+      animation: raindropFall linear infinite;
+    }
+    @keyframes raindropFall {
+      0% { transform: translateY(-20px) rotate(14deg); opacity: 0; }
+      20% { opacity: 0.95; }
+      100% { transform: translateY(220px) rotate(14deg); opacity: 0.15; }
+    }
+
+    /* Cloud Scene */
+    .weather-stage.cloud-scene {
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    }
+    .cloud-shape {
+      position: absolute;
+      background: rgba(148, 163, 184, 0.28);
+      border-radius: 50px;
+      filter: blur(2px);
+      will-change: transform;
+      animation: cloudDrift linear infinite;
+    }
+    @keyframes cloudDrift {
+      0% { transform: translateX(-140px); }
+      100% { transform: translateX(380px); }
+    }
+
+    /* Sun Scene */
+    .weather-stage.sun-scene {
+      background: linear-gradient(180deg, #0284c7 0%, #075985 100%);
+    }
+    .sun-core {
+      width: 74px;
+      height: 74px;
+      background: radial-gradient(circle, #fde047 0%, #f59e0b 80%);
+      border-radius: 50%;
+      box-shadow: 0 0 40px #f59e0b;
+      animation: sunPulse 3s ease-in-out infinite;
+    }
+    @keyframes sunPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.8)); }
+      50% { transform: scale(1.08); filter: drop-shadow(0 0 35px rgba(245, 158, 11, 1)); }
+    }
+
+    /* Thunderstorm Flash */
+    .weather-stage.thunder-scene {
+      background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
+      animation: lightningStrobe 5s infinite;
+    }
+    @keyframes lightningStrobe {
+      0%, 93%, 95%, 97%, 100% { background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%); }
+      94%, 96% { background: linear-gradient(180deg, #4338ca 0%, #312e81 100%); }
+    }
+
+    /* Snow Scene */
+    .weather-stage.snow-scene {
+      background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+    }
+    .snowflake {
+      position: absolute;
+      top: -10px;
+      color: #fff;
+      font-size: 15px;
+      user-select: none;
+      animation: snowFall linear infinite;
+    }
+    @keyframes snowFall {
+      0% { transform: translateY(-10px) rotate(0deg); opacity: 0; }
+      30% { opacity: 0.9; }
+      100% { transform: translateY(200px) rotate(360deg); opacity: 0.2; }
+    }
   </style>
+
 </head>
 <body>
 
@@ -711,7 +808,7 @@
   <div class="quick-cities-rail" id="quickCitiesRail"></div>
 
   <!-- Hero Main Card -->
-  <div class="hero-card" onclick="openMetricDetail('temp')">
+  <div class="hero-card" onclick="openWeatherScene()" title="Нажмите, чтобы открыть анимацию погоды">
     <div class="main-temp" id="tempDisplay">--°</div>
     <div class="main-cond" id="condDisplay">Загрузка прогноза...</div>
     <div class="main-feels" id="feelsDisplay">Ощущается как --° • Физический ансамбль 160 станций ⚡</div>
@@ -871,6 +968,19 @@
     </div>
     <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()">✕ Закрыть агропрогноз</button>
   </div>
+
+  <!-- Bottom Sheet 4: Weather Scene Animated Modal -->
+  <div class="bottom-sheet" id="weatherSceneSheet">
+    <div class="sheet-handle-wrap" onclick="closeAllSheets()" title="Нажмите, чтобы закрыть"><div class="sheet-handle"></div></div>
+    <div class="sheet-header">
+      <div class="sheet-title" id="weatherSceneTitle">Атмосферная визуализация</div>
+      <button type="button" class="sheet-close-btn" onclick="closeAllSheets()">✕</button>
+    </div>
+    <div class="weather-stage" id="weatherStage"></div>
+    <div class="detail-body" id="weatherSceneBody"></div>
+    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()">✕ Закрыть окно</button>
+  </div>
+
 
   <script>
     // -------------------------------------------------------------
@@ -1201,6 +1311,112 @@
       document.getElementById('citySearchInput').focus();
     }
 
+    
+    function openWeatherScene() {
+      if (!cachedWeather) return;
+      const { w } = cachedWeather;
+      const cur = w.current;
+      const code = cur.weather_code;
+      const temp = Math.round(cur.temperature_2m);
+      const feels = Math.round(cur.apparent_temperature);
+      const desc = getWeatherDesc(code);
+      const isNight = cur.is_day === 0;
+
+      const stage = document.getElementById('weatherStage');
+      const title = document.getElementById('weatherSceneTitle');
+      const body = document.getElementById('weatherSceneBody');
+
+      title.innerText = `${desc} в г. ${currentCity.name_ru}`;
+
+      // Determine weather type: 'rain', 'clouds', 'sun', 'thunder', 'snow'
+      let type = 'clouds';
+      if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) {
+        type = 'rain';
+      } else if (code >= 95) {
+        type = 'thunder';
+      } else if ([71, 73, 75, 85, 86].includes(code)) {
+        type = 'snow';
+      } else if (code === 0) {
+        type = 'sun';
+      } else {
+        type = 'clouds';
+      }
+
+      // Render animated scene
+      stage.className = `weather-stage ${type}-scene`;
+      if (type === 'rain') {
+        let drops = '';
+        for (let i = 0; i < 20; i++) {
+          const left = Math.floor(Math.random() * 96) + 2;
+          const delay = (Math.random() * 1.5).toFixed(2);
+          const dur = (0.5 + Math.random() * 0.4).toFixed(2);
+          drops += `<div class="raindrop" style="left: ${left}%; animation-delay: ${delay}s; animation-duration: ${dur}s;"></div>`;
+        }
+        stage.innerHTML = `
+          ${drops}
+          <div style="position: absolute; bottom: 14px; left: 16px; font-size: 26px; z-index: 2;">🌧</div>
+          <div style="position: absolute; bottom: 12px; right: 16px; font-size: 13px; color: #7dd3fc; font-weight: 700; z-index: 2;">Идут осадки • Дождь льётся</div>
+        `;
+      } else if (type === 'thunder') {
+        let drops = '';
+        for (let i = 0; i < 20; i++) {
+          const left = Math.floor(Math.random() * 96) + 2;
+          const delay = (Math.random() * 1.2).toFixed(2);
+          const dur = (0.4 + Math.random() * 0.3).toFixed(2);
+          drops += `<div class="raindrop" style="left: ${left}%; animation-delay: ${delay}s; animation-duration: ${dur}s;"></div>`;
+        }
+        stage.innerHTML = `
+          ${drops}
+          <div style="position: absolute; bottom: 14px; left: 16px; font-size: 26px; z-index: 2;">⛈</div>
+          <div style="position: absolute; bottom: 12px; right: 16px; font-size: 13px; color: #c084fc; font-weight: 700; z-index: 2;">Грозовой фронт • Вспышки</div>
+        `;
+      } else if (type === 'sun') {
+        stage.innerHTML = `
+          <div class="sun-core"></div>
+          <div style="position: absolute; bottom: 12px; left: 16px; font-size: 13px; color: #fde047; font-weight: 700;">${isNight ? '🌙 Ясная ночь' : '☀️ Ясно и солнечно'}</div>
+        `;
+      } else if (type === 'snow') {
+        let flakes = '';
+        for (let i = 0; i < 16; i++) {
+          const left = Math.floor(Math.random() * 96) + 2;
+          const delay = (Math.random() * 2).toFixed(2);
+          const dur = (1.5 + Math.random() * 1.5).toFixed(2);
+          flakes += `<div class="snowflake" style="left: ${left}%; animation-delay: ${delay}s; animation-duration: ${dur}s;">❄</div>`;
+        }
+        stage.innerHTML = `
+          ${flakes}
+          <div style="position: absolute; bottom: 12px; left: 16px; font-size: 13px; color: #fff; font-weight: 700;">Снегопад</div>
+        `;
+      } else {
+        // Clouds animation
+        stage.innerHTML = `
+          <div class="cloud-shape" style="top: 25px; left: 10px; width: 140px; height: 45px; animation-duration: 9s;"></div>
+          <div class="cloud-shape" style="top: 65px; left: 40px; width: 180px; height: 55px; animation-duration: 13s; animation-delay: 2s; background: rgba(148, 163, 184, 0.35);"></div>
+          <div class="cloud-shape" style="top: 105px; left: 20px; width: 130px; height: 42px; animation-duration: 8s; animation-delay: 4s;"></div>
+          <div style="position: absolute; bottom: 14px; left: 16px; font-size: 26px; z-index: 2;">☁️</div>
+          <div style="position: absolute; bottom: 12px; right: 16px; font-size: 13px; color: #cbd5e1; font-weight: 700; z-index: 2;">Пасмурно • Движение облаков</div>
+        `;
+      }
+
+      // Render metrics breakdown
+      const rainProb = w.daily?.precipitation_probability_max?.[selectedDayIndex] ?? 0;
+      const wind = cur.wind_speed_10m;
+      const hum = cur.relative_humidity_2m;
+      body.innerHTML = `
+        <div class="detail-highlight">
+          <div class="detail-big-val">${temp > 0 ? '+' : ''}${temp}°C</div>
+          <div class="detail-big-sub">${desc} • Ощущается как ${feels > 0 ? '+' : ''}${feels}°C</div>
+        </div>
+        <div class="detail-text">Текущая визуализация погоды для г. <b>${currentCity.name_ru}</b> (высота <b>${currentCity.ele} м</b>). Расчёт выполнен по данным физико-информированного ML-ансамбля 160 станций.</div>
+        <div class="detail-row"><span class="label">Относительная влажность:</span><span class="val">${hum}%</span></div>
+        <div class="detail-row"><span class="label">Вероятность дождя:</span><span class="val">${rainProb}%</span></div>
+        <div class="detail-row"><span class="label">Скорость ветра:</span><span class="val">${wind} м/с</span></div>
+        <div class="detail-row"><span class="label">Атмосферное давление:</span><span class="val">${Math.round(cur.surface_pressure * 0.750062)} мм рт. ст.</span></div>
+      `;
+
+      openSheetById('weatherSceneSheet');
+    }
+
     function openFrostSheet() {
       closeAllSheets();
       document.getElementById('sheetBackdrop').classList.add('active');
@@ -1339,6 +1555,112 @@
         const inp = document.getElementById('citySearchInput');
         if (inp) inp.focus();
       }, 100);
+    }
+
+    
+    function openWeatherScene() {
+      if (!cachedWeather) return;
+      const { w } = cachedWeather;
+      const cur = w.current;
+      const code = cur.weather_code;
+      const temp = Math.round(cur.temperature_2m);
+      const feels = Math.round(cur.apparent_temperature);
+      const desc = getWeatherDesc(code);
+      const isNight = cur.is_day === 0;
+
+      const stage = document.getElementById('weatherStage');
+      const title = document.getElementById('weatherSceneTitle');
+      const body = document.getElementById('weatherSceneBody');
+
+      title.innerText = `${desc} в г. ${currentCity.name_ru}`;
+
+      // Determine weather type: 'rain', 'clouds', 'sun', 'thunder', 'snow'
+      let type = 'clouds';
+      if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) {
+        type = 'rain';
+      } else if (code >= 95) {
+        type = 'thunder';
+      } else if ([71, 73, 75, 85, 86].includes(code)) {
+        type = 'snow';
+      } else if (code === 0) {
+        type = 'sun';
+      } else {
+        type = 'clouds';
+      }
+
+      // Render animated scene
+      stage.className = `weather-stage ${type}-scene`;
+      if (type === 'rain') {
+        let drops = '';
+        for (let i = 0; i < 20; i++) {
+          const left = Math.floor(Math.random() * 96) + 2;
+          const delay = (Math.random() * 1.5).toFixed(2);
+          const dur = (0.5 + Math.random() * 0.4).toFixed(2);
+          drops += `<div class="raindrop" style="left: ${left}%; animation-delay: ${delay}s; animation-duration: ${dur}s;"></div>`;
+        }
+        stage.innerHTML = `
+          ${drops}
+          <div style="position: absolute; bottom: 14px; left: 16px; font-size: 26px; z-index: 2;">🌧</div>
+          <div style="position: absolute; bottom: 12px; right: 16px; font-size: 13px; color: #7dd3fc; font-weight: 700; z-index: 2;">Идут осадки • Дождь льётся</div>
+        `;
+      } else if (type === 'thunder') {
+        let drops = '';
+        for (let i = 0; i < 20; i++) {
+          const left = Math.floor(Math.random() * 96) + 2;
+          const delay = (Math.random() * 1.2).toFixed(2);
+          const dur = (0.4 + Math.random() * 0.3).toFixed(2);
+          drops += `<div class="raindrop" style="left: ${left}%; animation-delay: ${delay}s; animation-duration: ${dur}s;"></div>`;
+        }
+        stage.innerHTML = `
+          ${drops}
+          <div style="position: absolute; bottom: 14px; left: 16px; font-size: 26px; z-index: 2;">⛈</div>
+          <div style="position: absolute; bottom: 12px; right: 16px; font-size: 13px; color: #c084fc; font-weight: 700; z-index: 2;">Грозовой фронт • Вспышки</div>
+        `;
+      } else if (type === 'sun') {
+        stage.innerHTML = `
+          <div class="sun-core"></div>
+          <div style="position: absolute; bottom: 12px; left: 16px; font-size: 13px; color: #fde047; font-weight: 700;">${isNight ? '🌙 Ясная ночь' : '☀️ Ясно и солнечно'}</div>
+        `;
+      } else if (type === 'snow') {
+        let flakes = '';
+        for (let i = 0; i < 16; i++) {
+          const left = Math.floor(Math.random() * 96) + 2;
+          const delay = (Math.random() * 2).toFixed(2);
+          const dur = (1.5 + Math.random() * 1.5).toFixed(2);
+          flakes += `<div class="snowflake" style="left: ${left}%; animation-delay: ${delay}s; animation-duration: ${dur}s;">❄</div>`;
+        }
+        stage.innerHTML = `
+          ${flakes}
+          <div style="position: absolute; bottom: 12px; left: 16px; font-size: 13px; color: #fff; font-weight: 700;">Снегопад</div>
+        `;
+      } else {
+        // Clouds animation
+        stage.innerHTML = `
+          <div class="cloud-shape" style="top: 25px; left: 10px; width: 140px; height: 45px; animation-duration: 9s;"></div>
+          <div class="cloud-shape" style="top: 65px; left: 40px; width: 180px; height: 55px; animation-duration: 13s; animation-delay: 2s; background: rgba(148, 163, 184, 0.35);"></div>
+          <div class="cloud-shape" style="top: 105px; left: 20px; width: 130px; height: 42px; animation-duration: 8s; animation-delay: 4s;"></div>
+          <div style="position: absolute; bottom: 14px; left: 16px; font-size: 26px; z-index: 2;">☁️</div>
+          <div style="position: absolute; bottom: 12px; right: 16px; font-size: 13px; color: #cbd5e1; font-weight: 700; z-index: 2;">Пасмурно • Движение облаков</div>
+        `;
+      }
+
+      // Render metrics breakdown
+      const rainProb = w.daily?.precipitation_probability_max?.[selectedDayIndex] ?? 0;
+      const wind = cur.wind_speed_10m;
+      const hum = cur.relative_humidity_2m;
+      body.innerHTML = `
+        <div class="detail-highlight">
+          <div class="detail-big-val">${temp > 0 ? '+' : ''}${temp}°C</div>
+          <div class="detail-big-sub">${desc} • Ощущается как ${feels > 0 ? '+' : ''}${feels}°C</div>
+        </div>
+        <div class="detail-text">Текущая визуализация погоды для г. <b>${currentCity.name_ru}</b> (высота <b>${currentCity.ele} м</b>). Расчёт выполнен по данным физико-информированного ML-ансамбля 160 станций.</div>
+        <div class="detail-row"><span class="label">Относительная влажность:</span><span class="val">${hum}%</span></div>
+        <div class="detail-row"><span class="label">Вероятность дождя:</span><span class="val">${rainProb}%</span></div>
+        <div class="detail-row"><span class="label">Скорость ветра:</span><span class="val">${wind} м/с</span></div>
+        <div class="detail-row"><span class="label">Атмосферное давление:</span><span class="val">${Math.round(cur.surface_pressure * 0.750062)} мм рт. ст.</span></div>
+      `;
+
+      openSheetById('weatherSceneSheet');
     }
 
     function openFrostSheet() {

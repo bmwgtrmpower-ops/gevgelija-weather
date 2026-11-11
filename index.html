@@ -35,13 +35,16 @@
       background: radial-gradient(circle at 50% 0%, #172554 0%, #090d16 80%);
     }
 
-    /* Minimalist Top Location Switcher */
+    /* Top Nav: Center Location Dropdown, Right Language Toggle */
     .top-nav {
       display: flex;
-      justify-content: center;
+      align-items: center;
+      justify-content: space-between;
       position: relative;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
+
+    .top-spacer { width: 44px; }
 
     .loc-dropdown-btn {
       display: inline-flex;
@@ -74,15 +77,34 @@
       transform: rotate(180deg);
     }
 
+    .lang-toggle-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--muted);
+      padding: 7px 12px;
+      border-radius: 18px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+    }
+
+    .lang-toggle-btn:active {
+      transform: scale(0.95);
+      color: var(--text);
+    }
+
     /* Minimal Floating Dropdown Menu */
     .dropdown-menu {
       display: none;
       position: absolute;
-      top: 48px;
+      top: 52px;
       left: 50%;
       transform: translateX(-50%);
       width: 240px;
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(15, 23, 42, 0.96);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 18px;
       padding: 6px;
@@ -127,11 +149,9 @@
       margin: 4px 6px;
     }
 
-    .gps-item {
-      color: var(--accent);
-    }
+    .gps-item { color: var(--accent); }
 
-    /* Hero Display */
+    /* Hero Weather */
     .hero {
       text-align: center;
       padding: 10px 0 16px 0;
@@ -158,7 +178,7 @@
       color: var(--muted);
     }
 
-    /* Wire / Grid Safety Banner */
+    /* Grid Safety Banner */
     .alert-banner {
       border-radius: 16px;
       padding: 14px 16px;
@@ -273,76 +293,82 @@
 </head>
 <body>
 
-  <!-- Minimalist Location Dropdown Header -->
+  <!-- Top Nav -->
   <div class="top-nav">
+    <div class="top-spacer"></div>
+
+    <!-- Center Location Dropdown -->
     <div class="loc-dropdown-btn" id="locBtn" onclick="toggleDropdown()">
       <span>📍</span>
-      <span id="currentLocName">Гевгелия</span>
+      <span id="currentLocName">Gevgelija</span>
       <span class="chevron">▾</span>
     </div>
 
-    <!-- Dropdown List -->
+    <!-- Right Language Switcher -->
+    <button class="lang-toggle-btn" id="langBtn" onclick="toggleLanguage()">RU</button>
+
+    <!-- Dropdown Menu -->
     <div class="dropdown-menu" id="dropdownMenu">
-      <div class="dropdown-item active" onclick="pickCity('gevgelija')">Гевгелия</div>
-      <div class="dropdown-item" onclick="pickCity('skopje')">Скопье</div>
-      <div class="dropdown-item" onclick="pickCity('ohrid')">Охрид</div>
-      <div class="dropdown-item" onclick="pickCity('mavrovo')">Маврово</div>
-      <div class="dropdown-item" onclick="pickCity('bitola')">Битола</div>
+      <div class="dropdown-item active" id="item-gevgelija" onclick="pickCity('gevgelija')">Gevgelija</div>
+      <div class="dropdown-item" id="item-skopje" onclick="pickCity('skopje')">Skopje</div>
+      <div class="dropdown-item" id="item-ohrid" onclick="pickCity('ohrid')">Ohrid</div>
+      <div class="dropdown-item" id="item-mavrovo" onclick="pickCity('mavrovo')">Mavrovo</div>
+      <div class="dropdown-item" id="item-bitola" onclick="pickCity('bitola')">Bitola</div>
       <div class="dropdown-divider"></div>
-      <div class="dropdown-item gps-item" onclick="pickGPS()">🎯 Где я сейчас (GPS)</div>
+      <div class="dropdown-item gps-item" id="item-gps" onclick="pickGPS()">🎯 Current Location (GPS)</div>
     </div>
   </div>
 
   <!-- Hero Display -->
   <div class="hero">
     <div class="main-temp" id="tempDisplay">+14°</div>
-    <div class="cond-text" id="condDisplay">Облачно</div>
-    <div class="feels-text" id="feelsDisplay">Ощущается как +15°</div>
+    <div class="cond-text" id="condDisplay">Cloudy</div>
+    <div class="feels-text" id="feelsDisplay">Feels like +15°</div>
   </div>
 
   <!-- Grid & Wind Safety Banner -->
   <div class="alert-banner safe" id="wireBanner">
     <div class="alert-icon" id="bannerIcon">⚡️</div>
     <div>
-      <div class="alert-title" id="bannerTitle">Ветер спокойный • Опасности нет</div>
-      <div class="alert-desc" id="bannerDesc">Порывы ветра слабые (до 4 м/с). Линии электропередач не раскачивает, обогреватели работают штатно.</div>
+      <div class="alert-title" id="bannerTitle">Grid Safe • No Danger</div>
+      <div class="alert-desc" id="bannerDesc">Wind gusts are light. Overhead lines are stable, heaters operate safely.</div>
     </div>
   </div>
 
   <!-- Hourly Forecast Rail -->
-  <div class="section-head">Почасовой прогноз и дождь</div>
+  <div class="section-head" id="headHourly">Hourly Forecast & Rain</div>
   <div class="hourly-rail" id="hourlyRail"></div>
 
   <!-- 4 Metrics for Selected City -->
-  <div class="section-head">Показатели</div>
+  <div class="section-head" id="headMetrics">City Metrics</div>
   <div class="city-grid">
 
     <!-- Card 1: Rain & Precipitation -->
     <div class="metric-card">
-      <div class="metric-top">🌧 Осадки сегодня</div>
+      <div class="metric-top" id="lblRain">🌧 Rain Today</div>
       <div class="metric-val" id="rainVal">8%</div>
-      <div class="metric-sub" id="rainSub">Сухо, осадков сегодня не ожидается</div>
+      <div class="metric-sub" id="rainSub">Dry, no rain expected</div>
     </div>
 
     <!-- Card 2: Wind & Gusts -->
     <div class="metric-card">
-      <div class="metric-top">💨 Ветер и порывы</div>
-      <div class="metric-val" id="windVal">1.5 м/с</div>
-      <div class="metric-sub" id="windSub">Порывы до 4 м/с • Штиль</div>
+      <div class="metric-top" id="lblWind">💨 Wind & Gusts</div>
+      <div class="metric-val" id="windVal">1.5 m/s</div>
+      <div class="metric-sub" id="windSub">Gusts up to 4 m/s • Calm</div>
     </div>
 
     <!-- Card 3: Air Quality / Smog -->
     <div class="metric-card">
-      <div class="metric-top">🍃 Чистота воздуха</div>
-      <div class="metric-val" id="aqiVal" style="color: #10b981;">Чистый</div>
-      <div class="metric-sub" id="aqiSub">AQI: 22 • Дышится легко</div>
+      <div class="metric-top" id="lblAqi">🍃 Air Quality</div>
+      <div class="metric-val" id="aqiVal" style="color: #10b981;">Clean</div>
+      <div class="metric-sub" id="aqiSub">AQI: 22 • Fresh air</div>
     </div>
 
     <!-- Card 4: Humidity & Pressure -->
     <div class="metric-card">
-      <div class="metric-top">💧 Влажность и давление</div>
+      <div class="metric-top" id="lblHum">💧 Humidity & Pressure</div>
       <div class="metric-val" id="humVal">85%</div>
-      <div class="metric-sub" id="pressSub">Давление 756 мм рт. ст.</div>
+      <div class="metric-sub" id="pressSub">Pressure: 756 mmHg</div>
     </div>
 
   </div>
@@ -355,15 +381,162 @@
       try { tg.enableClosingConfirmation(); } catch(e){}
     }
 
+    // Bilingual Dictionary
+    const I18N = {
+      ru: {
+        langBtn: "EN",
+        headHourly: "Почасовой прогноз и дождь",
+        headMetrics: "Показатели",
+        lblRain: "🌧 Осадки сегодня",
+        lblWind: "💨 Ветер и порывы",
+        lblAqi: "🍃 Чистота воздуха",
+        lblHum: "💧 Влажность и давление",
+        feelsLike: "Ощущается как",
+        dryNoRain: "Сухо, осадков сегодня не ожидается",
+        lowRain: "Небольшой шанс дождя",
+        rainExpected: "Ожидается дождь, нужен зонт",
+        calm: "Штиль",
+        lightBreeze: "Лёгкий ветерок",
+        freshBreeze: "Ощутимый ветерок",
+        gustsPrefix: "Порывы до",
+        pressPrefix: "Давление:",
+        pressUnit: "мм рт. ст.",
+        aqiClean: "Чистый",
+        aqiMod: "Умеренный",
+        aqiDust: "Пыльно",
+        aqiSmog: "Смог",
+        aqiCleanSub: "Дышится легко и свежо",
+        aqiModSub: "Качество воздуха нормальное",
+        aqiDustSub: "Чувствуется взвесь в воздухе",
+        aqiSmogSub: "В котловине скопился смог",
+        gridSafeTitle: "Ветер спокойный • Опасности нет",
+        gridSafeDesc: "Порывы ветра слабые (до {gust} м/с). Линии передач не качает, обогреватели работают штатно.",
+        gridWarnTitle: "Крепкий ветер: порывы до {gust} м/с",
+        gridWarnDesc: "Провода на улице будет раскачивать. При первых миганиях света отключите обогреватель.",
+        gridDangerTitle: "ШТОРМ: Порывы до {gust} м/с! Опасность проводов",
+        gridDangerDesc: "Высокий риск схлёстывания фаз на столбах и скачка 380V. Выключите обогреватели и технику из розеток на ночь!",
+        gpsItem: "🎯 Где я сейчас (GPS)",
+        gpsCurrent: "Моя геопозиция",
+        cities: {
+          gevgelija: "Гевгелия",
+          skopje: "Скопье",
+          ohrid: "Охрид",
+          mavrovo: "Маврово",
+          bitola: "Битола"
+        },
+        conditions: {
+          clear: "Ясно",
+          partlyCloudy: "Переменная облачность",
+          overcast: "Пасмурно",
+          fog: "Туман",
+          rain: "Идёт дождь",
+          snow: "Идёт снег",
+          thunder: "Гроза"
+        }
+      },
+      en: {
+        langBtn: "RU",
+        headHourly: "Hourly Forecast & Rain",
+        headMetrics: "City Metrics",
+        lblRain: "🌧 Rain Today",
+        lblWind: "💨 Wind & Gusts",
+        lblAqi: "🍃 Air Quality",
+        lblHum: "💧 Humidity & Pressure",
+        feelsLike: "Feels like",
+        dryNoRain: "Dry, no rain expected today",
+        lowRain: "Low rain chance",
+        rainExpected: "Rain expected, umbrella needed",
+        calm: "Calm",
+        lightBreeze: "Light breeze",
+        freshBreeze: "Moderate breeze",
+        gustsPrefix: "Gusts up to",
+        pressPrefix: "Pressure:",
+        pressUnit: "mmHg",
+        aqiClean: "Good",
+        aqiMod: "Moderate",
+        aqiDust: "Dusty",
+        aqiSmog: "Smog Alert",
+        aqiCleanSub: "Air is fresh and clean",
+        aqiModSub: "Normal ambient quality",
+        aqiDustSub: "Particulates elevated",
+        aqiSmogSub: "Valley trapped by winter smog",
+        gridSafeTitle: "Grid Safe • Wind is Calm",
+        gridSafeDesc: "Light gusts (up to {gust} m/s). Overhead lines are stable, heaters operate safely.",
+        gridWarnTitle: "Strong Wind: Gusts up to {gust} m/s",
+        gridWarnDesc: "Wires may sway outside. If lights flicker, unplug high-draw heaters.",
+        gridDangerTitle: "STORM ALERT: Gusts up to {gust} m/s!",
+        gridDangerDesc: "High danger of wire slapping & 380V phase surge. Unplug heaters & electronics tonight!",
+        gpsItem: "🎯 Current Location (GPS)",
+        gpsCurrent: "Current Location",
+        cities: {
+          gevgelija: "Gevgelija",
+          skopje: "Skopje",
+          ohrid: "Ohrid",
+          mavrovo: "Mavrovo",
+          bitola: "Bitola"
+        },
+        conditions: {
+          clear: "Clear",
+          partlyCloudy: "Partly Cloudy",
+          overcast: "Overcast",
+          fog: "Fog",
+          rain: "Rain",
+          snow: "Snow",
+          thunder: "Thunderstorm"
+        }
+      }
+    };
+
+    // Auto-detect or load saved language
+    let curLang = localStorage.getItem('balkan_meteo_lang');
+    if (!curLang) {
+      const tgLang = tg?.initDataUnsafe?.user?.language_code || navigator.language || '';
+      curLang = tgLang.toLowerCase().startsWith('ru') ? 'ru' : 'en';
+    }
+
     const CITIES = {
-      gevgelija: { name: 'Гевгелия', lat: 41.1465, lon: 22.5042 },
-      skopje:    { name: 'Скопье',   lat: 41.9981, lon: 21.4254 },
-      mavrovo:   { name: 'Маврово',  lat: 41.7011, lon: 20.7389 },
-      ohrid:     { name: 'Охрид',    lat: 41.1128, lon: 20.8019 },
-      bitola:    { name: 'Битола',   lat: 41.0319, lon: 21.3347 }
+      gevgelija: { lat: 41.1465, lon: 22.5042 },
+      skopje:    { lat: 41.9981, lon: 21.4254 },
+      mavrovo:   { lat: 41.7011, lon: 20.7389 },
+      ohrid:     { lat: 41.1128, lon: 20.8019 },
+      bitola:    { lat: 41.0319, lon: 21.3347 }
     };
 
     let activeKey = 'gevgelija';
+    let cachedWeatherData = null;
+
+    function applyStaticTexts() {
+      const t = I18N[curLang];
+      document.getElementById('langBtn').innerText = t.langBtn;
+      document.getElementById('headHourly').innerText = t.headHourly;
+      document.getElementById('headMetrics').innerText = t.headMetrics;
+      document.getElementById('lblRain').innerText = t.lblRain;
+      document.getElementById('lblWind').innerText = t.lblWind;
+      document.getElementById('lblAqi').innerText = t.lblAqi;
+      document.getElementById('lblHum').innerText = t.lblHum;
+      document.getElementById('item-gps').innerText = t.gpsItem;
+
+      for (let k of Object.keys(t.cities)) {
+        const el = document.getElementById(`item-${k}`);
+        if (el) el.innerText = t.cities[k];
+      }
+
+      if (activeKey !== 'gps') {
+        document.getElementById('currentLocName').innerText = t.cities[activeKey];
+      } else {
+        document.getElementById('currentLocName').innerText = t.gpsCurrent;
+      }
+    }
+
+    function toggleLanguage() {
+      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+      curLang = curLang === 'ru' ? 'en' : 'ru';
+      localStorage.setItem('balkan_meteo_lang', curLang);
+      applyStaticTexts();
+      if (cachedWeatherData) {
+        renderWeather(cachedWeatherData);
+      }
+    }
 
     function toggleDropdown() {
       const menu = document.getElementById('dropdownMenu');
@@ -373,7 +546,6 @@
       btn.classList.toggle('open', !isOpen);
     }
 
-    // Close dropdown on click outside
     document.addEventListener('click', (e) => {
       const topNav = document.querySelector('.top-nav');
       if (!topNav.contains(e.target)) {
@@ -385,35 +557,37 @@
     function pickCity(key) {
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
       activeKey = key;
-      document.getElementById('currentLocName').innerText = CITIES[key].name;
+      document.getElementById('currentLocName').innerText = I18N[curLang].cities[key];
       
       document.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('active'));
-      event.target.classList.add('active');
+      const activeEl = document.getElementById(`item-${key}`);
+      if (activeEl) activeEl.classList.add('active');
       
       toggleDropdown();
       const c = CITIES[key];
-      loadWeather(c.lat, c.lon, c.name);
+      loadWeather(c.lat, c.lon);
     }
 
     function pickGPS() {
       if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
       toggleDropdown();
       if (!navigator.geolocation) {
-        alert("Геолокация недоступна");
+        alert("Geolocation not available");
         return;
       }
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          document.getElementById('currentLocName').innerText = "Моя локация";
+          activeKey = 'gps';
+          document.getElementById('currentLocName').innerText = I18N[curLang].gpsCurrent;
           document.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('active'));
-          loadWeather(pos.coords.latitude, pos.coords.longitude, "Текущая геопозиция");
+          loadWeather(pos.coords.latitude, pos.coords.longitude);
         },
-        () => alert("Не удалось определить GPS"),
+        () => alert("Unable to get GPS coordinates"),
         { enableHighAccuracy: true, timeout: 8000 }
       );
     }
 
-    async function loadWeather(lat, lon, cityName) {
+    async function loadWeather(lat, lon) {
       try {
         const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_gusts_10m,surface_pressure,weather_code&hourly=temperature_2m,precipitation_probability,weather_code&daily=temperature_2m_max,precipitation_probability_max,precipitation_sum,wind_gusts_10m_max&forecast_days=2&timezone=auto&wind_speed_unit=ms`;
         const aqiUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=european_aqi,pm2_5&timezone=auto`;
@@ -423,128 +597,137 @@
           fetch(aqiUrl).then(r => r.json()).catch(() => null)
         ]);
 
-        const cur = wResp.current;
-        const daily = wResp.daily;
-        const temp = Math.round(cur.temperature_2m);
-        const app = Math.round(cur.apparent_temperature);
-        const rainProb = daily.precipitation_probability_max[0];
-        const rainSum = daily.precipitation_sum[0];
-        const gusts = Math.round(daily.wind_gusts_10m_max[0]);
-        const pressMm = Math.round(cur.surface_pressure * 0.750062);
-
-        document.getElementById('tempDisplay').innerText = `${temp > 0 ? '+' : ''}${temp}°`;
-        document.getElementById('feelsDisplay').innerText = `Ощущается как ${app > 0 ? '+' : ''}${app}°`;
-
-        const wcode = cur.weather_code;
-        let condName = "Ясно";
-        if ([1, 2].includes(wcode)) condName = "Переменная облачность";
-        else if (wcode === 3) condName = "Пасмурно";
-        else if ([45, 48].includes(wcode)) condName = "Туман";
-        else if ([51, 53, 55, 61, 63, 65, 80].includes(wcode)) condName = "Идёт дождь";
-        else if ([71, 73, 75].includes(wcode)) condName = "Идёт снег";
-        else if (wcode >= 95) condName = "Гроза";
-        document.getElementById('condDisplay').innerText = condName;
-
-        // Banner: Wind & Power-Grid Safety
-        const banner = document.getElementById('wireBanner');
-        const bIcon = document.getElementById('bannerIcon');
-        const bTitle = document.getElementById('bannerTitle');
-        const bDesc = document.getElementById('bannerDesc');
-
-        if (gusts >= 17) {
-          banner.className = 'alert-banner danger';
-          bIcon.innerText = '🚨';
-          bTitle.innerText = `ШТОРМ: Порывы до ${gusts} м/с! Опасность проводов`;
-          bDesc.innerText = `Высокий риск схлёстывания фаз на столбах и скачка 380V. Выключите обогреватели и технику из розеток на ночь!`;
-        } else if (gusts >= 13) {
-          banner.className = 'alert-banner warning';
-          bIcon.innerText = '⚠️';
-          bTitle.innerText = `Крепкий ветер: порывы до ${gusts} м/с`;
-          bDesc.innerText = `Провода на улице будет раскачивать. При первых миганиях света отключите обогреватель.`;
-        } else {
-          banner.className = 'alert-banner safe';
-          bIcon.innerText = '⚡️';
-          bTitle.innerText = 'Ветер спокойный • Опасности нет';
-          bDesc.innerText = `Порывы ветра слабые (до ${gusts} м/с). Линии передач не качает, обогреватели работают штатно.`;
-        }
-
-        // 1. Rain
-        document.getElementById('rainVal').innerText = `${rainProb}%`;
-        if (rainProb <= 15) {
-          document.getElementById('rainSub').innerText = `Сухо, осадков сегодня не ожидается`;
-        } else if (rainProb <= 45) {
-          document.getElementById('rainSub').innerText = `Небольшой шанс дождя (${rainSum} мм)`;
-        } else {
-          document.getElementById('rainSub').innerText = `Ожидается дождь (~${rainSum} мм), нужен зонт`;
-        }
-
-        // 2. Wind
-        document.getElementById('windVal').innerText = `${cur.wind_speed_10m} м/с`;
-        let windDesc = 'Штиль';
-        if (cur.wind_speed_10m > 5) windDesc = 'Ощутимый ветерок';
-        else if (cur.wind_speed_10m > 2) windDesc = 'Лёгкий ветерок';
-        document.getElementById('windSub').innerText = `Порывы до ${gusts} м/с • ${windDesc}`;
-
-        // 3. Air Quality
-        const aqi = aqiResp?.current?.european_aqi ?? 20;
-        const aqiEl = document.getElementById('aqiVal');
-        const aqiSubEl = document.getElementById('aqiSub');
-        if (aqi <= 25) {
-          aqiEl.innerText = 'Чистый';
-          aqiEl.style.color = '#10b981';
-          aqiSubEl.innerText = `AQI: ${aqi} • Дышится легко и свежо`;
-        } else if (aqi <= 50) {
-          aqiEl.innerText = 'Умеренный';
-          aqiEl.style.color = '#38bdf8';
-          aqiSubEl.innerText = `AQI: ${aqi} • Качество воздуха нормальное`;
-        } else if (aqi <= 75) {
-          aqiEl.innerText = 'Пыльно';
-          aqiEl.style.color = '#f59e0b';
-          aqiSubEl.innerText = `AQI: ${aqi} • Чувствуется взвесь в воздухе`;
-        } else {
-          aqiEl.innerText = 'Смог';
-          aqiEl.style.color = '#ef4444';
-          aqiSubEl.innerText = `AQI: ${aqi} • В котловине скопился смог`;
-        }
-
-        // 4. Humidity & Pressure
-        document.getElementById('humVal').innerText = `${cur.relative_humidity_2m}%`;
-        document.getElementById('pressSub').innerText = `Давление: ${pressMm} мм рт. ст.`;
-
-        // Hourly
-        const rail = document.getElementById('hourlyRail');
-        rail.innerHTML = '';
-        const nowHour = new Date().getHours();
-        for (let i = nowHour; i < nowHour + 12; i++) {
-          if (!wResp.hourly.time[i]) break;
-          const timeLabel = wResp.hourly.time[i].split('T')[1];
-          const hT = Math.round(wResp.hourly.temperature_2m[i]);
-          const hR = wResp.hourly.precipitation_probability[i];
-          const hC = wResp.hourly.weather_code[i];
-
-          let icon = '☀️';
-          if ([1, 2, 3].includes(hC)) icon = '⛅️';
-          if ([51, 61, 80].includes(hC)) icon = '🌧';
-          if (hC >= 95) icon = '⛈';
-
-          const item = document.createElement('div');
-          item.className = 'hourly-box';
-          item.innerHTML = `
-            <div class="h-time">${timeLabel}</div>
-            <div class="h-icon">${icon}</div>
-            <div class="h-temp">${hT > 0 ? '+' : ''}${hT}°</div>
-            <div class="h-rain">${hR > 0 ? hR + '%' : '—'}</div>
-          `;
-          rail.appendChild(item);
-        }
-
+        cachedWeatherData = { wResp, aqiResp };
+        renderWeather(cachedWeatherData);
       } catch (err) {
         console.error(err);
       }
     }
 
-    // Init
-    loadWeather(CITIES.gevgelija.lat, CITIES.gevgelija.lon, CITIES.gevgelija.name);
+    function renderWeather(data) {
+      const { wResp, aqiResp } = data;
+      const t = I18N[curLang];
+
+      const cur = wResp.current;
+      const daily = wResp.daily;
+      const temp = Math.round(cur.temperature_2m);
+      const app = Math.round(cur.apparent_temperature);
+      const rainProb = daily.precipitation_probability_max[0];
+      const rainSum = daily.precipitation_sum[0];
+      const gusts = Math.round(daily.wind_gusts_10m_max[0]);
+      const pressMm = Math.round(cur.surface_pressure * 0.750062);
+
+      document.getElementById('tempDisplay').innerText = `${temp > 0 ? '+' : ''}${temp}°`;
+      document.getElementById('feelsDisplay').innerText = `${t.feelsLike} ${app > 0 ? '+' : ''}${app}°`;
+
+      // Weather Condition
+      const wcode = cur.weather_code;
+      let condName = t.conditions.clear;
+      if ([1, 2].includes(wcode)) condName = t.conditions.partlyCloudy;
+      else if (wcode === 3) condName = t.conditions.overcast;
+      else if ([45, 48].includes(wcode)) condName = t.conditions.fog;
+      else if ([51, 53, 55, 61, 63, 65, 80].includes(wcode)) condName = t.conditions.rain;
+      else if ([71, 73, 75].includes(wcode)) condName = t.conditions.snow;
+      else if (wcode >= 95) condName = t.conditions.thunder;
+      document.getElementById('condDisplay').innerText = condName;
+
+      // Banner: Wind & Grid Safety
+      const banner = document.getElementById('wireBanner');
+      const bIcon = document.getElementById('bannerIcon');
+      const bTitle = document.getElementById('bannerTitle');
+      const bDesc = document.getElementById('bannerDesc');
+
+      if (gusts >= 17) {
+        banner.className = 'alert-banner danger';
+        bIcon.innerText = '🚨';
+        bTitle.innerText = t.gridDangerTitle.replace('{gust}', gusts);
+        bDesc.innerText = t.gridDangerDesc;
+      } else if (gusts >= 13) {
+        banner.className = 'alert-banner warning';
+        bIcon.innerText = '⚠️';
+        bTitle.innerText = t.gridWarnTitle.replace('{gust}', gusts);
+        bDesc.innerText = t.gridWarnDesc;
+      } else {
+        banner.className = 'alert-banner safe';
+        bIcon.innerText = '⚡️';
+        bTitle.innerText = t.gridSafeTitle;
+        bDesc.innerText = t.gridSafeDesc.replace('{gust}', gusts);
+      }
+
+      // Card 1: Rain
+      document.getElementById('rainVal').innerText = `${rainProb}%`;
+      if (rainProb <= 15) {
+        document.getElementById('rainSub').innerText = t.dryNoRain;
+      } else if (rainProb <= 45) {
+        document.getElementById('rainSub').innerText = `${t.lowRain} (${rainSum} mm)`;
+      } else {
+        document.getElementById('rainSub').innerText = `${t.rainExpected} (~${rainSum} mm)`;
+      }
+
+      // Card 2: Wind
+      document.getElementById('windVal').innerText = `${cur.wind_speed_10m} m/s`;
+      let windDesc = t.calm;
+      if (cur.wind_speed_10m > 5) windDesc = t.freshBreeze;
+      else if (cur.wind_speed_10m > 2) windDesc = t.lightBreeze;
+      document.getElementById('windSub').innerText = `${t.gustsPrefix} ${gusts} m/s • ${windDesc}`;
+
+      // Card 3: Air Quality
+      const aqi = aqiResp?.current?.european_aqi ?? 20;
+      const aqiEl = document.getElementById('aqiVal');
+      const aqiSubEl = document.getElementById('aqiSub');
+      if (aqi <= 25) {
+        aqiEl.innerText = t.aqiClean;
+        aqiEl.style.color = '#10b981';
+        aqiSubEl.innerText = `AQI: ${aqi} • ${t.aqiCleanSub}`;
+      } else if (aqi <= 50) {
+        aqiEl.innerText = t.aqiMod;
+        aqiEl.style.color = '#38bdf8';
+        aqiSubEl.innerText = `AQI: ${aqi} • ${t.aqiModSub}`;
+      } else if (aqi <= 75) {
+        aqiEl.innerText = t.aqiDust;
+        aqiEl.style.color = '#f59e0b';
+        aqiSubEl.innerText = `AQI: ${aqi} • ${t.aqiDustSub}`;
+      } else {
+        aqiEl.innerText = t.aqiSmog;
+        aqiEl.style.color = '#ef4444';
+        aqiSubEl.innerText = `AQI: ${aqi} • ${t.aqiSmogSub}`;
+      }
+
+      // Card 4: Humidity & Pressure
+      document.getElementById('humVal').innerText = `${cur.relative_humidity_2m}%`;
+      document.getElementById('pressSub').innerText = `${t.pressPrefix} ${pressMm} ${t.pressUnit}`;
+
+      // Hourly Rail
+      const rail = document.getElementById('hourlyRail');
+      rail.innerHTML = '';
+      const nowHour = new Date().getHours();
+      for (let i = nowHour; i < nowHour + 12; i++) {
+        if (!wResp.hourly.time[i]) break;
+        const timeLabel = wResp.hourly.time[i].split('T')[1];
+        const hT = Math.round(wResp.hourly.temperature_2m[i]);
+        const hR = wResp.hourly.precipitation_probability[i];
+        const hC = wResp.hourly.weather_code[i];
+
+        let icon = '☀️';
+        if ([1, 2, 3].includes(hC)) icon = '⛅️';
+        if ([51, 61, 80].includes(hC)) icon = '🌧';
+        if (hC >= 95) icon = '⛈';
+
+        const item = document.createElement('div');
+        item.className = 'hourly-box';
+        item.innerHTML = `
+          <div class="h-time">${timeLabel}</div>
+          <div class="h-icon">${icon}</div>
+          <div class="h-temp">${hT > 0 ? '+' : ''}${hT}°</div>
+          <div class="h-rain">${hR > 0 ? hR + '%' : '—'}</div>
+        `;
+        rail.appendChild(item);
+      }
+    }
+
+    // Initialize
+    applyStaticTexts();
+    loadWeather(CITIES.gevgelija.lat, CITIES.gevgelija.lon);
   </script>
 </body>
 </html>

@@ -20,7 +20,7 @@ import sys
 if sys.stdout and hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-BOT_TOKEN = "8608012499:AAGDPYIvA2G3jTo7JP7vsYhYN8gnIGodamw"
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
 WEB_APP_URL = "https://bmwgtrmpower-ops.github.io/gevgelija-weather/"
 

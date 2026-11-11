@@ -1,0 +1,1285 @@
+{
+  "total_stations": 160,
+  "stations": [
+    {
+      "id": "MK_SKOPJE",
+      "name": "Skopje Zajcev Rid",
+      "country": "MK",
+      "lat": 42.0069,
+      "lon": 21.4125,
+      "elevation": 302
+    },
+    {
+      "id": "MK_SKOPJE_AIR",
+      "name": "Skopje Petrovec Airport",
+      "country": "MK",
+      "lat": 41.9616,
+      "lon": 21.6214,
+      "elevation": 238
+    },
+    {
+      "id": "MK_GEVGELIJA",
+      "name": "Gevgelija",
+      "country": "MK",
+      "lat": 41.14649,
+      "lon": 22.50416,
+      "elevation": 59
+    },
+    {
+      "id": "MK_BOGORODICA",
+      "name": "Bogorodica Border",
+      "country": "MK",
+      "lat": 41.1408,
+      "lon": 22.5489,
+      "elevation": 52
+    },
+    {
+      "id": "MK_BITOLA",
+      "name": "Bitola",
+      "country": "MK",
+      "lat": 41.0311,
+      "lon": 21.3347,
+      "elevation": 580
+    },
+    {
+      "id": "MK_OHRID",
+      "name": "Ohrid Lake",
+      "country": "MK",
+      "lat": 41.1172,
+      "lon": 20.8019,
+      "elevation": 700
+    },
+    {
+      "id": "MK_OHRID_AIR",
+      "name": "Ohrid Airport",
+      "country": "MK",
+      "lat": 41.18,
+      "lon": 20.7422,
+      "elevation": 705
+    },
+    {
+      "id": "MK_PRILEP",
+      "name": "Prilep",
+      "country": "MK",
+      "lat": 41.3464,
+      "lon": 21.5542,
+      "elevation": 673
+    },
+    {
+      "id": "MK_TETOVO",
+      "name": "Tetovo",
+      "country": "MK",
+      "lat": 42.0097,
+      "lon": 20.9714,
+      "elevation": 468
+    },
+    {
+      "id": "MK_KUMANOVO",
+      "name": "Kumanovo",
+      "country": "MK",
+      "lat": 42.1322,
+      "lon": 21.7144,
+      "elevation": 340
+    },
+    {
+      "id": "MK_VELES",
+      "name": "Veles",
+      "country": "MK",
+      "lat": 41.7164,
+      "lon": 21.7753,
+      "elevation": 206
+    },
+    {
+      "id": "MK_STRUMICA",
+      "name": "Strumica Valley",
+      "country": "MK",
+      "lat": 41.4378,
+      "lon": 22.6433,
+      "elevation": 230
+    },
+    {
+      "id": "MK_KAVADARCI",
+      "name": "Kavadarci Tikves",
+      "country": "MK",
+      "lat": 41.4331,
+      "lon": 22.0119,
+      "elevation": 280
+    },
+    {
+      "id": "MK_NEGOTINO",
+      "name": "Negotino",
+      "country": "MK",
+      "lat": 41.4844,
+      "lon": 22.0911,
+      "elevation": 150
+    },
+    {
+      "id": "MK_DEMIR_KAPIJA",
+      "name": "Demir Kapija Canyon",
+      "country": "MK",
+      "lat": 41.4111,
+      "lon": 22.2422,
+      "elevation": 110
+    },
+    {
+      "id": "MK_VALANDOVO",
+      "name": "Valandovo",
+      "country": "MK",
+      "lat": 41.3172,
+      "lon": 22.5614,
+      "elevation": 120
+    },
+    {
+      "id": "MK_STIP",
+      "name": "Stip",
+      "country": "MK",
+      "lat": 41.7458,
+      "lon": 22.1958,
+      "elevation": 340
+    },
+    {
+      "id": "MK_KOCANI",
+      "name": "Kocani Rice Valley",
+      "country": "MK",
+      "lat": 41.9167,
+      "lon": 22.4125,
+      "elevation": 350
+    },
+    {
+      "id": "MK_GOSTIVAR",
+      "name": "Gostivar",
+      "country": "MK",
+      "lat": 41.7961,
+      "lon": 20.9083,
+      "elevation": 520
+    },
+    {
+      "id": "MK_KICEVO",
+      "name": "Kicevo",
+      "country": "MK",
+      "lat": 41.5139,
+      "lon": 20.9592,
+      "elevation": 625
+    },
+    {
+      "id": "MK_STRUGA",
+      "name": "Struga Drim",
+      "country": "MK",
+      "lat": 41.1778,
+      "lon": 20.6789,
+      "elevation": 695
+    },
+    {
+      "id": "MK_RADOVIS",
+      "name": "Radovis",
+      "country": "MK",
+      "lat": 41.6381,
+      "lon": 22.4644,
+      "elevation": 380
+    },
+    {
+      "id": "MK_BEROVO",
+      "name": "Berovo Malesevo",
+      "country": "MK",
+      "lat": 41.705,
+      "lon": 22.8578,
+      "elevation": 824
+    },
+    {
+      "id": "MK_KRIVA_PALANKA",
+      "name": "Kriva Palanka",
+      "country": "MK",
+      "lat": 42.2014,
+      "lon": 22.3319,
+      "elevation": 615
+    },
+    {
+      "id": "MK_DELCEVO",
+      "name": "Delcevo Pijanec",
+      "country": "MK",
+      "lat": 41.9664,
+      "lon": 22.7744,
+      "elevation": 600
+    },
+    {
+      "id": "MK_VINICA",
+      "name": "Vinica",
+      "country": "MK",
+      "lat": 41.8828,
+      "lon": 22.5092,
+      "elevation": 410
+    },
+    {
+      "id": "MK_RESEN",
+      "name": "Resen Prespa",
+      "country": "MK",
+      "lat": 41.0889,
+      "lon": 21.0125,
+      "elevation": 880
+    },
+    {
+      "id": "MK_DEBAR",
+      "name": "Debar Radika",
+      "country": "MK",
+      "lat": 41.525,
+      "lon": 20.5272,
+      "elevation": 660
+    },
+    {
+      "id": "MK_KRUSEVO",
+      "name": "Krusevo Summit",
+      "country": "MK",
+      "lat": 41.3689,
+      "lon": 21.2489,
+      "elevation": 1250
+    },
+    {
+      "id": "MK_POPOVA_SAPKA",
+      "name": "Popova Sapka Peak",
+      "country": "MK",
+      "lat": 42.0167,
+      "lon": 20.8833,
+      "elevation": 1780
+    },
+    {
+      "id": "MK_MAVROVO",
+      "name": "Mavrovo Lake",
+      "country": "MK",
+      "lat": 41.7,
+      "lon": 20.7333,
+      "elevation": 1220
+    },
+    {
+      "id": "MK_STRAZA",
+      "name": "Straza Pass",
+      "country": "MK",
+      "lat": 41.6667,
+      "lon": 20.85,
+      "elevation": 1212
+    },
+    {
+      "id": "MK_PLETVAR",
+      "name": "Pletvar Pass",
+      "country": "MK",
+      "lat": 41.3667,
+      "lon": 21.65,
+      "elevation": 990
+    },
+    {
+      "id": "MK_BUKOVO",
+      "name": "Bukovo Pass",
+      "country": "MK",
+      "lat": 41.05,
+      "lon": 21.05,
+      "elevation": 1207
+    },
+    {
+      "id": "MK_KOZUF",
+      "name": "Kozuf Mountain",
+      "country": "MK",
+      "lat": 41.1667,
+      "lon": 22.2167,
+      "elevation": 1650
+    },
+    {
+      "id": "RS_BG_VRACAR",
+      "name": "Belgrade Vracar Obs",
+      "country": "RS",
+      "lat": 44.7983,
+      "lon": 20.4658,
+      "elevation": 132
+    },
+    {
+      "id": "RS_BG_SURCIN",
+      "name": "Belgrade Airport",
+      "country": "RS",
+      "lat": 44.8184,
+      "lon": 20.3091,
+      "elevation": 96
+    },
+    {
+      "id": "RS_BG_KOSUTNJAK",
+      "name": "Belgrade Kosutnjak",
+      "country": "RS",
+      "lat": 44.7667,
+      "lon": 20.4333,
+      "elevation": 203
+    },
+    {
+      "id": "RS_NOVI_SAD",
+      "name": "Novi Sad Rimski Sancevi",
+      "country": "RS",
+      "lat": 45.3333,
+      "lon": 19.85,
+      "elevation": 86
+    },
+    {
+      "id": "RS_NIS",
+      "name": "Nis Fortress",
+      "country": "RS",
+      "lat": 43.3333,
+      "lon": 21.9,
+      "elevation": 202
+    },
+    {
+      "id": "RS_NIS_AIR",
+      "name": "Nis Constantine Airport",
+      "country": "RS",
+      "lat": 43.337,
+      "lon": 21.8536,
+      "elevation": 198
+    },
+    {
+      "id": "RS_KRAGUJEVAC",
+      "name": "Kragujevac Sumadija",
+      "country": "RS",
+      "lat": 44.0333,
+      "lon": 20.9333,
+      "elevation": 185
+    },
+    {
+      "id": "RS_SUBOTICA",
+      "name": "Subotica North",
+      "country": "RS",
+      "lat": 46.1,
+      "lon": 19.6667,
+      "elevation": 109
+    },
+    {
+      "id": "RS_ZRENJANIN",
+      "name": "Zrenjanin Banat",
+      "country": "RS",
+      "lat": 45.3833,
+      "lon": 20.4167,
+      "elevation": 80
+    },
+    {
+      "id": "RS_PANCEVO",
+      "name": "Pancevo Danube",
+      "country": "RS",
+      "lat": 44.8739,
+      "lon": 20.6406,
+      "elevation": 77
+    },
+    {
+      "id": "RS_VRSAC",
+      "name": "Vrsac Kosava Gate",
+      "country": "RS",
+      "lat": 45.15,
+      "lon": 21.3167,
+      "elevation": 84
+    },
+    {
+      "id": "RS_BELA_CRKVA",
+      "name": "Bela Crkva",
+      "country": "RS",
+      "lat": 44.9,
+      "lon": 21.4333,
+      "elevation": 88
+    },
+    {
+      "id": "RS_VELIKO_GRADISTE",
+      "name": "Veliko Gradiste Danube",
+      "country": "RS",
+      "lat": 44.75,
+      "lon": 21.5167,
+      "elevation": 82
+    },
+    {
+      "id": "RS_NEGOTIN",
+      "name": "Negotin Timok",
+      "country": "RS",
+      "lat": 44.2333,
+      "lon": 22.55,
+      "elevation": 42
+    },
+    {
+      "id": "RS_KLADOVO",
+      "name": "Kladovo Iron Gate",
+      "country": "RS",
+      "lat": 44.6111,
+      "lon": 22.6111,
+      "elevation": 54
+    },
+    {
+      "id": "RS_MAJDANPEK",
+      "name": "Majdanpek Mining",
+      "country": "RS",
+      "lat": 44.43,
+      "lon": 21.93,
+      "elevation": 350
+    },
+    {
+      "id": "RS_BOR",
+      "name": "Bor",
+      "country": "RS",
+      "lat": 44.0744,
+      "lon": 22.0958,
+      "elevation": 378
+    },
+    {
+      "id": "RS_ZAJECAR",
+      "name": "Zajecar",
+      "country": "RS",
+      "lat": 43.9,
+      "lon": 22.2833,
+      "elevation": 144
+    },
+    {
+      "id": "RS_KNJAZEVAC",
+      "name": "Knjazevac",
+      "country": "RS",
+      "lat": 43.5667,
+      "lon": 22.25,
+      "elevation": 240
+    },
+    {
+      "id": "RS_PIROT",
+      "name": "Pirot Nisava",
+      "country": "RS",
+      "lat": 43.15,
+      "lon": 22.5833,
+      "elevation": 367
+    },
+    {
+      "id": "RS_DIMITROVGRAD",
+      "name": "Dimitrovgrad Border",
+      "country": "RS",
+      "lat": 43.0167,
+      "lon": 22.75,
+      "elevation": 450
+    },
+    {
+      "id": "RS_ALEKSINAC",
+      "name": "Aleksinac",
+      "country": "RS",
+      "lat": 43.5414,
+      "lon": 21.7061,
+      "elevation": 180
+    },
+    {
+      "id": "RS_PARACIN",
+      "name": "Paracin",
+      "country": "RS",
+      "lat": 43.86,
+      "lon": 21.41,
+      "elevation": 130
+    },
+    {
+      "id": "RS_CUPRIJA",
+      "name": "Cuprija Morava",
+      "country": "RS",
+      "lat": 43.9333,
+      "lon": 21.3667,
+      "elevation": 123
+    },
+    {
+      "id": "RS_JAGODINA",
+      "name": "Jagodina",
+      "country": "RS",
+      "lat": 43.9772,
+      "lon": 21.2611,
+      "elevation": 116
+    },
+    {
+      "id": "RS_SMEDEREVO",
+      "name": "Smederevo",
+      "country": "RS",
+      "lat": 44.6628,
+      "lon": 20.93,
+      "elevation": 73
+    },
+    {
+      "id": "RS_POZAREVAC",
+      "name": "Pozarevac",
+      "country": "RS",
+      "lat": 44.62,
+      "lon": 21.18,
+      "elevation": 94
+    },
+    {
+      "id": "RS_SOMBOR",
+      "name": "Sombor Backa",
+      "country": "RS",
+      "lat": 45.7667,
+      "lon": 19.15,
+      "elevation": 88
+    },
+    {
+      "id": "RS_KIKINDA",
+      "name": "Kikinda",
+      "country": "RS",
+      "lat": 45.8333,
+      "lon": 20.4667,
+      "elevation": 81
+    },
+    {
+      "id": "RS_SREMSKA_MITROVICA",
+      "name": "Sremska Mitrovica",
+      "country": "RS",
+      "lat": 44.9667,
+      "lon": 19.65,
+      "elevation": 82
+    },
+    {
+      "id": "RS_LOZNICA",
+      "name": "Loznica Drina",
+      "country": "RS",
+      "lat": 44.5333,
+      "lon": 19.2333,
+      "elevation": 121
+    },
+    {
+      "id": "RS_SABAC",
+      "name": "Sabac Sava",
+      "country": "RS",
+      "lat": 44.75,
+      "lon": 19.7,
+      "elevation": 80
+    },
+    {
+      "id": "RS_VALJEVO",
+      "name": "Valjevo Kolubara",
+      "country": "RS",
+      "lat": 44.2833,
+      "lon": 19.9167,
+      "elevation": 176
+    },
+    {
+      "id": "RS_CACAK",
+      "name": "Cacak Western Morava",
+      "country": "RS",
+      "lat": 43.8914,
+      "lon": 20.3497,
+      "elevation": 242
+    },
+    {
+      "id": "RS_KRALJEVO",
+      "name": "Kraljevo",
+      "country": "RS",
+      "lat": 43.7167,
+      "lon": 20.7,
+      "elevation": 215
+    },
+    {
+      "id": "RS_KRUSEVAC",
+      "name": "Krusevac",
+      "country": "RS",
+      "lat": 43.5833,
+      "lon": 21.3333,
+      "elevation": 166
+    },
+    {
+      "id": "RS_PROKUPLJE",
+      "name": "Prokuplje Toplica",
+      "country": "RS",
+      "lat": 43.2344,
+      "lon": 21.5878,
+      "elevation": 260
+    },
+    {
+      "id": "RS_KURSUMLIJA",
+      "name": "Kursumlija",
+      "country": "RS",
+      "lat": 43.1333,
+      "lon": 21.2667,
+      "elevation": 382
+    },
+    {
+      "id": "RS_LESKOVAC",
+      "name": "Leskovac",
+      "country": "RS",
+      "lat": 42.9833,
+      "lon": 21.95,
+      "elevation": 230
+    },
+    {
+      "id": "RS_LEBANE",
+      "name": "Lebane",
+      "country": "RS",
+      "lat": 42.92,
+      "lon": 21.74,
+      "elevation": 280
+    },
+    {
+      "id": "RS_SURDULICA",
+      "name": "Surdulica",
+      "country": "RS",
+      "lat": 42.69,
+      "lon": 22.17,
+      "elevation": 530
+    },
+    {
+      "id": "RS_VLADICIN_HAN",
+      "name": "Vladicin Han",
+      "country": "RS",
+      "lat": 42.7058,
+      "lon": 22.0622,
+      "elevation": 328
+    },
+    {
+      "id": "RS_VRANJE",
+      "name": "Vranje South",
+      "country": "RS",
+      "lat": 42.55,
+      "lon": 21.9,
+      "elevation": 432
+    },
+    {
+      "id": "RS_BUJANOVAC",
+      "name": "Bujanovac Valley",
+      "country": "RS",
+      "lat": 42.46,
+      "lon": 21.77,
+      "elevation": 395
+    },
+    {
+      "id": "RS_PRESEVO",
+      "name": "Presevo Pass Border",
+      "country": "RS",
+      "lat": 42.31,
+      "lon": 21.65,
+      "elevation": 460
+    },
+    {
+      "id": "RS_UZICE",
+      "name": "Uzice Djetinja",
+      "country": "RS",
+      "lat": 43.8586,
+      "lon": 19.8489,
+      "elevation": 411
+    },
+    {
+      "id": "RS_POZEGA",
+      "name": "Pozega Basin",
+      "country": "RS",
+      "lat": 43.8444,
+      "lon": 20.0361,
+      "elevation": 310
+    },
+    {
+      "id": "RS_PRIBOJ",
+      "name": "Priboj Lim",
+      "country": "RS",
+      "lat": 43.59,
+      "lon": 19.53,
+      "elevation": 395
+    },
+    {
+      "id": "RS_PRIJEPOLJE",
+      "name": "Prijepolje",
+      "country": "RS",
+      "lat": 43.39,
+      "lon": 19.65,
+      "elevation": 450
+    },
+    {
+      "id": "RS_NOVA_VAROS",
+      "name": "Nova Varos",
+      "country": "RS",
+      "lat": 43.46,
+      "lon": 19.81,
+      "elevation": 950
+    },
+    {
+      "id": "RS_SJENICA",
+      "name": "Sjenica Cold Pole",
+      "country": "RS",
+      "lat": 43.27,
+      "lon": 20.0,
+      "elevation": 1038
+    },
+    {
+      "id": "RS_NOVI_PAZAR",
+      "name": "Novi Pazar",
+      "country": "RS",
+      "lat": 43.14,
+      "lon": 20.52,
+      "elevation": 496
+    },
+    {
+      "id": "RS_TUTIN",
+      "name": "Tutin Pester",
+      "country": "RS",
+      "lat": 42.99,
+      "lon": 20.33,
+      "elevation": 880
+    },
+    {
+      "id": "RS_RASKA",
+      "name": "Raska Ibar",
+      "country": "RS",
+      "lat": 43.29,
+      "lon": 20.61,
+      "elevation": 400
+    },
+    {
+      "id": "RS_VRNJACKA_BANJA",
+      "name": "Vrnjacka Banja",
+      "country": "RS",
+      "lat": 43.6256,
+      "lon": 20.8967,
+      "elevation": 230
+    },
+    {
+      "id": "RS_ARANDJELOVAC",
+      "name": "Arandjelovac Bukulja",
+      "country": "RS",
+      "lat": 44.31,
+      "lon": 20.56,
+      "elevation": 270
+    },
+    {
+      "id": "RS_GORNJI_MILANOVAC",
+      "name": "Gornji Milanovac",
+      "country": "RS",
+      "lat": 44.02,
+      "lon": 20.46,
+      "elevation": 310
+    },
+    {
+      "id": "RS_BACKA_PALANKA",
+      "name": "Backa Palanka",
+      "country": "RS",
+      "lat": 45.25,
+      "lon": 19.39,
+      "elevation": 80
+    },
+    {
+      "id": "RS_RUMA",
+      "name": "Ruma Srem",
+      "country": "RS",
+      "lat": 45.0081,
+      "lon": 19.8222,
+      "elevation": 111
+    },
+    {
+      "id": "RS_INDIJA",
+      "name": "Indjija",
+      "country": "RS",
+      "lat": 45.0483,
+      "lon": 20.0811,
+      "elevation": 113
+    },
+    {
+      "id": "RS_KOPAONIK",
+      "name": "Kopaonik Summit Obs",
+      "country": "RS",
+      "lat": 43.2833,
+      "lon": 20.8167,
+      "elevation": 1710
+    },
+    {
+      "id": "RS_ZLATIBOR",
+      "name": "Zlatibor Obs",
+      "country": "RS",
+      "lat": 43.65,
+      "lon": 19.7167,
+      "elevation": 1028
+    },
+    {
+      "id": "RS_TARA",
+      "name": "Tara Mitrovac",
+      "country": "RS",
+      "lat": 43.9167,
+      "lon": 19.4167,
+      "elevation": 1080
+    },
+    {
+      "id": "RS_CRNI_VRH",
+      "name": "Crni Vrh Mountain",
+      "country": "RS",
+      "lat": 44.1333,
+      "lon": 21.9667,
+      "elevation": 1027
+    },
+    {
+      "id": "RS_FRUSKA_GORA",
+      "name": "Fruska Gora Irisk Venac",
+      "country": "RS",
+      "lat": 45.15,
+      "lon": 19.86,
+      "elevation": 451
+    },
+    {
+      "id": "GR_THESSALONIKI_AIR",
+      "name": "Thessaloniki Makedonia Airport",
+      "country": "GR",
+      "lat": 40.5197,
+      "lon": 22.9709,
+      "elevation": 4
+    },
+    {
+      "id": "GR_THESSALONIKI_CITY",
+      "name": "Thessaloniki Center",
+      "country": "GR",
+      "lat": 40.6401,
+      "lon": 22.9444,
+      "elevation": 20
+    },
+    {
+      "id": "GR_KILKIS",
+      "name": "Kilkis Border",
+      "country": "GR",
+      "lat": 40.9931,
+      "lon": 22.8744,
+      "elevation": 280
+    },
+    {
+      "id": "GR_EVZONOI",
+      "name": "Evzonoi Gevgelija Border",
+      "country": "GR",
+      "lat": 41.11,
+      "lon": 22.55,
+      "elevation": 50
+    },
+    {
+      "id": "GR_POLYKASTRO",
+      "name": "Polykastro Vardar",
+      "country": "GR",
+      "lat": 40.9972,
+      "lon": 22.5714,
+      "elevation": 45
+    },
+    {
+      "id": "GR_GIANNOITSA",
+      "name": "Giannitsa Plain",
+      "country": "GR",
+      "lat": 40.7917,
+      "lon": 22.4139,
+      "elevation": 40
+    },
+    {
+      "id": "GR_EDESSA",
+      "name": "Edessa Waterfalls",
+      "country": "GR",
+      "lat": 40.8039,
+      "lon": 22.0478,
+      "elevation": 320
+    },
+    {
+      "id": "GR_VEROIA",
+      "name": "Veroia Vermio",
+      "country": "GR",
+      "lat": 40.5244,
+      "lon": 22.2028,
+      "elevation": 130
+    },
+    {
+      "id": "GR_NAOUSA",
+      "name": "Naousa Wine",
+      "country": "GR",
+      "lat": 40.63,
+      "lon": 22.07,
+      "elevation": 330
+    },
+    {
+      "id": "GR_KATERINI",
+      "name": "Katerini Pieria",
+      "country": "GR",
+      "lat": 40.2708,
+      "lon": 22.5061,
+      "elevation": 35
+    },
+    {
+      "id": "GR_LITOCHORO",
+      "name": "Litochoro Olympus Foot",
+      "country": "GR",
+      "lat": 40.1044,
+      "lon": 22.5033,
+      "elevation": 290
+    },
+    {
+      "id": "GR_OLYMPUS_PEAK",
+      "name": "Mount Olympus Refuge",
+      "country": "GR",
+      "lat": 40.0856,
+      "lon": 22.3583,
+      "elevation": 2100
+    },
+    {
+      "id": "GR_SERRES",
+      "name": "Serres Struma Valley",
+      "country": "GR",
+      "lat": 41.0847,
+      "lon": 23.5478,
+      "elevation": 50
+    },
+    {
+      "id": "GR_SIDIROKASTRO",
+      "name": "Sidirokastro Border",
+      "country": "GR",
+      "lat": 41.2333,
+      "lon": 23.3833,
+      "elevation": 90
+    },
+    {
+      "id": "GR_DRAMA",
+      "name": "Drama",
+      "country": "GR",
+      "lat": 41.15,
+      "lon": 24.15,
+      "elevation": 115
+    },
+    {
+      "id": "GR_KAVALA",
+      "name": "Kavala Port",
+      "country": "GR",
+      "lat": 40.9394,
+      "lon": 24.4128,
+      "elevation": 25
+    },
+    {
+      "id": "GR_KAVALA_AIR",
+      "name": "Kavala Airport Chrysoupoli",
+      "country": "GR",
+      "lat": 40.9133,
+      "lon": 24.6192,
+      "elevation": 5
+    },
+    {
+      "id": "GR_THASSOS",
+      "name": "Thassos Island Limenas",
+      "country": "GR",
+      "lat": 40.7781,
+      "lon": 24.7094,
+      "elevation": 10
+    },
+    {
+      "id": "GR_XANTHI",
+      "name": "Xanthi Thrace",
+      "country": "GR",
+      "lat": 41.1347,
+      "lon": 24.8881,
+      "elevation": 80
+    },
+    {
+      "id": "GR_KOMOTINI",
+      "name": "Komotini",
+      "country": "GR",
+      "lat": 41.1192,
+      "lon": 25.4053,
+      "elevation": 45
+    },
+    {
+      "id": "GR_ALEXANDROUPOLI",
+      "name": "Alexandroupoli Evros",
+      "country": "GR",
+      "lat": 40.85,
+      "lon": 25.8667,
+      "elevation": 10
+    },
+    {
+      "id": "GR_ORESTIADA",
+      "name": "Orestiada North Evros",
+      "country": "GR",
+      "lat": 41.5036,
+      "lon": 26.5317,
+      "elevation": 35
+    },
+    {
+      "id": "GR_FLORINA",
+      "name": "Florina Pelagonia Border",
+      "country": "GR",
+      "lat": 40.7819,
+      "lon": 21.4097,
+      "elevation": 660
+    },
+    {
+      "id": "GR_AMYNTAIO",
+      "name": "Amyntaio",
+      "country": "GR",
+      "lat": 40.69,
+      "lon": 21.68,
+      "elevation": 590
+    },
+    {
+      "id": "GR_PTOLEMAIDA",
+      "name": "Ptolemaida Basin",
+      "country": "GR",
+      "lat": 40.5139,
+      "lon": 21.6786,
+      "elevation": 610
+    },
+    {
+      "id": "GR_KOZANI",
+      "name": "Kozani",
+      "country": "GR",
+      "lat": 40.3006,
+      "lon": 21.7889,
+      "elevation": 710
+    },
+    {
+      "id": "GR_KASTORIA",
+      "name": "Kastoria Lake",
+      "country": "GR",
+      "lat": 40.5214,
+      "lon": 21.2633,
+      "elevation": 630
+    },
+    {
+      "id": "GR_GREVENA",
+      "name": "Grevena Pindus",
+      "country": "GR",
+      "lat": 40.0847,
+      "lon": 21.4272,
+      "elevation": 530
+    },
+    {
+      "id": "GR_METSOVO",
+      "name": "Metsovo Pindus Pass",
+      "country": "GR",
+      "lat": 39.77,
+      "lon": 21.18,
+      "elevation": 1160
+    },
+    {
+      "id": "GR_IOANNINA",
+      "name": "Ioannina Lake",
+      "country": "GR",
+      "lat": 39.6647,
+      "lon": 20.8519,
+      "elevation": 485
+    },
+    {
+      "id": "GR_IGOUMENITSA",
+      "name": "Igoumenitsa Ionian Port",
+      "country": "GR",
+      "lat": 39.5,
+      "lon": 20.2667,
+      "elevation": 15
+    },
+    {
+      "id": "GR_CORFU_AIR",
+      "name": "Corfu Kerkyra Airport",
+      "country": "GR",
+      "lat": 39.6019,
+      "lon": 19.9117,
+      "elevation": 2
+    },
+    {
+      "id": "GR_LARISSA",
+      "name": "Larissa Thessaly",
+      "country": "GR",
+      "lat": 39.6389,
+      "lon": 22.4167,
+      "elevation": 77
+    },
+    {
+      "id": "GR_VOLOS",
+      "name": "Volos Pagasetic Gulf",
+      "country": "GR",
+      "lat": 39.3622,
+      "lon": 22.9422,
+      "elevation": 15
+    },
+    {
+      "id": "GR_TRIKALA",
+      "name": "Trikala Meteora",
+      "country": "GR",
+      "lat": 39.5558,
+      "lon": 21.7678,
+      "elevation": 115
+    },
+    {
+      "id": "GR_KARDITSA",
+      "name": "Karditsa Plain",
+      "country": "GR",
+      "lat": 39.3644,
+      "lon": 21.9214,
+      "elevation": 105
+    },
+    {
+      "id": "GR_POLYGYROS",
+      "name": "Polygyros Chalkidiki",
+      "country": "GR",
+      "lat": 40.3778,
+      "lon": 23.4414,
+      "elevation": 500
+    },
+    {
+      "id": "GR_NEA_MOUDANIA",
+      "name": "Nea Moudania Kassandra",
+      "country": "GR",
+      "lat": 40.2417,
+      "lon": 23.2806,
+      "elevation": 10
+    },
+    {
+      "id": "GR_SITHONIA",
+      "name": "Sithonia Nikiti",
+      "country": "GR",
+      "lat": 40.22,
+      "lon": 23.67,
+      "elevation": 20
+    },
+    {
+      "id": "GR_LAMIA",
+      "name": "Lamia Fthiotida",
+      "country": "GR",
+      "lat": 38.8958,
+      "lon": 22.4344,
+      "elevation": 100
+    },
+    {
+      "id": "AL_TIRANA_AIR",
+      "name": "Tirana Rinas Airport",
+      "country": "AL",
+      "lat": 41.4147,
+      "lon": 19.7206,
+      "elevation": 38
+    },
+    {
+      "id": "AL_TIRANA_CITY",
+      "name": "Tirana Center Dajti",
+      "country": "AL",
+      "lat": 41.3275,
+      "lon": 19.8189,
+      "elevation": 110
+    },
+    {
+      "id": "AL_DURRES",
+      "name": "Durres Adriatic Port",
+      "country": "AL",
+      "lat": 41.3231,
+      "lon": 19.4531,
+      "elevation": 5
+    },
+    {
+      "id": "AL_SHKODER",
+      "name": "Shkoder Lake",
+      "country": "AL",
+      "lat": 42.0683,
+      "lon": 19.5125,
+      "elevation": 16
+    },
+    {
+      "id": "AL_VLORE",
+      "name": "Vlore Ionian Bay",
+      "country": "AL",
+      "lat": 40.4667,
+      "lon": 19.4833,
+      "elevation": 10
+    },
+    {
+      "id": "AL_SARANDE",
+      "name": "Sarande Riviera",
+      "country": "AL",
+      "lat": 39.8756,
+      "lon": 20.0053,
+      "elevation": 25
+    },
+    {
+      "id": "AL_KORCE",
+      "name": "Korce Morava Mt",
+      "country": "AL",
+      "lat": 40.6167,
+      "lon": 20.7833,
+      "elevation": 869
+    },
+    {
+      "id": "AL_POGRADEC",
+      "name": "Pogradec Ohrid Shore",
+      "country": "AL",
+      "lat": 40.9,
+      "lon": 20.65,
+      "elevation": 700
+    },
+    {
+      "id": "AL_ELBASAN",
+      "name": "Elbasan Shkumbin",
+      "country": "AL",
+      "lat": 41.1125,
+      "lon": 20.0828,
+      "elevation": 130
+    },
+    {
+      "id": "AL_FIER",
+      "name": "Fier Myzeqe Plain",
+      "country": "AL",
+      "lat": 40.7239,
+      "lon": 19.5561,
+      "elevation": 20
+    },
+    {
+      "id": "AL_BERAT",
+      "name": "Berat Osum River",
+      "country": "AL",
+      "lat": 40.7058,
+      "lon": 19.9522,
+      "elevation": 60
+    },
+    {
+      "id": "AL_GJIROKASTER",
+      "name": "Gjirokaster Drino",
+      "country": "AL",
+      "lat": 40.0758,
+      "lon": 20.1389,
+      "elevation": 300
+    },
+    {
+      "id": "AL_KUKES",
+      "name": "Kukes Mountain Lake",
+      "country": "AL",
+      "lat": 42.0767,
+      "lon": 20.4219,
+      "elevation": 354
+    },
+    {
+      "id": "AL_PESHKOPI",
+      "name": "Peshkopi Korab",
+      "country": "AL",
+      "lat": 41.685,
+      "lon": 20.4289,
+      "elevation": 650
+    },
+    {
+      "id": "AL_LEZHE",
+      "name": "Lezhe Drin Plain",
+      "country": "AL",
+      "lat": 41.7833,
+      "lon": 19.6439,
+      "elevation": 10
+    },
+    {
+      "id": "AL_LUSHNJE",
+      "name": "Lushnje",
+      "country": "AL",
+      "lat": 40.9419,
+      "lon": 19.705,
+      "elevation": 25
+    },
+    {
+      "id": "AL_BURREL",
+      "name": "Burrel Mat",
+      "country": "AL",
+      "lat": 41.61,
+      "lon": 20.01,
+      "elevation": 315
+    },
+    {
+      "id": "AL_TEPELENE",
+      "name": "Tepelene Vjosa",
+      "country": "AL",
+      "lat": 40.2961,
+      "lon": 20.0189,
+      "elevation": 200
+    },
+    {
+      "id": "AL_COROVODE",
+      "name": "Corovode Canyon",
+      "country": "AL",
+      "lat": 40.5042,
+      "lon": 20.2272,
+      "elevation": 300
+    },
+    {
+      "id": "AL_KAVAJE",
+      "name": "Kavaje Coastal",
+      "country": "AL",
+      "lat": 41.1839,
+      "lon": 19.5628,
+      "elevation": 15
+    }
+  ]
+}

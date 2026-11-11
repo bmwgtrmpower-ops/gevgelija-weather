@@ -1,0 +1,33 @@
+name: Balkan 200+ Research Collector
+
+on:
+  schedule:
+    - cron: '30 */2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run research collector (209 nodes)
+        run: python collector_research.py
+
+      - name: Commit and push research dataset
+        run: |
+          git config user.name "Balkan Research Grid"
+          git config user.email "research@users.noreply.github.com"
+          git pull --rebase origin main || true
+          git add research_latest.json research_history.csv
+          git commit -m "Research snapshot (209 nodes): $(date -u +'%Y-%m-%d %H:%M UTC')" || echo "No changes"
+          git push origin main

@@ -471,26 +471,32 @@
     }
     /* BIG 44x44px touch target close button */
     .sheet-close-btn {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      color: #fff;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      color: #ffffff;
       border-radius: 50%;
-      width: 44px;
-      height: 44px;
-      min-width: 44px;
-      min-height: 44px;
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      min-height: 48px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
-      font-weight: 700;
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1;
       touch-action: manipulation;
-      transition: transform 0.12s, background 0.12s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: transform 0.1s, background 0.1s;
+      z-index: 1002;
     }
     .sheet-close-btn:active {
-      transform: scale(0.9);
-      background: rgba(239, 68, 68, 0.5);
+      transform: scale(0.88);
+      background: #ef4444 !important;
+      color: #fff !important;
     }
 
     /* Big Close Button at Bottom of Sheet */
@@ -897,39 +903,39 @@
   </div>
 
   <!-- Backdrop -->
-  <div class="sheet-backdrop" id="sheetBackdrop" onclick="closeAllSheets()"></div>
+  <div class="sheet-backdrop" id="sheetBackdrop" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault();}"></div>
 
   <!-- Bottom Sheet 1: City Search & List -->
   <div class="bottom-sheet" id="citySearchSheet">
-    <div class="sheet-handle-wrap" onclick="closeAllSheets()" title="Нажмите, чтобы закрыть"><div class="sheet-handle"></div></div>
+    <div class="sheet-handle-wrap" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" title="Нажмите, чтобы закрыть"><div class="sheet-handle"></div></div>
     <div class="sheet-header">
       <div class="sheet-title" id="citySheetTitle">Города Северной Македонии</div>
-      <button class="sheet-close-btn" onclick="closeAllSheets()">✕</button>
+      <button type="button" class="sheet-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}" aria-label="Закрыть">✕</button>
     </div>
     <div class="search-box-wrap">
       <input type="text" class="search-input" id="citySearchInput" placeholder="🔍 Введите название города (напр. Скопье, Охрид...)" oninput="filterCities(this.value)">
     </div>
     <div class="cities-scroll-list" id="citiesScrollList"></div>
-    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()">✕ Закрыть список городов</button>
+    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}">✕ Закрыть список городов</button>
   </div>
 
   <!-- Bottom Sheet 2: Metric Detail Modal -->
   <div class="bottom-sheet" id="metricDetailSheet">
-    <div class="sheet-handle-wrap" onclick="closeAllSheets()" title="Нажмите, чтобы закрыть"><div class="sheet-handle"></div></div>
+    <div class="sheet-handle-wrap" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" title="Нажмите, чтобы закрыть"><div class="sheet-handle"></div></div>
     <div class="sheet-header">
       <div class="sheet-title" id="detailModalTitle">Детальный отчет</div>
-      <button class="sheet-close-btn" onclick="closeAllSheets()">✕</button>
+      <button type="button" class="sheet-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}" aria-label="Закрыть">✕</button>
     </div>
     <div class="detail-body" id="detailModalBody"></div>
-    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()">✕ Закрыть отчет</button>
+    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}">✕ Закрыть отчет</button>
   </div>
 
   <!-- Bottom Sheet 3: Frost & Agro Calculator Modal -->
   <div class="bottom-sheet" id="frostSheet">
-    <div class="sheet-handle-wrap" onclick="closeAllSheets()" title="Нажмите, чтобы закрыть"><div class="sheet-handle"></div></div>
+    <div class="sheet-handle-wrap" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" title="Нажмите, чтобы закрыть"><div class="sheet-handle"></div></div>
     <div class="sheet-header">
       <div class="sheet-title">❄️ Агропрогноз заморозков</div>
-      <button class="sheet-close-btn" onclick="closeAllSheets()">✕</button>
+      <button type="button" class="sheet-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}" aria-label="Закрыть">✕</button>
     </div>
     <div class="frost-tag-chips">
       <div class="frost-tag" onclick="quickFrostQuery('Ближайшие 3 дня')">📅 Ближайшие 3 дня</div>
@@ -966,19 +972,19 @@
         <span class="val">Штатный полив, укрытие не требуется</span>
       </div>
     </div>
-    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()">✕ Закрыть агропрогноз</button>
+    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}">✕ Закрыть агропрогноз</button>
   </div>
 
   <!-- Bottom Sheet 4: Weather Scene Animated Modal -->
   <div class="bottom-sheet" id="weatherSceneSheet">
-    <div class="sheet-handle-wrap" onclick="closeAllSheets()" title="Нажмите, чтобы закрыть"><div class="sheet-handle"></div></div>
+    <div class="sheet-handle-wrap" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" title="Нажмите, чтобы закрыть"><div class="sheet-handle"></div></div>
     <div class="sheet-header">
       <div class="sheet-title" id="weatherSceneTitle">Атмосферная визуализация</div>
-      <button type="button" class="sheet-close-btn" onclick="closeAllSheets()">✕</button>
+      <button type="button" class="sheet-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}" aria-label="Закрыть">✕</button>
     </div>
     <div class="weather-stage" id="weatherStage"></div>
     <div class="detail-body" id="weatherSceneBody"></div>
-    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()">✕ Закрыть окно</button>
+    <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()" ontouchend="closeAllSheets(); if(event){event.preventDefault(); event.stopPropagation();}" onpointerdown="closeAllSheets(); if(event){event.stopPropagation();}">✕ Закрыть окно</button>
   </div>
 
 
@@ -990,7 +996,7 @@
     if (tg) {
       tg.ready();
       tg.expand();
-      try { tg.enableClosingConfirmation(); } catch(e){}
+      try { try { tg.disableClosingConfirmation(); } catch(e){} } catch(e){}
     }
 
     const MACEDONIA_CITIES = [
@@ -1305,251 +1311,6 @@
 
     // Modal Sheet Controllers
     function openCitySearch() {
-      closeAllSheets();
-      document.getElementById('sheetBackdrop').classList.add('active');
-      document.getElementById('citySearchSheet').classList.add('open');
-      document.getElementById('citySearchInput').focus();
-    }
-
-    
-    function openWeatherScene() {
-      if (!cachedWeather) return;
-      const { w } = cachedWeather;
-      const cur = w.current;
-      const code = cur.weather_code;
-      const temp = Math.round(cur.temperature_2m);
-      const feels = Math.round(cur.apparent_temperature);
-      const desc = getWeatherDesc(code);
-      const isNight = cur.is_day === 0;
-
-      const stage = document.getElementById('weatherStage');
-      const title = document.getElementById('weatherSceneTitle');
-      const body = document.getElementById('weatherSceneBody');
-
-      title.innerText = `${desc} в г. ${currentCity.name_ru}`;
-
-      // Determine weather type: 'rain', 'clouds', 'sun', 'thunder', 'snow'
-      let type = 'clouds';
-      if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) {
-        type = 'rain';
-      } else if (code >= 95) {
-        type = 'thunder';
-      } else if ([71, 73, 75, 85, 86].includes(code)) {
-        type = 'snow';
-      } else if (code === 0) {
-        type = 'sun';
-      } else {
-        type = 'clouds';
-      }
-
-      // Render animated scene
-      stage.className = `weather-stage ${type}-scene`;
-      if (type === 'rain') {
-        let drops = '';
-        for (let i = 0; i < 20; i++) {
-          const left = Math.floor(Math.random() * 96) + 2;
-          const delay = (Math.random() * 1.5).toFixed(2);
-          const dur = (0.5 + Math.random() * 0.4).toFixed(2);
-          drops += `<div class="raindrop" style="left: ${left}%; animation-delay: ${delay}s; animation-duration: ${dur}s;"></div>`;
-        }
-        stage.innerHTML = `
-          ${drops}
-          <div style="position: absolute; bottom: 14px; left: 16px; font-size: 26px; z-index: 2;">🌧</div>
-          <div style="position: absolute; bottom: 12px; right: 16px; font-size: 13px; color: #7dd3fc; font-weight: 700; z-index: 2;">Идут осадки • Дождь льётся</div>
-        `;
-      } else if (type === 'thunder') {
-        let drops = '';
-        for (let i = 0; i < 20; i++) {
-          const left = Math.floor(Math.random() * 96) + 2;
-          const delay = (Math.random() * 1.2).toFixed(2);
-          const dur = (0.4 + Math.random() * 0.3).toFixed(2);
-          drops += `<div class="raindrop" style="left: ${left}%; animation-delay: ${delay}s; animation-duration: ${dur}s;"></div>`;
-        }
-        stage.innerHTML = `
-          ${drops}
-          <div style="position: absolute; bottom: 14px; left: 16px; font-size: 26px; z-index: 2;">⛈</div>
-          <div style="position: absolute; bottom: 12px; right: 16px; font-size: 13px; color: #c084fc; font-weight: 700; z-index: 2;">Грозовой фронт • Вспышки</div>
-        `;
-      } else if (type === 'sun') {
-        stage.innerHTML = `
-          <div class="sun-core"></div>
-          <div style="position: absolute; bottom: 12px; left: 16px; font-size: 13px; color: #fde047; font-weight: 700;">${isNight ? '🌙 Ясная ночь' : '☀️ Ясно и солнечно'}</div>
-        `;
-      } else if (type === 'snow') {
-        let flakes = '';
-        for (let i = 0; i < 16; i++) {
-          const left = Math.floor(Math.random() * 96) + 2;
-          const delay = (Math.random() * 2).toFixed(2);
-          const dur = (1.5 + Math.random() * 1.5).toFixed(2);
-          flakes += `<div class="snowflake" style="left: ${left}%; animation-delay: ${delay}s; animation-duration: ${dur}s;">❄</div>`;
-        }
-        stage.innerHTML = `
-          ${flakes}
-          <div style="position: absolute; bottom: 12px; left: 16px; font-size: 13px; color: #fff; font-weight: 700;">Снегопад</div>
-        `;
-      } else {
-        // Clouds animation
-        stage.innerHTML = `
-          <div class="cloud-shape" style="top: 25px; left: 10px; width: 140px; height: 45px; animation-duration: 9s;"></div>
-          <div class="cloud-shape" style="top: 65px; left: 40px; width: 180px; height: 55px; animation-duration: 13s; animation-delay: 2s; background: rgba(148, 163, 184, 0.35);"></div>
-          <div class="cloud-shape" style="top: 105px; left: 20px; width: 130px; height: 42px; animation-duration: 8s; animation-delay: 4s;"></div>
-          <div style="position: absolute; bottom: 14px; left: 16px; font-size: 26px; z-index: 2;">☁️</div>
-          <div style="position: absolute; bottom: 12px; right: 16px; font-size: 13px; color: #cbd5e1; font-weight: 700; z-index: 2;">Пасмурно • Движение облаков</div>
-        `;
-      }
-
-      // Render metrics breakdown
-      const rainProb = w.daily?.precipitation_probability_max?.[selectedDayIndex] ?? 0;
-      const wind = cur.wind_speed_10m;
-      const hum = cur.relative_humidity_2m;
-      body.innerHTML = `
-        <div class="detail-highlight">
-          <div class="detail-big-val">${temp > 0 ? '+' : ''}${temp}°C</div>
-          <div class="detail-big-sub">${desc} • Ощущается как ${feels > 0 ? '+' : ''}${feels}°C</div>
-        </div>
-        <div class="detail-text">Текущая визуализация погоды для г. <b>${currentCity.name_ru}</b> (высота <b>${currentCity.ele} м</b>). Расчёт выполнен по данным физико-информированного ML-ансамбля 160 станций.</div>
-        <div class="detail-row"><span class="label">Относительная влажность:</span><span class="val">${hum}%</span></div>
-        <div class="detail-row"><span class="label">Вероятность дождя:</span><span class="val">${rainProb}%</span></div>
-        <div class="detail-row"><span class="label">Скорость ветра:</span><span class="val">${wind} м/с</span></div>
-        <div class="detail-row"><span class="label">Атмосферное давление:</span><span class="val">${Math.round(cur.surface_pressure * 0.750062)} мм рт. ст.</span></div>
-      `;
-
-      openSheetById('weatherSceneSheet');
-    }
-
-    function openFrostSheet() {
-      closeAllSheets();
-      document.getElementById('sheetBackdrop').classList.add('active');
-      document.getElementById('frostSheet').classList.add('open');
-    }
-
-    function openMetricDetail(type) {
-      if (!cachedWeather) return;
-      openSheetById('metricDetailSheet');
-      const body = document.getElementById('detailModalBody');
-      const title = document.getElementById('detailModalTitle');
-      const { w, aqi } = cachedWeather;
-      const cur = w.current;
-
-      if (type === 'rain') {
-        title.innerText = '🌧 Анализ осадков и облачности';
-        const p = w.daily.precipitation_probability_max[selectedDayIndex] || 0;
-        const sum = w.daily.precipitation_sum[selectedDayIndex] || 0;
-        body.innerHTML = `
-          <div class="detail-highlight">
-            <div class="detail-big-val">${p}%</div>
-            <div class="detail-big-sub">Вероятность дождя • Сумма: ${sum} мм</div>
-          </div>
-          <div class="detail-text">Прогноз рассчитан по физической модели конвективных осадков ECMWF + Open-Meteo.</div>
-          <div class="detail-row"><span class="label">Осадки за сутки:</span><span class="val">${sum} мм</span></div>
-          <div class="detail-row"><span class="label">Интенсивность:</span><span class="val">${sum > 5 ? 'Умеренный / Сильный' : 'Слабый / Без осадков'}</span></div>
-        `;
-      } else if (type === 'wind') {
-        title.innerText = '💨 Аэродинамика и безопасность сети';
-        const gusts = Math.round(cur.wind_gusts_10m);
-        body.innerHTML = `
-          <div class="detail-highlight">
-            <div class="detail-big-val">${cur.wind_speed_10m} м/с</div>
-            <div class="detail-big-sub">Порывы до ${gusts} м/с</div>
-          </div>
-          <div class="detail-text">Критический порог схлестывания фазных проводов на столбах на Балканах составляет 17.0 м/с.</div>
-          <div class="detail-row"><span class="label">Текущая скорость:</span><span class="val">${cur.wind_speed_10m} м/с</span></div>
-          <div class="detail-row"><span class="label">Макс. порыв:</span><span class="val">${gusts} м/с</span></div>
-          <div class="detail-row"><span class="label">Угроза 380V:</span><span class="val">${gusts >= 17 ? 'ВЫСОКАЯ' : 'Безопасно'}</span></div>
-        `;
-      } else if (type === 'aqi') {
-        title.innerText = '🍃 Качество воздуха и смог';
-        const aqiVal = aqi?.current?.european_aqi ?? 20;
-        const pm = aqi?.current?.pm2_5 ?? 10;
-        body.innerHTML = `
-          <div class="detail-highlight">
-            <div class="detail-big-val">${aqiVal} AQI</div>
-            <div class="detail-big-sub">PM2.5: ${pm} мкг/м³</div>
-          </div>
-          <div class="detail-text">В межгорных котловинах Македонии зимой часто образуется температурная инверсия, запирающая дым у земли.</div>
-          <div class="detail-row"><span class="label">Статус:</span><span class="val">${aqiVal <= 25 ? 'Отличное' : (aqiVal <= 50 ? 'Умеренное' : 'Смог')}</span></div>
-          <div class="detail-row"><span class="label">Проветривание:</span><span class="val">${aqiVal <= 40 ? 'Рекомендуется' : 'Ограничить'}</span></div>
-        `;
-      } else if (type === 'hum') {
-        title.innerText = '💧 Влажность, давление и точка росы';
-        const hum = cur.relative_humidity_2m;
-        const pMm = Math.round(cur.surface_pressure * 0.750062);
-        // Formula Magnus for dew point
-        const a = 17.27, b = 237.7;
-        const alpha = ((a * cur.temperature_2m) / (b + cur.temperature_2m)) + Math.log(hum / 100.0);
-        const dew = (b * alpha) / (a - alpha);
-        body.innerHTML = `
-          <div class="detail-highlight">
-            <div class="detail-big-val">${hum}%</div>
-            <div class="detail-big-sub">Точка росы: ${dew.toFixed(1)}°C</div>
-          </div>
-          <div class="detail-text">Точка росы определяет температуру конденсации водяного пара и туманообразования.</div>
-          <div class="detail-row"><span class="label">Относительная влажность:</span><span class="val">${hum}%</span></div>
-          <div class="detail-row"><span class="label">Атмосферное давление:</span><span class="val">${pMm} мм рт. ст.</span></div>
-          <div class="detail-row"><span class="label">Точка росы (Магнус):</span><span class="val">${dew.toFixed(1)}°C</span></div>
-        `;
-      } else if (type === 'temp') {
-        title.innerText = '🌡 Температурный профиль';
-        const t = Math.round(cur.temperature_2m);
-        const app = Math.round(cur.apparent_temperature);
-        body.innerHTML = `
-          <div class="detail-highlight">
-            <div class="detail-big-val">${t > 0 ? '+' : ''}${t}°C</div>
-            <div class="detail-big-sub">Ощущается как: ${app > 0 ? '+' : ''}${app}°C</div>
-          </div>
-          <div class="detail-text">Рассчитано физико-информированным ансамблем с учетом высоты над уровнем моря (${currentCity.ele} м) и теплоемкости долины.</div>
-          <div class="detail-row"><span class="label">Город:</span><span class="val">${currentCity.name_ru}</span></div>
-          <div class="detail-row"><span class="label">Высота над уровнем моря:</span><span class="val">${currentCity.ele} м</span></div>
-          <div class="detail-row"><span class="label">Регион:</span><span class="val">${currentCity.region}</span></div>
-        `;
-      }
-
-      document.getElementById('sheetBackdrop').classList.add('active');
-      document.getElementById('metricDetailSheet').classList.add('open');
-    }
-
-    function closeAllSheets() {
-      document.getElementById('sheetBackdrop').classList.remove('active');
-      document.querySelectorAll('.bottom-sheet').forEach(s => {
-        s.classList.remove('open');
-        setTimeout(() => {
-          if (!s.classList.contains('open')) {
-            s.style.display = 'none';
-            s.style.transform = '';
-          }
-        }, 240);
-      });
-      if (window.Telegram?.WebApp?.BackButton?.isVisible) {
-        window.Telegram.WebApp.BackButton.hide();
-      }
-    }
-
-    function openSheetById(sheetId) {
-      // 1. Instantly hide all other sheets (no overlap, no bleeding through!)
-      document.querySelectorAll('.bottom-sheet').forEach(s => {
-        if (s.id !== sheetId) {
-          s.classList.remove('open');
-          s.style.display = 'none';
-          s.style.transform = '';
-        }
-      });
-      // 2. Show target sheet
-      const target = document.getElementById(sheetId);
-      if (!target) return;
-      target.style.display = 'flex';
-      void target.offsetWidth; // Force DOM reflow
-      target.classList.add('open');
-      document.getElementById('sheetBackdrop').classList.add('active');
-
-      // 3. Bind Telegram native back button if present
-      if (window.Telegram?.WebApp?.BackButton) {
-        window.Telegram.WebApp.BackButton.show();
-        window.Telegram.WebApp.BackButton.onClick(closeAllSheets);
-      }
-    }
-
-    // Modal Sheet Controllers
-    function openCitySearch() {
       openSheetById('citySearchSheet');
       setTimeout(() => {
         const inp = document.getElementById('citySearchInput');
@@ -1667,14 +1428,37 @@
       openSheetById('frostSheet');
     }
 
-    // Enable Swipe-Down gesture on all bottom sheets
+    // Enable Swipe-Down gesture on all bottom sheets (Jitter-Proof & Button-Safe)
     document.addEventListener('DOMContentLoaded', () => {
+      // Direct touch and click binding on all close buttons
+      document.querySelectorAll('.sheet-close-btn, .sheet-action-close-btn, .sheet-handle-wrap').forEach(btn => {
+        btn.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+        btn.addEventListener('touchend', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          closeAllSheets();
+        }, { passive: false });
+        btn.addEventListener('pointerdown', e => {
+          e.stopPropagation();
+          closeAllSheets();
+        });
+      });
+
       document.querySelectorAll('.bottom-sheet').forEach(sheet => {
         let startY = 0;
         let currentY = 0;
+        let isDragging = false;
+
         sheet.addEventListener('touchstart', e => {
+          // If touching any close button, action button, input or interactive item, DO NOT initiate swipe!
+          if (e.target.closest('.sheet-close-btn, .sheet-action-close-btn, button, input, .frost-tag, .frost-btn, .city-item, a')) {
+            startY = 0;
+            isDragging = false;
+            return;
+          }
           if (sheet.scrollTop <= 5) {
             startY = e.touches[0].clientY;
+            isDragging = false;
           } else {
             startY = 0;
           }
@@ -1684,16 +1468,18 @@
           if (startY > 0) {
             currentY = e.touches[0].clientY;
             const diff = currentY - startY;
-            if (diff > 0) {
+            // Only start dragging if finger moved down by MORE than 10px (filters out tap tremors!)
+            if (diff > 10) {
+              isDragging = true;
               sheet.style.transform = `translateY(${diff}px)`;
             }
           }
         }, { passive: true });
 
         sheet.addEventListener('touchend', e => {
-          if (startY > 0 && currentY > 0) {
+          if (isDragging && startY > 0 && currentY > 0) {
             const diff = currentY - startY;
-            if (diff > 80) {
+            if (diff > 70) {
               sheet.style.transform = '';
               closeAllSheets();
             } else {
@@ -1702,6 +1488,7 @@
           }
           startY = 0;
           currentY = 0;
+          isDragging = false;
         }, { passive: true });
       });
     });

@@ -1,22 +1,22 @@
 {
-  "timestamp": "2026-11-11 14:29:24 UTC",
-  "spoken_text": "В Гевгелии сейчас плюс 16, ощущается как плюс 16, пасмурно. Давление 756 миллиметров ртутного столба, стабильное. Ветер 2 метра в секунду, воздух чистый.",
+  "timestamp": "2026-11-11 14:32:04 UTC",
+  "spoken_text": "В Гевгелии сейчас плюс 16, ощущается как плюс 16, пасмурно. Давление 756 миллиметров ртутного столба, стабильное. Ветер 1 метра в секунду, воздух чистый.",
   "gevgelija": {
-    "temperature": 15.9,
+    "temperature": 15.7,
     "apparent_temperature": 16.1,
-    "humidity": 85,
+    "humidity": 86,
     "pressure_mmhg": 756,
     "pressure_trend": "стабильное",
-    "wind_speed": 1.52,
+    "wind_speed": 1.25,
     "wind_gusts": 2.9,
     "weather_code": 3,
     "description": "пасмурно"
   },
   "evzonoi_greece": {
-    "temperature": 16.1,
+    "temperature": 15.9,
     "humidity": 86,
     "pressure_mmhg": 756,
-    "wind_speed": 1.41
+    "wind_speed": 1.3
   },
   "air_quality": {
     "european_aqi": 26,

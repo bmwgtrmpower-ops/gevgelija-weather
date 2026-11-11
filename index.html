@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Balkan Meteo | Персональная станция</title>
+  <title>Balkan Meteo</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -35,63 +35,114 @@
       background: radial-gradient(circle at 50% 0%, #172554 0%, #090d16 80%);
     }
 
-    /* City selector pills */
-    .city-scroll {
+    /* Minimalist Top Location Switcher */
+    .top-nav {
       display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 4px 2px 14px 2px;
-      scrollbar-width: none;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 12px;
     }
-    .city-scroll::-webkit-scrollbar { display: none; }
 
-    .city-pill {
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      color: var(--muted);
-      padding: 9px 18px;
-      border-radius: 24px;
-      font-size: 14px;
+    .loc-dropdown-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text);
+      padding: 8px 18px;
+      border-radius: 22px;
+      font-size: 15px;
       font-weight: 500;
-      white-space: nowrap;
       cursor: pointer;
+      backdrop-filter: blur(10px);
       transition: all 0.2s ease;
     }
 
-    .city-pill.active {
-      background: #0284c7;
-      color: #ffffff;
-      border-color: #38bdf8;
-      font-weight: 600;
-      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+    .loc-dropdown-btn:active {
+      transform: scale(0.97);
+      background: rgba(255, 255, 255, 0.12);
     }
 
-    /* Hero Weather Card */
+    .chevron {
+      font-size: 11px;
+      color: var(--muted);
+      transition: transform 0.2s ease;
+    }
+
+    .loc-dropdown-btn.open .chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Minimal Floating Dropdown Menu */
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 240px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 18px;
+      padding: 6px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.6);
+      z-index: 100;
+      animation: fadeIn 0.15s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, -8px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    .dropdown-item {
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #cbd5e1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.15s;
+    }
+
+    .dropdown-item:active, .dropdown-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+    }
+
+    .dropdown-item.active {
+      color: var(--accent);
+      font-weight: 600;
+      background: rgba(56, 189, 248, 0.1);
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      margin: 4px 6px;
+    }
+
+    .gps-item {
+      color: var(--accent);
+    }
+
+    /* Hero Display */
     .hero {
       text-align: center;
       padding: 10px 0 16px 0;
     }
 
-    .loc-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(56, 189, 248, 0.1);
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      color: #7dd3fc;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 500;
-      margin-bottom: 10px;
-    }
-
     .main-temp {
-      font-size: 80px;
+      font-size: 84px;
       font-weight: 200;
       letter-spacing: -3px;
       line-height: 0.95;
-      margin: 6px 0;
+      margin: 8px 0;
       text-shadow: 0 4px 24px rgba(56, 189, 248, 0.25);
     }
 
@@ -107,7 +158,7 @@
       color: var(--muted);
     }
 
-    /* Dedicated Storm & Grid Status Banner */
+    /* Wire / Grid Safety Banner */
     .alert-banner {
       border-radius: 16px;
       padding: 14px 16px;
@@ -116,22 +167,21 @@
       align-items: center;
       gap: 12px;
       backdrop-filter: blur(12px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
     }
 
     .alert-banner.safe {
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.25);
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.2);
     }
 
     .alert-banner.warning {
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.4);
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
     }
 
     .alert-banner.danger {
-      background: rgba(239, 68, 68, 0.2);
-      border: 1px solid rgba(239, 68, 68, 0.5);
+      background: rgba(239, 68, 68, 0.18);
+      border: 1px solid rgba(239, 68, 68, 0.45);
       animation: pulseAlert 2s infinite;
     }
 
@@ -140,7 +190,7 @@
       50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.35); }
     }
 
-    .alert-icon { font-size: 26px; line-height: 1; flex-shrink: 0; }
+    .alert-icon { font-size: 24px; line-height: 1; flex-shrink: 0; }
     .alert-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
     .alert-desc { font-size: 13px; line-height: 1.35; color: #cbd5e1; }
 
@@ -165,7 +215,7 @@
     .hourly-rail::-webkit-scrollbar { display: none; }
 
     .hourly-box {
-      flex: 0 0 70px;
+      flex: 0 0 68px;
       background: var(--card);
       border: 1px solid var(--card-border);
       border-radius: 14px;
@@ -181,7 +231,7 @@
     .h-temp { font-size: 16px; font-weight: 600; }
     .h-rain { font-size: 11px; color: #38bdf8; font-weight: 600; }
 
-    /* Clean 4-Card City Grid */
+    /* 4 Clean City Metrics Cards */
     .city-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -201,9 +251,6 @@
     }
 
     .metric-top {
-      display: flex;
-      align-items: center;
-      gap: 8px;
       font-size: 13px;
       color: var(--muted);
       margin-bottom: 8px;
@@ -222,49 +269,38 @@
       margin-top: 6px;
       line-height: 1.35;
     }
-
-    /* GPS Button */
-    .gps-action-btn {
-      width: 100%;
-      background: linear-gradient(135deg, #0284c7, #0ea5e9);
-      color: white;
-      border: none;
-      border-radius: 16px;
-      padding: 15px;
-      font-size: 15px;
-      font-weight: 600;
-      margin-top: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      box-shadow: 0 4px 18px rgba(14, 165, 233, 0.35);
-      transition: transform 0.15s ease;
-    }
-    .gps-action-btn:active { transform: scale(0.98); }
   </style>
 </head>
 <body>
 
-  <!-- City Switcher -->
-  <div class="city-scroll">
-    <div class="city-pill active" onclick="selectCity('gevgelija')">🏠 Гевгелия (Дом)</div>
-    <div class="city-pill" onclick="selectCity('skopje')">🏙 Скопье (Родители)</div>
-    <div class="city-pill" onclick="selectCity('mavrovo')">🏔 Маврово (Горы)</div>
-    <div class="city-pill" onclick="selectCity('ohrid')">🌊 Охрид (Озеро)</div>
-    <div class="city-pill" onclick="selectCity('bitola')">🏛 Битола</div>
+  <!-- Minimalist Location Dropdown Header -->
+  <div class="top-nav">
+    <div class="loc-dropdown-btn" id="locBtn" onclick="toggleDropdown()">
+      <span>📍</span>
+      <span id="currentLocName">Гевгелия</span>
+      <span class="chevron">▾</span>
+    </div>
+
+    <!-- Dropdown List -->
+    <div class="dropdown-menu" id="dropdownMenu">
+      <div class="dropdown-item active" onclick="pickCity('gevgelija')">Гевгелия</div>
+      <div class="dropdown-item" onclick="pickCity('skopje')">Скопье</div>
+      <div class="dropdown-item" onclick="pickCity('ohrid')">Охрид</div>
+      <div class="dropdown-item" onclick="pickCity('mavrovo')">Маврово</div>
+      <div class="dropdown-item" onclick="pickCity('bitola')">Битола</div>
+      <div class="dropdown-divider"></div>
+      <div class="dropdown-item gps-item" onclick="pickGPS()">🎯 Где я сейчас (GPS)</div>
+    </div>
   </div>
 
-  <!-- Hero Weather -->
+  <!-- Hero Display -->
   <div class="hero">
-    <div class="loc-badge" id="cityBadge">📍 Гевгелия (58 м)</div>
     <div class="main-temp" id="tempDisplay">+14°</div>
     <div class="cond-text" id="condDisplay">Облачно</div>
     <div class="feels-text" id="feelsDisplay">Ощущается как +15°</div>
   </div>
 
-  <!-- Grid Safety & Wind Banner -->
+  <!-- Grid & Wind Safety Banner -->
   <div class="alert-banner safe" id="wireBanner">
     <div class="alert-icon" id="bannerIcon">⚡️</div>
     <div>
@@ -273,26 +309,26 @@
     </div>
   </div>
 
-  <!-- Hourly Forecast -->
+  <!-- Hourly Forecast Rail -->
   <div class="section-head">Почасовой прогноз и дождь</div>
   <div class="hourly-rail" id="hourlyRail"></div>
 
-  <!-- 4 Dynamic City Metrics (Updates for the selected city!) -->
-  <div class="section-head" id="gridHead">Показатели для выбранного города</div>
+  <!-- 4 Metrics for Selected City -->
+  <div class="section-head">Показатели</div>
   <div class="city-grid">
 
     <!-- Card 1: Rain & Precipitation -->
     <div class="metric-card">
       <div class="metric-top">🌧 Осадки сегодня</div>
       <div class="metric-val" id="rainVal">8%</div>
-      <div class="metric-sub" id="rainSub">Сухо, дождь маловероятен (0.0 мм)</div>
+      <div class="metric-sub" id="rainSub">Сухо, осадков сегодня не ожидается</div>
     </div>
 
     <!-- Card 2: Wind & Gusts -->
     <div class="metric-card">
       <div class="metric-top">💨 Ветер и порывы</div>
       <div class="metric-val" id="windVal">1.5 м/с</div>
-      <div class="metric-sub" id="windSub">Порывы до 4 м/с (Штиль)</div>
+      <div class="metric-sub" id="windSub">Порывы до 4 м/с • Штиль</div>
     </div>
 
     <!-- Card 3: Air Quality / Smog -->
@@ -311,11 +347,6 @@
 
   </div>
 
-  <!-- GPS button for walks in villages -->
-  <button class="gps-action-btn" onclick="detectGPSLocation()">
-    📍 Определить погоду там, где я сейчас гуляю
-  </button>
-
   <script>
     const tg = window.Telegram?.WebApp;
     if (tg) {
@@ -325,21 +356,65 @@
     }
 
     const CITIES = {
-      gevgelija: { name: 'Гевгелия (Bulevar 18)', elev: '58 м', lat: 41.1465, lon: 22.5042 },
-      skopje:    { name: 'Скопье (Котловина)', elev: '240 м', lat: 41.9981, lon: 21.4254 },
-      mavrovo:   { name: 'Маврово (Курорт)', elev: '1280 м', lat: 41.7011, lon: 20.7389 },
-      ohrid:     { name: 'Охрид (Озеро)', elev: '695 м', lat: 41.1128, lon: 20.8019 },
-      bitola:    { name: 'Битола (Пелагония)', elev: '576 м', lat: 41.0319, lon: 21.3347 }
+      gevgelija: { name: 'Гевгелия', lat: 41.1465, lon: 22.5042 },
+      skopje:    { name: 'Скопье',   lat: 41.9981, lon: 21.4254 },
+      mavrovo:   { name: 'Маврово',  lat: 41.7011, lon: 20.7389 },
+      ohrid:     { name: 'Охрид',    lat: 41.1128, lon: 20.8019 },
+      bitola:    { name: 'Битола',   lat: 41.0319, lon: 21.3347 }
     };
 
-    let activeCityKey = 'gevgelija';
+    let activeKey = 'gevgelija';
 
-    async function fetchCityWeather(lat, lon, cityName, elev) {
-      document.getElementById('cityBadge').innerText = `📍 ${cityName} (${elev})`;
-      document.getElementById('gridHead').innerText = `Показатели: ${cityName}`;
+    function toggleDropdown() {
+      const menu = document.getElementById('dropdownMenu');
+      const btn = document.getElementById('locBtn');
+      const isOpen = menu.style.display === 'block';
+      menu.style.display = isOpen ? 'none' : 'block';
+      btn.classList.toggle('open', !isOpen);
+    }
 
+    // Close dropdown on click outside
+    document.addEventListener('click', (e) => {
+      const topNav = document.querySelector('.top-nav');
+      if (!topNav.contains(e.target)) {
+        document.getElementById('dropdownMenu').style.display = 'none';
+        document.getElementById('locBtn').classList.remove('open');
+      }
+    });
+
+    function pickCity(key) {
+      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+      activeKey = key;
+      document.getElementById('currentLocName').innerText = CITIES[key].name;
+      
+      document.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      toggleDropdown();
+      const c = CITIES[key];
+      loadWeather(c.lat, c.lon, c.name);
+    }
+
+    function pickGPS() {
+      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+      toggleDropdown();
+      if (!navigator.geolocation) {
+        alert("Геолокация недоступна");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          document.getElementById('currentLocName').innerText = "Моя локация";
+          document.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('active'));
+          loadWeather(pos.coords.latitude, pos.coords.longitude, "Текущая геопозиция");
+        },
+        () => alert("Не удалось определить GPS"),
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    }
+
+    async function loadWeather(lat, lon, cityName) {
       try {
-        // 1. Fetch Forecast from Open-Meteo
         const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_gusts_10m,surface_pressure,weather_code&hourly=temperature_2m,precipitation_probability,weather_code&daily=temperature_2m_max,precipitation_probability_max,precipitation_sum,wind_gusts_10m_max&forecast_days=2&timezone=auto&wind_speed_unit=ms`;
         const aqiUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=european_aqi,pm2_5&timezone=auto`;
 
@@ -357,11 +432,9 @@
         const gusts = Math.round(daily.wind_gusts_10m_max[0]);
         const pressMm = Math.round(cur.surface_pressure * 0.750062);
 
-        // Header Display
         document.getElementById('tempDisplay').innerText = `${temp > 0 ? '+' : ''}${temp}°`;
         document.getElementById('feelsDisplay').innerText = `Ощущается как ${app > 0 ? '+' : ''}${app}°`;
 
-        // Weather Code text
         const wcode = cur.weather_code;
         let condName = "Ясно";
         if ([1, 2].includes(wcode)) condName = "Переменная облачность";
@@ -372,7 +445,7 @@
         else if (wcode >= 95) condName = "Гроза";
         document.getElementById('condDisplay').innerText = condName;
 
-        // 1. Grid & Wire Safety Banner (Direct & Concrete advice, no bureaucracy!)
+        // Banner: Wind & Power-Grid Safety
         const banner = document.getElementById('wireBanner');
         const bIcon = document.getElementById('bannerIcon');
         const bTitle = document.getElementById('bannerTitle');
@@ -382,7 +455,7 @@
           banner.className = 'alert-banner danger';
           bIcon.innerText = '🚨';
           bTitle.innerText = `ШТОРМ: Порывы до ${gusts} м/с! Опасность проводов`;
-          bDesc.innerText = `Высокий риск схлёстывания фаз на столбах и скачка напряжения 380V. Выключите электрообогреватель и ценную технику из розеток на ночь!`;
+          bDesc.innerText = `Высокий риск схлёстывания фаз на столбах и скачка 380V. Выключите обогреватели и технику из розеток на ночь!`;
         } else if (gusts >= 13) {
           banner.className = 'alert-banner warning';
           bIcon.innerText = '⚠️';
@@ -391,33 +464,31 @@
         } else {
           banner.className = 'alert-banner safe';
           bIcon.innerText = '⚡️';
-          bTitle.innerText = 'Сеть стабильна • Опасности нет';
-          bDesc.innerText = `Ветер спокойный (порывы до ${gusts} м/с). Риск схлёстывания проводов отсутствует, обогреватели работают спокойно.`;
+          bTitle.innerText = 'Ветер спокойный • Опасности нет';
+          bDesc.innerText = `Порывы ветра слабые (до ${gusts} м/с). Линии передач не качает, обогреватели работают штатно.`;
         }
 
-        // 2. Card 1: Rain & Precipitation (Clear, separate metric!)
+        // 1. Rain
         document.getElementById('rainVal').innerText = `${rainProb}%`;
         if (rainProb <= 15) {
-          document.getElementById('rainSub').innerText = `Сухо, осадков сегодня не ожидается (0 мм)`;
+          document.getElementById('rainSub').innerText = `Сухо, осадков сегодня не ожидается`;
         } else if (rainProb <= 45) {
-          document.getElementById('rainSub').innerText = `Небольшой шанс дождя, в основном сухо (${rainSum} мм)`;
+          document.getElementById('rainSub').innerText = `Небольшой шанс дождя (${rainSum} мм)`;
         } else {
-          document.getElementById('rainSub').innerText = `Ожидается дождь (~${rainSum} мм), пригодится зонт`;
+          document.getElementById('rainSub').innerText = `Ожидается дождь (~${rainSum} мм), нужен зонт`;
         }
 
-        // 3. Card 2: Wind & Gusts
+        // 2. Wind
         document.getElementById('windVal').innerText = `${cur.wind_speed_10m} м/с`;
         let windDesc = 'Штиль';
         if (cur.wind_speed_10m > 5) windDesc = 'Ощутимый ветерок';
         else if (cur.wind_speed_10m > 2) windDesc = 'Лёгкий ветерок';
         document.getElementById('windSub').innerText = `Порывы до ${gusts} м/с • ${windDesc}`;
 
-        // 4. Card 3: Air Quality / Smog (Crucial for Skopje valley!)
+        // 3. Air Quality
         const aqi = aqiResp?.current?.european_aqi ?? 20;
-        const pm25 = aqiResp?.current?.pm2_5 ?? 8;
         const aqiEl = document.getElementById('aqiVal');
         const aqiSubEl = document.getElementById('aqiSub');
-
         if (aqi <= 25) {
           aqiEl.innerText = 'Чистый';
           aqiEl.style.color = '#10b981';
@@ -429,18 +500,18 @@
         } else if (aqi <= 75) {
           aqiEl.innerText = 'Пыльно';
           aqiEl.style.color = '#f59e0b';
-          aqiSubEl.innerText = `AQI: ${aqi} • Чувствуется взвесь / дымка`;
+          aqiSubEl.innerText = `AQI: ${aqi} • Чувствуется взвесь в воздухе`;
         } else {
           aqiEl.innerText = 'Смог';
           aqiEl.style.color = '#ef4444';
-          aqiSubEl.innerText = `AQI: ${aqi} • Котловина заблокирована смогом`;
+          aqiSubEl.innerText = `AQI: ${aqi} • В котловине скопился смог`;
         }
 
-        // 5. Card 4: Humidity & Pressure
+        // 4. Humidity & Pressure
         document.getElementById('humVal').innerText = `${cur.relative_humidity_2m}%`;
         document.getElementById('pressSub').innerText = `Давление: ${pressMm} мм рт. ст.`;
 
-        // 6. Hourly Rail
+        // Hourly
         const rail = document.getElementById('hourlyRail');
         rail.innerHTML = '';
         const nowHour = new Date().getHours();
@@ -468,40 +539,12 @@
         }
 
       } catch (err) {
-        console.error("Fetch weather error:", err);
+        console.error(err);
       }
     }
 
-    function selectCity(key) {
-      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-      activeCityKey = key;
-      document.querySelectorAll('.city-pill').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-      const c = CITIES[key];
-      fetchCityWeather(c.lat, c.lon, c.name, c.elev);
-    }
-
-    function detectGPSLocation() {
-      if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-      if (!navigator.geolocation) {
-        alert("Геолокация недоступна на устройстве");
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
-          fetchCityWeather(lat, lon, "Точка на прогулке (GPS)", "авто-высота");
-        },
-        (err) => {
-          alert("Не удалось определить GPS координаты");
-        },
-        { enableHighAccuracy: true, timeout: 8000 }
-      );
-    }
-
-    // Default load for Gevgelija
-    fetchCityWeather(CITIES.gevgelija.lat, CITIES.gevgelija.lon, CITIES.gevgelija.name, CITIES.gevgelija.elev);
+    // Init
+    loadWeather(CITIES.gevgelija.lat, CITIES.gevgelija.lon, CITIES.gevgelija.name);
   </script>
 </body>
 </html>

@@ -1,7 +1,9 @@
 """
 Privacy-First Minimalist Telegram Weather Bot & Storm Sentinel for @macedonia_meteo_bot
 - Minimalist Main Screen: only 5 essential buttons
-- Nested Settings Menu: Language, Change Home, Popular Cities, User Guide, Privacy Policy, Reset Data
+- Permanent bottom keyboard (is_persistent: True) so it never collapses
+- Seamless in-place menu navigation (editMessageText) with "« Back" button
+- Clean Settings Menu: Language, Change Home, User Guide, Privacy Policy, Reset Data
 - Full GDPR & Privacy compliance: Right to be forgotten (Reset My Data)
 - Street-level geocoding via Open-Meteo + OpenStreetMap Nominatim
 - High-precision micro-climate & power grid storm sentinel
@@ -13,7 +15,6 @@ import json
 import time
 import os
 import sys
-import uuid
 
 # Ensure UTF-8 output on Windows console
 if sys.stdout and hasattr(sys.stdout, "reconfigure"):
@@ -29,7 +30,7 @@ LEGACY_LANG_FILE = os.path.join(BASE_DIR, "user_languages.json")
 USER_PROFILES = {}
 
 WEATHER_CACHE = {}
-CACHE_TTL = 300 # 5 minutes
+CACHE_TTL = 300  # 5 minutes
 
 def load_user_profiles():
     global USER_PROFILES
@@ -70,14 +71,22 @@ def load_user_profiles():
             }
         }
 
+    # Ensure second user has default home
+    if "7568006226" in USER_PROFILES:
+        USER_PROFILES["7568006226"].setdefault("home", {
+            "name": "Gevgelija",
+            "lat": 41.1465,
+            "lon": 22.5042
+        })
+
+load_user_profiles()
+
 def save_user_profiles():
     try:
         with open(PROFILES_FILE, "w", encoding="utf-8") as f:
             json.dump(USER_PROFILES, f, indent=2, ensure_ascii=False)
     except Exception as e:
         print(f"Error saving profiles: {e}", flush=True)
-
-load_user_profiles()
 
 def get_user_lang(chat_id):
     prof = USER_PROFILES.get(str(chat_id), {})
@@ -138,54 +147,56 @@ def fetch_weather_data(lat, lon):
     )
     now = time.time()
     if url in WEATHER_CACHE:
-        cached_time, cached_data = WEATHER_CACHE[url]
+        cached_time, cached_val = WEATHER_CACHE[url]
         if now - cached_time < CACHE_TTL:
-            return cached_data
+            return cached_val
 
-    req = urllib.request.Request(url, headers={'User-Agent': 'BalkanMeteoBot/2.0'})
+    req = urllib.request.Request(url, headers={"User-Agent": "MacedoniaMeteoBot/2.0"})
     try:
         with urllib.request.urlopen(req, timeout=10) as resp:
-            data = json.loads(resp.read().decode('utf-8'))
+            data = json.loads(resp.read().decode("utf-8"))
             WEATHER_CACHE[url] = (now, data)
             return data
     except Exception as e:
-        print(f"Fetch error: {e}", flush=True)
+        print(f"Error fetching weather: {e}", flush=True)
         return None
 
-def get_weather_report(lat, lon, location_name, lang="ru"):
+def format_weather_report(lat, lon, location_name, lang="ru"):
     data = fetch_weather_data(lat, lon)
     if not data:
-        return "Service temporarily unavailable / Сервис временно недоступен"
+        return "Weather data unavailable / Ошибка получения данных" if lang == "en" else "Не удалось получить данные о погоде."
 
-    elevation = data.get('elevation', 0)
-    cur = data.get('current', {})
-    daily = data.get('daily', {})
+    cur = data.get("current", {})
+    daily = data.get("daily", {})
+    elevation = data.get("elevation", 0)
 
-    temp = round(cur.get('temperature_2m', 0))
-    app = round(cur.get('apparent_temperature', temp))
-    hum = cur.get('relative_humidity_2m', 0)
-    wind = round(cur.get('wind_speed_10m', 0), 1)
-    gusts = round(daily.get('wind_gusts_10m_max', [0])[0], 1)
-    rain_prob = daily.get('precipitation_probability_max', [0])[0]
-    rain_sum = daily.get('precipitation_sum', [0.0])[0]
-    wcode = cur.get('weather_code', 0)
-    press_mm = round(cur.get('surface_pressure', 1013) * 0.750062)
+    temp = round(cur.get("temperature_2m", 0), 1)
+    app = round(cur.get("apparent_temperature", 0), 1)
+    hum = cur.get("relative_humidity_2m", 0)
+    wind = round(cur.get("wind_speed_10m", 0), 1)
+    gusts = round(cur.get("wind_gusts_10m", 0), 1)
+    press_hpa = cur.get("surface_pressure", 1013)
+    press_mm = round(press_hpa * 0.750062)
+    wcode = cur.get("weather_code", 0)
+
+    rain_prob = daily.get("precipitation_probability_max", [0])[0] if daily.get("precipitation_probability_max") else 0
+    rain_sum = daily.get("precipitation_sum", [0])[0] if daily.get("precipitation_sum") else 0.0
 
     if lang == "en":
-        cond = "Clear"
-        if wcode in [1, 2]: cond = "Partly Cloudy"
+        cond = "Clear sky"
+        if wcode in [1, 2]: cond = "Partly cloudy"
         elif wcode == 3: cond = "Overcast"
-        elif wcode in [45, 48]: cond = "Fog"
+        elif wcode in [45, 48]: cond = "Foggy"
         elif wcode in [51, 53, 55, 61, 63, 65, 80]: cond = "Rain"
         elif wcode >= 95: cond = "Thunderstorm"
 
         wire_alert = ""
         if gusts >= 17:
-            wire_alert = f"\n\n🚨 <b>STORM ALERT:</b> Wind gusts up to <b>{gusts} m/s</b>! High danger of wire galloping & 380V phase surges. <b>Unplug space heaters and electronics tonight!</b>"
+            wire_alert = f"\n\n🚨 <b>POWER GRID STORM ALERT:</b> Wind gusts up to <b>{gusts} m/s</b>! High risk of overhead line slapping and 380V voltage surge. <b>Unplug electric heaters before sleep!</b>"
         elif gusts >= 13:
-            wire_alert = f"\n\n⚠️ <b>STRONG WIND:</b> Gusts up to <b>{gusts} m/s</b> outside. Overhead wires will sway."
+            wire_alert = f"\n\n⚠️ <b>STRONG GUSTS:</b> Gusts up to <b>{gusts} m/s</b>. Overhead lines swaying."
         else:
-            wire_alert = f"\n\n⚡️ <b>Power Grid:</b> Safe. Gusts {gusts} m/s. Overhead lines stable."
+            wire_alert = f"\n\n⚡ <b>Power Grid:</b> Safe. Gusts {gusts} m/s. Overhead lines stable."
 
         return (
             f"📍 <b>{location_name}</b> (elevation {elevation:.0f} m)\n\n"
@@ -210,7 +221,7 @@ def get_weather_report(lat, lon, location_name, lang="ru"):
         elif gusts >= 13:
             wire_alert = f"\n\n⚠️ <b>СИЛЬНЫЙ ВЕТЕР:</b> Порывы до <b>{gusts} м/с</b>, на улице раскачивает провода."
         else:
-            wire_alert = f"\n\n⚡️ <b>Электросеть:</b> Безопасно. Порывы до {gusts} м/с. Провода стабильны."
+            wire_alert = f"\n\n⚡ <b>Электросеть:</b> Безопасно. Порывы до {gusts} м/с. Провода стабильны."
 
         return (
             f"📍 <b>{location_name}</b> (высота {elevation:.0f} м)\n\n"
@@ -225,7 +236,7 @@ def get_weather_report(lat, lon, location_name, lang="ru"):
 def get_grid_safety_diagnostic(lat, lon, location_name, lang="ru"):
     data = fetch_weather_data(lat, lon)
     if not data:
-        return "Error fetching diagnostic"
+        return "Error fetching diagnostic" if lang == "en" else "Ошибка получения диагностических данных"
 
     cur_wind = round(data.get('current', {}).get('wind_speed_10m', 0), 1)
     daily_gusts = data.get('daily', {}).get('wind_gusts_10m_max', [0, 0, 0])
@@ -237,7 +248,7 @@ def get_grid_safety_diagnostic(lat, lon, location_name, lang="ru"):
         status_text = "SAFE • NO DANGER" if gust_today < 13 else ("WARNING • STRONG GUSTS" if gust_today < 17 else "CRITICAL STORM HAZARD")
         advice = "Heaters & electronics can run normally. No risk of power line flapping." if gust_today < 13 else ("Wires will sway outside. If lights flicker, turn off high-power heaters." if gust_today < 17 else "High danger of wire galloping & phase surge! Unplug space heaters tonight!")
         return (
-            f"⚡️ <b>POWER GRID SAFETY DIAGNOSTIC</b>\n"
+            f"⚡ <b>POWER GRID SAFETY DIAGNOSTIC</b>\n"
             f"📍 <b>Location:</b> {location_name}\n\n"
             f"💨 <b>Current wind:</b> {cur_wind} m/s\n"
             f"🌪 <b>Max gusts today:</b> {gust_today} m/s\n"
@@ -251,7 +262,7 @@ def get_grid_safety_diagnostic(lat, lon, location_name, lang="ru"):
         status_text = "БЕЗОПАСНО • СЕТЬ СПОКОЙНА" if gust_today < 13 else ("ВНИМАНИЕ • КРЕПКИЙ ВЕТЕР" if gust_today < 17 else "ШТОРМ • ОПАСНОСТЬ 380V")
         advice = "Обогреватели и техника работают штатно. Риск схлёстывания проводов на столбах отсутствует." if gust_today < 13 else ("Провода на улице будет раскачивать. При первых миганиях света отключите мощные приборы." if gust_today < 17 else "Высокий риск пляски проводов и межфазного замыкания 380V! Отключите обогреватель из розетки на ночь!")
         return (
-            f"⚡️ <b>ДИАГНОСТИКА БЕЗОПАСНОСТИ ЭЛЕКТРОСЕТИ</b>\n"
+            f"⚡ <b>ДИАГНОСТИКА БЕЗОПАСНОСТИ ЭЛЕКТРОСЕТИ</b>\n"
             f"📍 <b>Локация:</b> {location_name}\n\n"
             f"💨 <b>Текущий ветер:</b> {cur_wind} м/с\n"
             f"🌪 <b>Макс. порывы сегодня:</b> {gust_today} м/с\n"
@@ -283,43 +294,48 @@ def send_language_prompt(chat_id):
     })
 
 def send_main_menu(chat_id, lang):
-    """Ultra-Minimalist Main Screen: only 5 essential buttons"""
+    """
+    Ultra-Minimalist Main Screen: only 5 essential buttons.
+    is_persistent: True locks the keyboard permanently so it NEVER collapses!
+    """
     home = get_user_home(chat_id)
     home_btn = f"🏠 {home['name']}" if home else ("🏠 My Home" if lang=="en" else "🏠 Мой дом")
 
     if lang == "en":
         text = (
             "Welcome to <b>macedonia meteo bot</b> 🇲🇰\n\n"
-            "• <b>🌦 Open Meteo App</b> — interactive full-screen dashboard\n"
+            "• <b>⛅ Open Meteo App</b> — interactive full-screen dashboard\n"
             "• <b>📍 Send Location</b> — micro-climate at your GPS position\n"
             f"• <b>{home_btn}</b> — instant weather at your home\n"
-            "• <b>⚡️ Grid Safety</b> — space heater & wire storm protection\n"
-            "• <b>⚙️ Settings</b> — change home, language, privacy & cities"
+            "• <b>⚡ Grid Safety</b> — space heater & wire storm protection\n"
+            "• <b>⚙️ Settings</b> — change home, language, privacy & guide"
         )
         keyboard = {
             "keyboard": [
-                [{"text": "🌦 Open Meteo App", "web_app": {"url": WEB_APP_URL}}],
+                [{"text": "⛅ Open Meteo App", "web_app": {"url": WEB_APP_URL}}],
                 [{"text": "📍 Send Location (GPS)", "request_location": True}, {"text": home_btn}],
-                [{"text": "⚡️ Grid Safety"}, {"text": "⚙️ Settings"}]
+                [{"text": "⚡ Grid Safety"}, {"text": "⚙️ Settings"}]
             ],
-            "resize_keyboard": True
+            "resize_keyboard": True,
+            "is_persistent": True
         }
     else:
         text = (
             "Добро пожаловать в <b>macedonia meteo bot</b> 🇲🇰\n\n"
-            "• <b>🌦 Открыть метеостанцию</b> — приложение на весь экран\n"
-            "• <b>📍 Моя геопозиция</b> — погода в точке, где вы стоите\n"
-            f"• <b>{home_btn}</b> — погода у дома в один клик\n"
-            "• <b>⚡️ Проверка сети</b> — защита обогревателей от порывов ветра\n"
-            "• <b>⚙️ Настройки</b> — город, язык, инструкция и конфиденциальность"
+            "• <b>⛅ Открыть метеостанцию</b> — интерактивный веб-экран погоды\n"
+            "• <b>📍 Отправить локацию</b> — микроклимат в вашей точке GPS\n"
+            f"• <b>{home_btn}</b> — погода у вас дома в 1 клик\n"
+            "• <b>⚡ Стабильность сети</b> — защита обогревателей от штормовых порывов\n"
+            "• <b>⚙️ Настройки</b> — смена языка, домашний адрес, конфиденциальность"
         )
         keyboard = {
             "keyboard": [
-                [{"text": "🌦 Открыть метеостанцию", "web_app": {"url": WEB_APP_URL}}],
-                [{"text": "📍 Моя геопозиция (GPS)", "request_location": True}, {"text": home_btn}],
-                [{"text": "⚡️ Проверка сети"}, {"text": "⚙️ Настройки"}]
+                [{"text": "⛅ Открыть метеостанцию", "web_app": {"url": WEB_APP_URL}}],
+                [{"text": "📍 Отправить локацию (GPS)", "request_location": True}, {"text": home_btn}],
+                [{"text": "⚡ Стабильность сети"}, {"text": "⚙️ Настройки"}]
             ],
-            "resize_keyboard": True
+            "resize_keyboard": True,
+            "is_persistent": True
         }
 
     call_tg("sendMessage", {
@@ -329,138 +345,134 @@ def send_main_menu(chat_id, lang):
         "reply_markup": keyboard
     })
 
-def send_settings_menu(chat_id, lang):
-    """Structured Settings Menu: all sub-tools cleanly grouped"""
+def build_settings_payload(chat_id, lang):
+    """Constructs the settings menu in-place payload without cities clutter."""
     home = get_user_home(chat_id)
-    home_name = home["name"] if home else ("Not set / Не задан")
-
-    title = (
-        "⚙️ <b>Settings & Menu / Настройки и меню</b>\n\n"
-        f"🌐 Language / Язык: <b>{'English 🇬🇧' if lang=='en' else 'Русский 🇷🇺'}</b>\n"
-        f"🏠 Home address / Домашний адрес: <b>{home_name}</b>\n\n"
-        "Choose an option / Выберите нужный раздел:"
-    )
-
-    inline_keyboard = {
-        "inline_keyboard": [
-            [
-                {"text": "🌐 " + ("Switch to Russian 🇷🇺" if lang=="en" else "Переключить на English 🇬🇧"), "callback_data": f"toggle_lang:{'ru' if lang=='en' else 'en'}"}
-            ],
-            [
-                {"text": "🏠 " + ("Set/Change Home Address" if lang=="en" else "Изменить домашний адрес"), "callback_data": "prompt_set_home"},
-                {"text": "🏙 " + ("Cities of Macedonia" if lang=="en" else "Города Македонии"), "callback_data": "menu_cities"}
-            ],
-            [
-                {"text": "📖 " + ("User Guide" if lang=="en" else "Инструкция"), "callback_data": "menu_guide"},
-                {"text": "🔒 " + ("Privacy Policy" if lang=="en" else "Конфиденциальность"), "callback_data": "menu_privacy"}
-            ],
-            [
-                {"text": "🗑 " + ("Reset My Data (GDPR)" if lang=="en" else "Сбросить мои данные"), "callback_data": "confirm_reset"}
-            ]
-        ]
-    }
-
-    call_tg("sendMessage", {
-        "chat_id": chat_id,
-        "text": title,
-        "parse_mode": "HTML",
-        "reply_markup": inline_keyboard
-    })
-
-def send_popular_cities(chat_id, lang):
-    title = "🏙 <b>Select a city / Выберите город:</b>"
-    inline_keyboard = {
-        "inline_keyboard": [
-            [
-                {"text": "🏙 Скопье / Skopje", "callback_data": "city:skopje"},
-                {"text": "🌊 Охрид / Ohrid", "callback_data": "city:ohrid"}
-            ],
-            [
-                {"text": "🏛 Битола / Bitola", "callback_data": "city:bitola"},
-                {"text": "🍓 Струмица / Strumica", "callback_data": "city:strumica"}
-            ],
-            [
-                {"text": "🍷 Кавадарци / Kavadarci", "callback_data": "city:kavadarci"},
-                {"text": "🏔 Маврово / Mavrovo", "callback_data": "city:mavrovo"}
-            ]
-        ]
-    }
-    call_tg("sendMessage", {
-        "chat_id": chat_id,
-        "text": title,
-        "parse_mode": "HTML",
-        "reply_markup": inline_keyboard
-    })
-
-def send_user_guide(chat_id, lang):
+    home_str = f"<b>{home['name']}</b> ({home['lat']}, {home['lon']})" if home else ("<i>Not set</i>" if lang == "en" else "<i>Не задан</i>")
+    
     if lang == "en":
-        guide = (
-            "📖 <b>USER GUIDE</b>\n\n"
-            "• <b>🌦 Open Meteo App:</b> Launches full-screen interactive dashboard with atmospheric charts and barometric data.\n"
-            "• <b>📍 Send Location:</b> Real-time weather at your feet using exact GPS coordinates.\n"
-            "• <b>🏠 My Home:</b> Quick forecast for your saved location. To set/change, share GPS or type any city/street.\n"
-            "• <b>⚡️ Grid Safety:</b> Power grid & storm diagnostic. If wind gusts exceed 17 m/s, it warns you to unplug space heaters to protect against 380V phase surges from flapping overhead lines.\n"
-            "• <b>⚙️ Settings:</b> Manage language, home location, privacy policy, and GDPR data erasure."
+        text = (
+            "⚙️ <b>Settings & Profile</b>\n\n"
+            f"🌐 <b>Language:</b> English 🇬🇧\n"
+            f"🏠 <b>Home address:</b> {home_str}\n\n"
+            "Select an option below:"
+        )
+        switch_lang_btn = {"text": "🌐 Switch to Russian 🇷🇺", "callback_data": "toggle_lang:ru"}
+        set_home_btn = {"text": "🏠 Change Home Address", "callback_data": "menu_set_home"}
+        guide_btn = {"text": "📖 User Guide", "callback_data": "menu_guide"}
+        privacy_btn = {"text": "🔒 Privacy Policy", "callback_data": "menu_privacy"}
+        reset_btn = {"text": "🗑 Reset My Data (GDPR)", "callback_data": "menu_reset"}
+    else:
+        text = (
+            "⚙️ <b>Настройки и профиль</b>\n\n"
+            f"🌐 <b>Язык:</b> Русский 🇷🇺\n"
+            f"🏠 <b>Домашний адрес:</b> {home_str}\n\n"
+            "Выберите нужный раздел:"
+        )
+        switch_lang_btn = {"text": "🌐 Switch to English 🇬🇧", "callback_data": "toggle_lang:en"}
+        set_home_btn = {"text": "🏠 Задать / изменить адрес", "callback_data": "menu_set_home"}
+        guide_btn = {"text": "📖 Инструкция", "callback_data": "menu_guide"}
+        privacy_btn = {"text": "🔒 Конфиденциальность", "callback_data": "menu_privacy"}
+        reset_btn = {"text": "🗑 Сбросить мои данные", "callback_data": "menu_reset"}
+
+    inline_keyboard = {
+        "inline_keyboard": [
+            [switch_lang_btn],
+            [set_home_btn],
+            [guide_btn, privacy_btn],
+            [reset_btn]
+        ]
+    }
+    return text, inline_keyboard
+
+def send_settings_menu(chat_id, lang):
+    text, inline_keyboard = build_settings_payload(chat_id, lang)
+    call_tg("sendMessage", {
+        "chat_id": chat_id,
+        "text": text,
+        "parse_mode": "HTML",
+        "reply_markup": inline_keyboard
+    })
+
+def get_back_button(lang):
+    txt = "« 🔙 Back / Назад" if lang == "en" else "« 🔙 Назад в настройки"
+    return {"inline_keyboard": [[{"text": txt, "callback_data": "menu_settings"}]]}
+
+def build_guide_text(lang):
+    if lang == "en":
+        return (
+            "📖 <b>USER GUIDE & BOT CAPABILITIES</b>\n\n"
+            "• <b>⛅ Open Meteo App</b> — opens full interactive WebApp radar.\n"
+            "• <b>📍 Send Location</b> — micro-climate at your current GPS location.\n"
+            "• <b>🏠 My Home</b> — 1-tap weather for your saved address. You can update it anytime by typing your street/city name or sending GPS.\n"
+            "• <b>⚡ Grid Safety</b> — space heater & power grid storm protection. If gusts exceed 17 m/s, alerts advise unplugging heaters to avoid 380V damage.\n"
+            "• <b>⚙️ Settings</b> — manage language, privacy, and personal profile."
         )
     else:
-        guide = (
-            "📖 <b>КРАТКОЕ РУКОВОДСТВО</b>\n\n"
-            "• <b>🌦 Открыть метеостанцию</b> — запуск интерактивной графической станции на весь экран.\n"
-            "• <b>📍 Моя геопозиция</b> — погода в точке, где вы находитесь прямо сейчас (по спутникам GPS).\n"
-            "• <b>🏠 Мой дом</b> — прогноз у вас дома в один клик. Чтобы задать домашний адрес, напишите название города в чат или отправьте геопозицию.\n"
-            "• <b>⚡️ Проверка сети</b> — защита обогревателей от штормового ветра. Если ветер от 17 м/с, бот предупредит отключить обогреватели от розеток, чтобы избежать скачка 380V от схлёстывания проводов на столбах.\n"
+        return (
+            "📖 <b>ИНСТРУКЦИЯ ПО ИСПОЛЬЗОВАНИЮ БОТА</b>\n\n"
+            "• <b>⛅ Открыть метеостанцию</b> — интерактивная полноэкранная веб-панель с графиками и радаром.\n"
+            "• <b>📍 Отправить локацию</b> — моментальная погода в точке вашего нахождения (по спутникам GPS).\n"
+            "• <b>🏠 Мой дом</b> — прогноз у вас дома в один клик. Чтобы сохранить адрес, просто отправьте название своей улицы или геолокацию.\n"
+            "• <b>⚡ Стабильность сети</b> — защита электросети и обогревателей. При порывах от 17 м/с бот рекомендует выключить обогреватели из розеток во избежание скачка 380V.\n"
             "• <b>⚙️ Настройки</b> — смена языка, управление адресом, политика приватности и сброс данных."
         )
 
-    call_tg("sendMessage", {
-        "chat_id": chat_id,
-        "text": guide,
-        "parse_mode": "HTML"
-    })
-
-def send_privacy_policy(chat_id, lang):
+def build_privacy_text(lang):
     if lang == "en":
-        policy = (
+        return (
             "🔒 <b>PRIVACY & DATA PROTECTION POLICY</b>\n\n"
             "<b>1. What data we store:</b>\n"
-            "• An anonymous technical Telegram ID to remember your language and saved city.\n"
+            "• Anonymous technical Telegram ID to remember your language and home city.\n"
             "• Your chosen language preference (EN/RU).\n"
-            "• Your saved home coordinates (only if you voluntarily tap 'Save as My Home').\n\n"
+            "• Your saved home coordinates (only if voluntarily set).\n\n"
             "<b>2. What we NEVER collect:</b>\n"
-            "• ❌ No real names, passport or legal identity data.\n"
+            "• ❌ No real names, passports or personal identity data.\n"
             "• ❌ No phone numbers, contacts or email addresses.\n"
             "• ❌ No payment or banking details.\n"
-            "• ❌ No IP addresses — Telegram proxies and shields all network connections.\n\n"
-            "<b>3. Zero Leaks & Isolation:</b>\n"
-            "• Profiles are strictly isolated. No user can see another user's home or activity.\n"
+            "• ❌ No IP addresses — Telegram shields all network connections.\n\n"
+            "<b>3. Zero Leaks & Complete Isolation:</b>\n"
+            "• User profiles are strictly isolated; no user can ever see another user's address.\n"
             "• Data is never uploaded to GitHub or sold to 3rd parties.\n\n"
             "<b>4. Right to Erasure (GDPR Art. 17):</b>\n"
-            "• You can permanently delete all your data anytime via the <b>Reset My Data</b> button in Settings."
+            "• You can permanently delete all your data anytime via the <b>Reset My Data</b> button."
         )
     else:
-        policy = (
+        return (
             "🔒 <b>ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ И БЕЗОПАСНОСТИ</b>\n\n"
             "<b>1. Какие данные мы храним:</b>\n"
             "• Обезличенный технический Telegram ID для запоминания языка и города.\n"
             "• Выбранный язык (RU / EN).\n"
-            "• Координаты города, если вы сами нажали «Сохранить как мой дом».\n\n"
+            "• Координаты города или улицы, если вы сами нажали «Сохранить как мой дом».\n\n"
             "<b>2. Чего мы НЕ собираем принципиально:</b>\n"
             "• ❌ Никаких паспортов, реальных имён или фамилий.\n"
             "• ❌ Никаких номеров телефонов, контактов или email.\n"
             "• ❌ Никаких платёжных данных или банковских карт.\n"
-            "• ❌ Никаких IP-адресов — Telegram полностью скрывает ваш IP через свои защищённые шлюзы.\n\n"
+            "• ❌ Никаких IP-адресов — Telegram полностью скрывает ваш IP через свои шлюзы.\n\n"
             "<b>3. Изоляция и безопасность:</b>\n"
-            "• Профили полностью изолированы: чужой пользователь никогда не узнает ваш адрес, а вы не видите чужие.\n"
+            "• Профили полностью изолированы: чужой пользователь никогда не узнает ваш адрес.\n"
             "• Данные никогда не выгружаются на GitHub и не передаются рекламодателям.\n\n"
             "<b>4. Право на забвение (GDPR):</b>\n"
-            "• Вы можете в любой момент полностью стереть свой профиль кнопкой <b>«Сбросить мои данные»</b> в Настройках."
+            "• Вы можете в любой момент полностью стереть свой профиль кнопкой <b>«Сбросить мои данные»</b>."
         )
 
-    call_tg("sendMessage", {
-        "chat_id": chat_id,
-        "text": policy,
-        "parse_mode": "HTML"
-    })
+def build_set_home_text(lang):
+    if lang == "en":
+        return (
+            "🏠 <b>SET OR CHANGE HOME ADDRESS</b>\n\n"
+            "To set your personal home location, you can:\n"
+            "1. Simply <b>type the name of your city, street, or address</b> in this chat (e.g. <code>Gevgelija</code>, <code>Bulevar Gevgelija</code>, or <code>Skopje</code>).\n"
+            "2. Or tap <b>📍 Send Location</b> from the bottom keyboard.\n\n"
+            "The bot will find your coordinates and ask if you want to save it as your private Home address."
+        )
+    else:
+        return (
+            "🏠 <b>ЗАДАТЬ ИЛИ ИЗМЕНИТЬ ДОМАШНИЙ АДРЕС</b>\n\n"
+            "Чтобы настроить домашнюю точку, вы можете:\n"
+            "1. Просто <b>напишите название своего города, улицы или адреса</b> в этот чат (например: <code>Гевгелия</code>, <code>Булевар Гевгелия</code>, <code>Скопье</code>).\n"
+            "2. Либо нажмите кнопку <b>📍 Отправить локацию</b> на нижней панели.\n\n"
+            "Бот определит координаты и предложит закрепить их как ваш домашний адрес."
+        )
 
 def handle_callback_query(cq):
     cq_id = cq.get("id")
@@ -473,6 +485,7 @@ def handle_callback_query(cq):
     call_tg("answerCallbackQuery", {"callback_query_id": cq_id})
     lang = get_user_lang(chat_id)
 
+    # Initial Language Picker
     if data.startswith("set_lang:"):
         new_lang = data.split(":")[1]
         set_user_lang(chat_id, new_lang)
@@ -487,318 +500,302 @@ def handle_callback_query(cq):
         send_main_menu(chat_id, new_lang)
         return
 
+    # Language Toggle from Settings
     if data.startswith("toggle_lang:"):
         new_lang = data.split(":")[1]
         set_user_lang(chat_id, new_lang)
+        # Refresh persistent bottom keyboard
         send_main_menu(chat_id, new_lang)
-        send_settings_menu(chat_id, new_lang)
+        # Edit settings message in-place
+        text, markup = build_settings_payload(chat_id, new_lang)
+        if msg_id:
+            call_tg("editMessageText", {
+                "chat_id": chat_id,
+                "message_id": msg_id,
+                "text": text,
+                "parse_mode": "HTML",
+                "reply_markup": markup
+            })
         return
 
+    # In-Place Back to Settings Menu
+    if data == "menu_settings":
+        text, markup = build_settings_payload(chat_id, lang)
+        if msg_id:
+            call_tg("editMessageText", {
+                "chat_id": chat_id,
+                "message_id": msg_id,
+                "text": text,
+                "parse_mode": "HTML",
+                "reply_markup": markup
+            })
+        return
+
+    # User Guide in-place
     if data == "menu_guide":
-        send_user_guide(chat_id, lang)
+        text = build_guide_text(lang)
+        markup = get_back_button(lang)
+        if msg_id:
+            call_tg("editMessageText", {
+                "chat_id": chat_id,
+                "message_id": msg_id,
+                "text": text,
+                "parse_mode": "HTML",
+                "reply_markup": markup
+            })
         return
 
+    # Privacy Policy in-place
     if data == "menu_privacy":
-        send_privacy_policy(chat_id, lang)
+        text = build_privacy_text(lang)
+        markup = get_back_button(lang)
+        if msg_id:
+            call_tg("editMessageText", {
+                "chat_id": chat_id,
+                "message_id": msg_id,
+                "text": text,
+                "parse_mode": "HTML",
+                "reply_markup": markup
+            })
         return
 
-    if data == "menu_cities":
-        send_popular_cities(chat_id, lang)
+    # Set Home Address in-place
+    if data == "menu_set_home":
+        text = build_set_home_text(lang)
+        markup = get_back_button(lang)
+        if msg_id:
+            call_tg("editMessageText", {
+                "chat_id": chat_id,
+                "message_id": msg_id,
+                "text": text,
+                "parse_mode": "HTML",
+                "reply_markup": markup
+            })
         return
 
-    if data == "confirm_reset":
-        confirm_msg = (
-            "⚠️ <b>Are you sure you want to delete all your data?</b>\n\n"
-            "This will erase your saved home location and preferences."
-        ) if lang == "en" else (
-            "⚠️ <b>Вы уверены, что хотите удалить все свои данные?</b>\n\n"
-            "Будет стёрт ваш домашний адрес и профиль из памяти бота."
-        )
-        btns = {
-            "inline_keyboard": [
-                [
-                    {"text": "✅ Yes, delete / Да, удалить" if lang=="en" else "✅ Да, удалить всё", "callback_data": "execute_reset"},
-                    {"text": "❌ Cancel / Отмена", "callback_data": "cancel_reset"}
-                ]
-            ]
-        }
-        call_tg("sendMessage", {
-            "chat_id": chat_id,
-            "text": confirm_msg,
-            "parse_mode": "HTML",
-            "reply_markup": btns
-        })
-        return
-
-    if data == "execute_reset":
+    # Reset Data (GDPR) in-place
+    if data == "menu_reset":
         reset_user_data(chat_id)
-        msg_txt = (
-            "🗑 <b>All your data has been permanently deleted.</b>\n\n"
-            "Send /start if you wish to configure the bot again."
-        ) if lang == "en" else (
-            "🗑 <b>Все ваши данные безвозвратно удалены из памяти бота.</b>\n\n"
-            "Если захотите настроить бота заново, отправьте команду /start."
+        text = (
+            "🗑 <b>Your personal profile and saved location have been permanently erased.</b>\n\n"
+            "Under GDPR Art. 17 (Right to Erasure), no traces remain in our storage."
+            if lang == "en" else
+            "🗑 <b>Ваш профиль и сохранённая геолокация полностью удалены.</b>\n\n"
+            "В соответствии со стандартом GDPR (право на забвение), все ваши данные стёрты без возможности восстановления."
+        )
+        markup = get_back_button(lang)
+        if msg_id:
+            call_tg("editMessageText", {
+                "chat_id": chat_id,
+                "message_id": msg_id,
+                "text": text,
+                "parse_mode": "HTML",
+                "reply_markup": markup
+            })
+        send_main_menu(chat_id, lang)
+        return
+
+    # Save Location as Home
+    if data.startswith("save_home:"):
+        parts = data.split(":")
+        lat = float(parts[1])
+        lon = float(parts[2])
+        loc_name = parts[3]
+        set_user_home(chat_id, loc_name, lat, lon)
+        saved_text = (
+            f"✅ <b>{loc_name}</b> has been saved as your private Home address!"
+            if lang == "en" else
+            f"✅ <b>{loc_name}</b> успешно сохранён как ваш домашний адрес!"
         )
         if msg_id:
             call_tg("editMessageText", {
                 "chat_id": chat_id,
                 "message_id": msg_id,
-                "text": msg_txt,
+                "text": saved_text,
+                "parse_mode": "HTML"
+            })
+        send_main_menu(chat_id, lang)
+        return
+
+def handle_text_message(msg):
+    chat_id = msg["chat"]["id"]
+    text = msg.get("text", "").strip()
+    lang = get_user_lang(chat_id)
+
+    if text.startswith("/start"):
+        if str(chat_id) not in USER_PROFILES:
+            send_language_prompt(chat_id)
+        else:
+            send_main_menu(chat_id, lang)
+        return
+
+    if text == "⚙️ Settings" or text == "⚙️ Настройки" or text == "/settings":
+        send_settings_menu(chat_id, lang)
+        return
+
+    if text == "⚡ Grid Safety" or text == "⚡ Стабильность сети" or text == "⚡ Проверка сети":
+        home = get_user_home(chat_id)
+        lat = home["lat"] if home else 41.1465
+        lon = home["lon"] if home else 22.5042
+        loc_name = home["name"] if home else "Гевгелия"
+        diag = get_grid_safety_diagnostic(lat, lon, loc_name, lang)
+        call_tg("sendMessage", {
+            "chat_id": chat_id,
+            "text": diag,
+            "parse_mode": "HTML"
+        })
+        return
+
+    if text.startswith("🏠"):
+        home = get_user_home(chat_id)
+        if home:
+            rep = format_weather_report(home["lat"], home["lon"], f"🏠 {home['name']}", lang)
+            call_tg("sendMessage", {
+                "chat_id": chat_id,
+                "text": rep,
+                "parse_mode": "HTML"
+            })
+        else:
+            prompt = (
+                "🏠 You haven't set a home address yet!\n\n"
+                "Send your city name in the chat (e.g. <code>Gevgelija</code> or <code>Skopje</code>) or tap <b>📍 Send Location</b>."
+                if lang == "en" else
+                "🏠 Вы ещё не задали домашний адрес!\n\n"
+                "Напишите название своего города в чат (например: <code>Гевгелия</code> или <code>Скопье</code>) или нажмите <b>📍 Отправить локацию</b>."
+            )
+            call_tg("sendMessage", {
+                "chat_id": chat_id,
+                "text": prompt,
                 "parse_mode": "HTML"
             })
         return
 
-    if data == "cancel_reset":
-        if msg_id:
-            call_tg("deleteMessage", {"chat_id": chat_id, "message_id": msg_id})
-        return
+    # Geocoding search (City / Street lookup)
+    query = text
+    encoded = urllib.parse.quote(query)
+    geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={encoded}&count=1&language={'en' if lang=='en' else 'ru'}&format=json"
+    results = None
+    try:
+        req = urllib.request.Request(geo_url, headers={"User-Agent": "MacedoniaMeteoBot/2.0"})
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            results = data.get("results")
+    except Exception as e:
+        print(f"Geocoding error: {e}", flush=True)
 
-    if data == "prompt_set_home":
-        prompt = (
-            "📍 <b>How to set your Home Address:</b>\n\n"
-            "1. Tap the <b>📎 Attachment icon</b> and share your Location (GPS).\n"
-            "2. OR type your street or city directly into chat (e.g. <i>Skopje</i>, <i>Bitola</i>, <i>Marshal Tito, Gevgelija</i>).\n"
-            "3. Then tap the <b>📌 Save as My Home</b> button under the result.\n\n"
-            "🔒 <i>Your location remains strictly confidential in your private profile.</i>"
-        ) if lang == "en" else (
-            "📍 <b>Как сохранить домашний адрес:</b>\n\n"
-            "1. Нажмите на скрепку 📎 и отправьте вашу геопозицию (GPS).\n"
-            "2. ЛИБО просто напишите в чат улицу или город (например: <i>Скопье</i>, <i>Битола</i>, <i>Маршал Тито, Гевгелия</i>).\n"
-            "3. Затем нажмите кнопку <b>📌 Сохранить как мой дом</b> под появившимся прогнозом.\n\n"
-            "🔒 <i>Ваш адрес хранится строго конфиденциально и не виден другим.</i>"
-        )
-        call_tg("sendMessage", {"chat_id": chat_id, "text": prompt, "parse_mode": "HTML"})
-        return
+    # Secondary OSM Nominatim check for streets & small Macedonian settlements
+    if not results:
+        try:
+            nom_url = f"https://nominatim.openstreetmap.org/search?q={encoded}&countrycodes=mk&format=json&limit=1"
+            req2 = urllib.request.Request(nom_url, headers={"User-Agent": "MacedoniaMeteoBot/2.0 (contact@meteo.internal)"})
+            with urllib.request.urlopen(req2, timeout=8) as resp2:
+                nom_data = json.loads(resp2.read().decode("utf-8"))
+                if nom_data:
+                    item = nom_data[0]
+                    results = [{
+                        "name": item.get("display_name", "").split(",")[0],
+                        "latitude": float(item.get("lat")),
+                        "longitude": float(item.get("lon"))
+                    }]
+        except Exception as e:
+            print(f"Nominatim error: {e}", flush=True)
 
-    if data.startswith("save_home:"):
-        parts = data.split(":", 3)
-        if len(parts) >= 4:
-            lat = float(parts[1])
-            lon = float(parts[2])
-            name = parts[3]
-            set_user_home(chat_id, name, lat, lon)
-            ack = (
-                f"✅ <b>'{name}' saved as your personal Home Location!</b>\n\n"
-                "Tap <b>🏠 My Home</b> in the menu anytime to check it."
-            ) if lang == "en" else (
-                f"✅ <b>'{name}' успешно сохранён как ваш домашний адрес!</b>\n\n"
-                "Теперь кнопка <b>🏠 Мой дом</b> всегда покажет погоду дома в 1 клик."
-            )
-            call_tg("sendMessage", {"chat_id": chat_id, "text": ack, "parse_mode": "HTML"})
-            send_main_menu(chat_id, lang)
-        return
+    if results:
+        match = results[0]
+        lat = match.get("latitude")
+        lon = match.get("longitude")
+        name = match.get("name", query)
+        country = match.get("country", "")
+        display = f"{name}, {country}" if country else name
+        rep = format_weather_report(lat, lon, display, lang)
 
-    if data.startswith("city:"):
-        city_key = data.split(":")[1]
-        cities = {
-            "skopje": (41.9981, 21.4254, "Skopje Valley" if lang=="en" else "Скопье (Котловина)"),
-            "ohrid": (41.1128, 20.8019, "Ohrid Lakefront" if lang=="en" else "Охрид (Озеро)"),
-            "bitola": (41.0319, 21.3347, "Bitola (Pelagonia)" if lang=="en" else "Битола (Пелагония)"),
-            "strumica": (41.4375, 22.6433, "Strumica Valley" if lang=="en" else "Струмица"),
-            "kavadarci": (41.4331, 22.0119, "Kavadarci (Tikves)" if lang=="en" else "Кавадарци (Тиквеш)"),
-            "mavrovo": (41.6547, 20.7336, "Mavrovo National Park" if lang=="en" else "Маврово (Нацпарк)")
-        }
-        if city_key in cities:
-            lat, lon, cname = cities[city_key]
-            rep = get_weather_report(lat, lon, cname, lang)
-            call_tg("sendMessage", {"chat_id": chat_id, "text": rep, "parse_mode": "HTML"})
-        return
-
-def handle_message(msg):
-    chat_id = msg.get("chat", {}).get("id")
-    if not chat_id:
-        return
-
-    lang = get_user_lang(chat_id)
-
-    # GPS Location message
-    if "location" in msg:
-        loc = msg["location"]
-        lat = loc.get("latitude")
-        lon = loc.get("longitude")
-        loc_name = "Your GPS Point" if lang=="en" else "Ваша геопозиция"
-        rep = get_weather_report(lat, lon, loc_name, lang)
-        save_btn_txt = "📌 Save as My Home" if lang=="en" else "📌 Сохранить как мой дом"
-        reply_markup = {
+        save_btn_text = "🏠 Save as My Home" if lang == "en" else "🏠 Сохранить как мой дом"
+        inline = {
             "inline_keyboard": [
-                [{"text": save_btn_txt, "callback_data": f"save_home:{lat:.4f}:{lon:.4f}:{loc_name}"}]
+                [{"text": save_btn_text, "callback_data": f"save_home:{lat}:{lon}:{name}"}]
             ]
         }
         call_tg("sendMessage", {
             "chat_id": chat_id,
             "text": rep,
             "parse_mode": "HTML",
-            "reply_markup": reply_markup
+            "reply_markup": inline
         })
-        return
-
-    text = msg.get("text", "").strip()
-
-    # /start handler
-    if text.startswith("/start"):
-        send_language_prompt(chat_id)
-        return
-
-    if text in ["/help", "📖 User Guide", "📖 Инструкция"]:
-        send_user_guide(chat_id, lang)
-        return
-
-    if text in ["/privacy", "🔒 Privacy Policy", "🔒 Конфиденциальность"]:
-        send_privacy_policy(chat_id, lang)
-        return
-
-    if text in ["/reset"]:
-        reset_user_data(chat_id)
+    else:
+        not_found = (
+            f"🔍 Location '<b>{query}</b>' not found.\nTry entering city name or exact street in Macedonia."
+            if lang == "en" else
+            f"🔍 Локация '<b>{query}</b>' не найдена.\nПопробуйте написать название города или улицы в Македонии (например: <code>Гевгелия</code>, <code>Скопье</code>, <code>Охрид</code>)."
+        )
         call_tg("sendMessage", {
             "chat_id": chat_id,
-            "text": "🗑 Ваши данные удалены. Отправьте /start для начала работы."
+            "text": not_found,
+            "parse_mode": "HTML"
         })
+
+def handle_location_message(msg):
+    chat_id = msg["chat"]["id"]
+    loc = msg.get("location", {})
+    lat = loc.get("latitude")
+    lon = loc.get("longitude")
+    lang = get_user_lang(chat_id)
+
+    if lat is None or lon is None:
         return
 
-    if text in ["⚙️ Settings", "⚙️ Настройки", "/settings", "/lang"]:
-        send_settings_menu(chat_id, lang)
-        return
-
-    if text in ["/cities", "🏙 Popular Cities", "🏙 Города Македонии"]:
-        send_popular_cities(chat_id, lang)
-        return
-
-    if text in ["/app", "🌦 Open Meteo App", "🌦 Открыть метеостанцию"]:
-        btn_text = "Launch Web App" if lang=="en" else "Запустить приложение"
-        call_tg("sendMessage", {
-            "chat_id": chat_id,
-            "text": "👇 Click below to launch the full-screen interactive station:" if lang=="en" else "👇 Нажмите кнопку ниже, чтобы открыть интерактивное приложение:",
-            "reply_markup": {
-                "inline_keyboard": [
-                    [{"text": f"🌦 {btn_text}", "web_app": {"url": WEB_APP_URL}}]
-                ]
-            }
-        })
-        return
-
-    # Check for Home button
-    home = get_user_home(chat_id)
-    is_home_press = False
-    if home and (text in [f"🏠 {home['name']}", "🏠 My Home", "🏠 Мой дом"]):
-        is_home_press = True
-    elif text in ["🏠 Set My Home", "🏠 Задать мой дом", "🏠 My Home", "🏠 Мой дом"]:
-        is_home_press = True
-
-    if is_home_press:
-        if home:
-            rep = get_weather_report(home["lat"], home["lon"], f"🏠 {home['name']}", lang)
-            change_txt = "✏️ Change Home Address" if lang=="en" else "✏️ Изменить домашний адрес"
-            call_tg("sendMessage", {
-                "chat_id": chat_id,
-                "text": rep,
-                "parse_mode": "HTML",
-                "reply_markup": {
-                    "inline_keyboard": [
-                        [{"text": change_txt, "callback_data": "prompt_set_home"}]
-                    ]
-                }
-            })
-        else:
-            prompt = (
-                "🏠 <b>You haven't set your Home Address yet.</b>\n\n"
-                "• Tap <b>📍 Send Location (GPS)</b> below.\n"
-                "• OR simply type the name of your street/city in chat (e.g. <i>Bitola</i> or <i>Gevgelija</i>).\n\n"
-                "🔒 <i>Your location is strictly confidential and never shared with others.</i>"
-            ) if lang == "en" else (
-                "🏠 <b>У вас пока не сохранён домашний адрес.</b>\n\n"
-                "• Нажмите <b>📍 Моя геопозиция (GPS)</b> внизу.\n"
-                "• ЛИБО просто напишите в чат улицу или город (например: <i>Битола</i>, <i>Гевгелия</i>, <i>Скопье</i>).\n\n"
-                "🔒 <i>Ваш адрес строго конфиденциален и не виден другим пользователям.</i>"
-            )
-            call_tg("sendMessage", {"chat_id": chat_id, "text": prompt, "parse_mode": "HTML"})
-        return
-
-    if text in ["/storm", "⚡️ Grid Safety", "⚡️ Проверка сети"]:
-        if home:
-            diag = get_grid_safety_diagnostic(home["lat"], home["lon"], home["name"], lang)
-        else:
-            diag = get_grid_safety_diagnostic(41.1465, 22.5042, "Balkan Grid Station (Gevgelija)", lang)
-        call_tg("sendMessage", {"chat_id": chat_id, "text": diag, "parse_mode": "HTML"})
-        return
-
-    # Geocoding search: Stage 1 (Open-Meteo for cities & towns)
-    encoded = urllib.parse.quote(text)
-    geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={encoded}&count=1&format=json"
+    place_name = f"GPS ({lat:.3f}, {lon:.3f})"
     try:
-        req = urllib.request.Request(geo_url, headers={'User-Agent': 'BalkanMeteoBot/2.0'})
-        with urllib.request.urlopen(req, timeout=8) as resp:
-            geo_data = json.loads(resp.read().decode('utf-8'))
-            results = geo_data.get('results', [])
-            if results:
-                r = results[0]
-                city_name = f"{r['name']}, {r.get('country','')}"
-                rep = get_weather_report(r['latitude'], r['longitude'], city_name, lang)
-                save_btn_txt = "📌 Save as My Home" if lang=="en" else "📌 Сохранить как мой дом"
-                reply_markup = {
-                    "inline_keyboard": [
-                        [{"text": save_btn_txt, "callback_data": f"save_home:{r['latitude']:.4f}:{r['longitude']:.4f}:{r['name']}"}]
-                    ]
-                }
-                call_tg("sendMessage", {
-                    "chat_id": chat_id,
-                    "text": rep,
-                    "parse_mode": "HTML",
-                    "reply_markup": reply_markup
-                })
-                return
-    except Exception:
-        pass
-
-    # Geocoding search: Stage 2 (OpenStreetMap Nominatim for exact streets, boulevards & addresses)
-    try:
-        nom_url = f"https://nominatim.openstreetmap.org/search?q={encoded}&format=json&limit=1&accept-language=ru,mk,en"
-        nom_req = urllib.request.Request(nom_url, headers={'User-Agent': 'MacedoniaMeteoBot/2.0 (contact@meteo.internal)'})
-        with urllib.request.urlopen(nom_req, timeout=8) as resp:
-            nom_data = json.loads(resp.read().decode('utf-8'))
-            if nom_data:
-                r = nom_data[0]
-                lat = float(r['lat'])
-                lon = float(r['lon'])
-                display_parts = r.get('display_name', '').split(',')
-                short_name = ', '.join([p.strip() for p in display_parts[:3]]) if len(display_parts) >= 3 else r.get('display_name', '')
-                rep = get_weather_report(lat, lon, short_name, lang)
-                save_btn_txt = "📌 Save as My Home" if lang=="en" else "📌 Сохранить как мой дом"
-                home_save_name = display_parts[0].strip() if display_parts else "Home"
-                reply_markup = {
-                    "inline_keyboard": [
-                        [{"text": save_btn_txt, "callback_data": f"save_home:{lat:.4f}:{lon:.4f}:{home_save_name}"}]
-                    ]
-                }
-                call_tg("sendMessage", {
-                    "chat_id": chat_id,
-                    "text": rep,
-                    "parse_mode": "HTML",
-                    "reply_markup": reply_markup
-                })
-                return
+        rev_url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json&zoom=16"
+        req = urllib.request.Request(rev_url, headers={"User-Agent": "MacedoniaMeteoBot/2.0 (contact@meteo.internal)"})
+        with urllib.request.urlopen(req, timeout=6) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            addr = data.get("address", {})
+            road = addr.get("road")
+            town = addr.get("town") or addr.get("city") or addr.get("village") or addr.get("suburb")
+            if road and town:
+                place_name = f"{road}, {town}"
+            elif town:
+                place_name = town
     except Exception as e:
-        print(f"Nominatim error: {e}", flush=True)
+        print(f"Reverse geocode error: {e}", flush=True)
 
-    fallback_msg = "Command not recognized. Tap /app or choose from the menu." if lang=="en" else "Команда не распознана. Нажмите /app или выберите кнопку в меню."
-    call_tg("sendMessage", {"chat_id": chat_id, "text": fallback_msg})
+    rep = format_weather_report(lat, lon, place_name, lang)
+    save_btn_text = "🏠 Save as My Home" if lang == "en" else "🏠 Сохранить как мой дом"
+    inline = {
+        "inline_keyboard": [
+            [{"text": save_btn_text, "callback_data": f"save_home:{lat}:{lon}:{place_name}"}]
+        ]
+    }
+    call_tg("sendMessage", {
+        "chat_id": chat_id,
+        "text": rep,
+        "parse_mode": "HTML",
+        "reply_markup": inline
+    })
 
-def run_loop():
-    print("Bot polling started with Ultra-Minimalist UI & Privacy for @macedonia_meteo_bot...", flush=True)
-    offset = 0
+def main():
+    print(f"Starting Macedonia Meteo Bot daemon (@macedonia_meteo_bot)...", flush=True)
+    last_update_id = 0
+
     while True:
         try:
-            res = call_tg("getUpdates", {"offset": offset, "timeout": 20})
-            if res and res.get("ok"):
-                for upd in res.get("result", []):
-                    offset = upd["update_id"] + 1
-                    if "callback_query" in upd:
-                        handle_callback_query(upd["callback_query"])
-                    elif "message" in upd:
-                        handle_message(upd["message"])
+            updates = call_tg("getUpdates", {"offset": last_update_id + 1, "timeout": 20})
+            if updates and updates.get("ok"):
+                for u in updates.get("result", []):
+                    last_update_id = u.get("update_id", last_update_id)
+
+                    if "callback_query" in u:
+                        handle_callback_query(u["callback_query"])
+                    elif "message" in u:
+                        msg = u["message"]
+                        if "location" in msg:
+                            handle_location_message(msg)
+                        elif "text" in msg:
+                            handle_text_message(msg)
             time.sleep(0.5)
         except Exception as e:
-            print(f"Polling loop exception: {e}", flush=True)
-            time.sleep(3)
+            print(f"Exception in polling loop: {e}", flush=True)
+            time.sleep(2)
 
 if __name__ == "__main__":
-    run_loop()
+    main()

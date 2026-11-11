@@ -1,8 +1,9 @@
 """
 Privacy-First Minimalist Telegram Weather Bot & Storm Sentinel for @macedonia_meteo_bot
-- Minimalist Main Screen: only 5 essential buttons
+- Minimalist Main Screen with intuitive hierarchy
 - Permanent bottom keyboard (is_persistent: True) so it never collapses
-- Seamless in-place menu navigation (editMessageText) with "« Back" button
+- Seamless in-place menu navigation (editMessageText) with "« Back" buttons
+- Integrated Popular Cities of Macedonia (Skopje, Ohrid, Bitola, Gevgelija, Strumica, Kavadarci, Prilep, Tetovo)
 - Clean Settings Menu: Language, Change Home, User Guide, Privacy Policy, Reset Data
 - Full GDPR & Privacy compliance: Right to be forgotten (Reset My Data)
 - Street-level geocoding via Open-Meteo + OpenStreetMap Nominatim
@@ -31,6 +32,17 @@ USER_PROFILES = {}
 
 WEATHER_CACHE = {}
 CACHE_TTL = 300  # 5 minutes
+
+POPULAR_CITIES = [
+    {"name_ru": "🏛 Скопье", "name_en": "🏛 Skopje", "lat": 41.9981, "lon": 21.4254, "clean_ru": "Скопье", "clean_en": "Skopje"},
+    {"name_ru": "🌊 Охрид", "name_en": "🌊 Ohrid", "lat": 41.1172, "lon": 20.8016, "clean_ru": "Охрид", "clean_en": "Ohrid"},
+    {"name_ru": "🍇 Битола", "name_en": "🍇 Bitola", "lat": 41.0297, "lon": 21.3292, "clean_ru": "Битола", "clean_en": "Bitola"},
+    {"name_ru": "☀️ Гевгелия", "name_en": "☀️ Gevgelija", "lat": 41.1465, "lon": 22.5042, "clean_ru": "Гевгелия", "clean_en": "Gevgelija"},
+    {"name_ru": "⛰ Струмица", "name_en": "⛰ Strumica", "lat": 41.4378, "lon": 22.6433, "clean_ru": "Струмица", "clean_en": "Strumica"},
+    {"name_ru": "🍷 Кавадарци", "name_en": "🍷 Kavadarci", "lat": 41.4331, "lon": 22.0119, "clean_ru": "Кавадарци", "clean_en": "Kavadarci"},
+    {"name_ru": "🏰 Прилеп", "name_en": "🏰 Prilep", "lat": 41.3444, "lon": 21.5542, "clean_ru": "Прилеп", "clean_en": "Prilep"},
+    {"name_ru": "🏔 Тетово", "name_en": "🏔 Tetovo", "lat": 42.0106, "lon": 20.9714, "clean_ru": "Тетово", "clean_en": "Tetovo"},
+]
 
 def load_user_profiles():
     global USER_PROFILES
@@ -71,7 +83,6 @@ def load_user_profiles():
             }
         }
 
-    # Ensure second user has default home
     if "7568006226" in USER_PROFILES:
         USER_PROFILES["7568006226"].setdefault("home", {
             "name": "Gevgelija",
@@ -295,7 +306,7 @@ def send_language_prompt(chat_id):
 
 def send_main_menu(chat_id, lang):
     """
-    Ultra-Minimalist Main Screen: only 5 essential buttons.
+    Minimalist Main Screen with intuitive hierarchy.
     is_persistent: True locks the keyboard permanently so it NEVER collapses!
     """
     home = get_user_home(chat_id)
@@ -304,17 +315,19 @@ def send_main_menu(chat_id, lang):
     if lang == "en":
         text = (
             "Welcome to <b>macedonia meteo bot</b> 🇲🇰\n\n"
-            "• <b>⛅ Open Meteo App</b> — interactive full-screen dashboard\n"
+            "• <b>⛅ Open Meteo App</b> — interactive radar & charts\n"
             "• <b>📍 Send Location</b> — micro-climate at your GPS position\n"
             f"• <b>{home_btn}</b> — instant weather at your home\n"
+            "• <b>🏙 Cities of Macedonia</b> — Skopje, Ohrid, Bitola & more\n"
             "• <b>⚡ Grid Safety</b> — space heater & wire storm protection\n"
-            "• <b>⚙️ Settings</b> — change home, language, privacy & guide"
+            "• <b>⚙️ Settings</b> — change home, language & privacy"
         )
         keyboard = {
             "keyboard": [
                 [{"text": "⛅ Open Meteo App", "web_app": {"url": WEB_APP_URL}}],
                 [{"text": "📍 Send Location (GPS)", "request_location": True}, {"text": home_btn}],
-                [{"text": "⚡ Grid Safety"}, {"text": "⚙️ Settings"}]
+                [{"text": "🏙 Cities of Macedonia"}, {"text": "⚡ Grid Safety"}],
+                [{"text": "⚙️ Settings"}]
             ],
             "resize_keyboard": True,
             "is_persistent": True
@@ -322,17 +335,19 @@ def send_main_menu(chat_id, lang):
     else:
         text = (
             "Добро пожаловать в <b>macedonia meteo bot</b> 🇲🇰\n\n"
-            "• <b>⛅ Открыть метеостанцию</b> — интерактивный веб-экран погоды\n"
+            "• <b>⛅ Открыть метеостанцию</b> — интерактивный радар и графики\n"
             "• <b>📍 Отправить локацию</b> — микроклимат в вашей точке GPS\n"
             f"• <b>{home_btn}</b> — погода у вас дома в 1 клик\n"
+            "• <b>🏙 Города Македонии</b> — Скопье, Охрид, Битола и др.\n"
             "• <b>⚡ Стабильность сети</b> — защита обогревателей от штормовых порывов\n"
-            "• <b>⚙️ Настройки</b> — смена языка, домашний адрес, конфиденциальность"
+            "• <b>⚙️ Настройки</b> — смена языка, домашний адрес, приватность"
         )
         keyboard = {
             "keyboard": [
                 [{"text": "⛅ Открыть метеостанцию", "web_app": {"url": WEB_APP_URL}}],
                 [{"text": "📍 Отправить локацию (GPS)", "request_location": True}, {"text": home_btn}],
-                [{"text": "⚡ Стабильность сети"}, {"text": "⚙️ Настройки"}]
+                [{"text": "🏙 Города Македонии"}, {"text": "⚡ Стабильность сети"}],
+                [{"text": "⚙️ Настройки"}]
             ],
             "resize_keyboard": True,
             "is_persistent": True
@@ -343,6 +358,46 @@ def send_main_menu(chat_id, lang):
         "text": text,
         "parse_mode": "HTML",
         "reply_markup": keyboard
+    })
+
+def build_cities_payload(lang):
+    """Builds inline grid of popular Macedonian regional centers."""
+    if lang == "en":
+        text = (
+            "🏙 <b>Popular Cities of Macedonia</b>\n\n"
+            "Choose a city below for an instant micro-climate report, or simply <b>type any city, village, or street name</b> into this chat:"
+        )
+    else:
+        text = (
+            "🏙 <b>Популярные города Македонии</b>\n\n"
+            "Выберите город для мгновенного прогноза или просто <b>напишите название любого посёлка или улицы</b> в этот чат:"
+        )
+
+    grid = []
+    # 4 rows of 2 cities
+    for i in range(0, len(POPULAR_CITIES), 2):
+        row = []
+        c1 = POPULAR_CITIES[i]
+        btn1_text = c1["name_en"] if lang == "en" else c1["name_ru"]
+        clean1 = c1["clean_en"] if lang == "en" else c1["clean_ru"]
+        row.append({"text": btn1_text, "callback_data": f"city:{clean1}:{c1['lat']}:{c1['lon']}"})
+
+        if i + 1 < len(POPULAR_CITIES):
+            c2 = POPULAR_CITIES[i + 1]
+            btn2_text = c2["name_en"] if lang == "en" else c2["name_ru"]
+            clean2 = c2["clean_en"] if lang == "en" else c2["clean_ru"]
+            row.append({"text": btn2_text, "callback_data": f"city:{clean2}:{c2['lat']}:{c2['lon']}"})
+        grid.append(row)
+
+    return text, {"inline_keyboard": grid}
+
+def send_cities_menu(chat_id, lang):
+    text, markup = build_cities_payload(lang)
+    call_tg("sendMessage", {
+        "chat_id": chat_id,
+        "text": text,
+        "parse_mode": "HTML",
+        "reply_markup": markup
     })
 
 def build_settings_payload(chat_id, lang):
@@ -404,8 +459,9 @@ def build_guide_text(lang):
             "📖 <b>USER GUIDE & BOT CAPABILITIES</b>\n\n"
             "• <b>⛅ Open Meteo App</b> — opens full interactive WebApp radar.\n"
             "• <b>📍 Send Location</b> — micro-climate at your current GPS location.\n"
-            "• <b>🏠 My Home</b> — 1-tap weather for your saved address. You can update it anytime by typing your street/city name or sending GPS.\n"
-            "• <b>⚡ Grid Safety</b> — space heater & power grid storm protection. If gusts exceed 17 m/s, alerts advise unplugging heaters to avoid 380V damage.\n"
+            "• <b>🏠 My Home</b> — 1-tap weather for your saved address.\n"
+            "• <b>🏙 Cities of Macedonia</b> — instant forecast for 8 major regional centers.\n"
+            "• <b>⚡ Grid Safety</b> — space heater & power grid storm protection.\n"
             "• <b>⚙️ Settings</b> — manage language, privacy, and personal profile."
         )
     else:
@@ -413,9 +469,10 @@ def build_guide_text(lang):
             "📖 <b>ИНСТРУКЦИЯ ПО ИСПОЛЬЗОВАНИЮ БОТА</b>\n\n"
             "• <b>⛅ Открыть метеостанцию</b> — интерактивная полноэкранная веб-панель с графиками и радаром.\n"
             "• <b>📍 Отправить локацию</b> — моментальная погода в точке вашего нахождения (по спутникам GPS).\n"
-            "• <b>🏠 Мой дом</b> — прогноз у вас дома в один клик. Чтобы сохранить адрес, просто отправьте название своей улицы или геолокацию.\n"
-            "• <b>⚡ Стабильность сети</b> — защита электросети и обогревателей. При порывах от 17 м/с бот рекомендует выключить обогреватели из розеток во избежание скачка 380V.\n"
-            "• <b>⚙️ Настройки</b> — смена языка, управление адресом, политика приватности и сброс данных."
+            "• <b>🏠 Мой дом</b> — прогноз у вас дома в один клик.\n"
+            "• <b>🏙 Города Македонии</b> — моментальный прогноз для 8 ключевых городов страны в 1 клик.\n"
+            "• <b>⚡ Стабильность сети</b> — защита электросети и обогревателей от штормовых порывов 380V.\n"
+            "• <b>⚙️ Настройки</b> — смена языка, управление адресом, приватность и сброс данных."
         )
 
 def build_privacy_text(lang):
@@ -504,9 +561,7 @@ def handle_callback_query(cq):
     if data.startswith("toggle_lang:"):
         new_lang = data.split(":")[1]
         set_user_lang(chat_id, new_lang)
-        # Refresh persistent bottom keyboard
         send_main_menu(chat_id, new_lang)
-        # Edit settings message in-place
         text, markup = build_settings_payload(chat_id, new_lang)
         if msg_id:
             call_tg("editMessageText", {
@@ -521,6 +576,19 @@ def handle_callback_query(cq):
     # In-Place Back to Settings Menu
     if data == "menu_settings":
         text, markup = build_settings_payload(chat_id, lang)
+        if msg_id:
+            call_tg("editMessageText", {
+                "chat_id": chat_id,
+                "message_id": msg_id,
+                "text": text,
+                "parse_mode": "HTML",
+                "reply_markup": markup
+            })
+        return
+
+    # In-Place Back to Cities Menu
+    if data == "show_cities":
+        text, markup = build_cities_payload(lang)
         if msg_id:
             call_tg("editMessageText", {
                 "chat_id": chat_id,
@@ -595,6 +663,31 @@ def handle_callback_query(cq):
         send_main_menu(chat_id, lang)
         return
 
+    # City Selected from Grid
+    if data.startswith("city:"):
+        parts = data.split(":")
+        name = parts[1]
+        lat = float(parts[2])
+        lon = float(parts[3])
+        rep = format_weather_report(lat, lon, name, lang)
+        save_btn_text = "🏠 Save as My Home" if lang == "en" else "🏠 Сохранить как мой дом"
+        back_cities_text = "« 🔙 Back to Cities" if lang == "en" else "« 🔙 К списку городов"
+        inline = {
+            "inline_keyboard": [
+                [{"text": save_btn_text, "callback_data": f"save_home:{lat}:{lon}:{name}"}],
+                [{"text": back_cities_text, "callback_data": "show_cities"}]
+            ]
+        }
+        if msg_id:
+            call_tg("editMessageText", {
+                "chat_id": chat_id,
+                "message_id": msg_id,
+                "text": rep,
+                "parse_mode": "HTML",
+                "reply_markup": inline
+            })
+        return
+
     # Save Location as Home
     if data.startswith("save_home:"):
         parts = data.split(":")
@@ -629,11 +722,15 @@ def handle_text_message(msg):
             send_main_menu(chat_id, lang)
         return
 
-    if text == "⚙️ Settings" or text == "⚙️ Настройки" or text == "/settings":
+    if text in ["⚙️ Settings", "⚙️ Настройки", "/settings"]:
         send_settings_menu(chat_id, lang)
         return
 
-    if text == "⚡ Grid Safety" or text == "⚡ Стабильность сети" or text == "⚡ Проверка сети":
+    if text in ["🏙 Cities of Macedonia", "🏙 Города Македонии", "🏙 Cities", "🏙 Города", "/cities"]:
+        send_cities_menu(chat_id, lang)
+        return
+
+    if text in ["⚡ Grid Safety", "⚡ Стабильность сети", "⚡ Проверка сети"]:
         home = get_user_home(chat_id)
         lat = home["lat"] if home else 41.1465
         lon = home["lon"] if home else 22.5042

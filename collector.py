@@ -175,6 +175,9 @@ latest = {
 with open("latest.json", "w", encoding="utf-8") as f:
     json.dump(latest, f, ensure_ascii=False, indent=2)
 
+with open("voice.txt", "w", encoding="utf-8") as f:
+    f.write(spoken_text)
+
 # 4. Save history.csv (Cluster Row)
 row_vals = [now_str]
 for k in STATIONS.keys():

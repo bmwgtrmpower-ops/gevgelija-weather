@@ -29,7 +29,7 @@ import datetime
 # 37 Strategic Meteorological Nodes across ALL of North Macedonia + Borders
 STATIONS = {
     # --- Домашний регион (Гевгелия и юг) ---
-    'home': {'name': 'Гевгелия (Bulevar Gevgelija 18)', 'region': 'Гевгелия', 'lat': 41.14649, 'lon': 22.50416},
+    'home': {'name': 'Гевгелия (Gevgelija Central)', 'region': 'Гевгелия', 'lat': 41.14649, 'lon': 22.50416},
     'koz':  {'name': 'Кожуф (Горный пик, 1370м)', 'region': 'Кожуф', 'lat': 41.21000, 'lon': 22.28000},
     'bog':  {'name': 'Богданци (Ветропарк)', 'region': 'Богданци', 'lat': 41.20000, 'lon': 22.58000},
     'doj':  {'name': 'Дойранское озеро (Стар Дојран)', 'region': 'Дойран', 'lat': 41.18000, 'lon': 22.72000},
@@ -234,12 +234,12 @@ elif app_round >= 9:
 else:
     cloth = "Одевайтесь теплее, на улице зябко."
 
-spoken_text = f"На Бульваре Гевгелия сейчас {t_text}, {feel_text}. На улице {sky_text}, {rain_text}. {wind_text.capitalize()}, {air_text}. {cloth}{wind_danger_alert}"
+spoken_text = f"В Гевгелии сейчас {t_text}, {feel_text}. На улице {sky_text}, {rain_text}. {wind_text.capitalize()}, {air_text}. {cloth}{wind_danger_alert}"
 
 # 3. Save latest.json with all 37 nodes
 latest = {
     "timestamp": now_str,
-    "address": "Bulevar Gevgelija 18, Gevgelija",
+    "address": "Gevgelija, North Macedonia",
     "spoken_text": spoken_text,
     "home": home,
     "stations_count": len(res_dict),
@@ -301,7 +301,7 @@ table_str = '\n'.join(table_rows)
 
 readme = f"""# 🇲🇰 Национальная метеорологическая сеть: Вся Северная Македония (37 станций)
 
-Сверхточный микроклиматический мониторинг для **Bulevar Gevgelija 18, Гевгелија** (41.1465° N, 22.5042° E).  
+Сверхточный микроклиматический мониторинг для **Gevgelija Central, Гевгелија** (41.1465° N, 22.5042° E).  
 Кластер включает все 8 регионов Македонии, горнолыжные центры (Маврово, Попова Шапка, Пелистер, Крушево), озёра и морские ворота Греции и Албании.
 
 ### 📡 Живая сводка по всем 37 станциям на {now_str}:
@@ -344,7 +344,7 @@ if gust_today_max >= 13.0 and last_alerted != today_iso:
     urgency = "🚨 <b>ШТОРМОВОЕ ПРЕДУПРЕЖДЕНИЕ: ОПАСНОСТЬ ДЛЯ ЭЛЕКТРОСЕТИ</b>" if gust_today_max >= 17.0 else "⚠️ <b>ВНИМАНИЕ: СИЛЬНЫЙ ПОСЫВИСТЫЙ ВЕТЕР</b>"
     tg_msg = (
         f"{urgency}\n\n"
-        f"📍 <b>Локация:</b> Бульвар Гевгелия 18\n"
+        f"📍 <b>Локация:</b> Гевгелия\n"
         f"💨 <b>Прогноз порывов ветра:</b> до <b>{gust_today_max:.0f} м/с</b> ({gust_today_max*3.6:.0f} км/ч)\n\n"
         f"⚡️ <b>Причина риска:</b> При порывах выше 13–15 м/с возникает галопирование (пляска) воздушных линий передач. "
         f"Схлёстывание фазных проводов может вызвать скачок напряжения до 380–400 Вольт!\n\n"

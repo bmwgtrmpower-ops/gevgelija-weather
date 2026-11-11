@@ -29,8 +29,8 @@ jobs:
 
       - name: 4. Run Balkan Deep Trainer (160 Stations Ingestion & Ensemble Fit)
         env:
-          TELEGRAM_BOT_TOKEN: "8608012499:AAGDPYIvA2G3jTo7JP7vsYhYN8gnIGodamw"
-          CREATOR_CHAT_ID: "542400016"
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CREATOR_CHAT_ID: ${{ secrets.CREATOR_CHAT_ID }}
         run: |
           python -u balkan_deep_trainer.py
 

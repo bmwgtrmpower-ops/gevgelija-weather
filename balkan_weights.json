@@ -1,0 +1,185 @@
+{
+  "timestamp_utc": "2026-11-11T20:17:58.263028Z",
+  "hubs": {
+    "MK_GEVGELIJA": {
+      "intercept": 0.113,
+      "top_features": [
+        {
+          "MK_BOGORODICA_temp": 0.6315
+        },
+        {
+          "vardar_gradient": 0.3537
+        },
+        {
+          "MK_SKOPJE_temp": 0.2401
+        },
+        {
+          "lapse_pop_skp": -0.1126
+        },
+        {
+          "MK_POPOVA_SAPKA_temp": 0.0668
+        },
+        {
+          "RS_BG_SURCIN_temp": 0.0506
+        },
+        {
+          "MK_KRUSEVO_temp": -0.0443
+        },
+        {
+          "MK_DELCEVO_temp": 0.0439
+        },
+        {
+          "RS_BG_VRACAR_temp": -0.0437
+        },
+        {
+          "MK_MAVROVO_temp": -0.0372
+        }
+      ],
+      "mae": 0.082
+    },
+    "MK_SKOPJE": {
+      "intercept": -0.549,
+      "top_features": [
+        {
+          "vardar_gradient": -0.6281
+        },
+        {
+          "lapse_pop_skp": -0.4462
+        },
+        {
+          "MK_GEVGELIJA_temp": 0.3536
+        },
+        {
+          "MK_BOGORODICA_temp": 0.3229
+        },
+        {
+          "MK_POPOVA_SAPKA_temp": 0.2945
+        },
+        {
+          "RS_BG_VRACAR_temp": -0.1193
+        },
+        {
+          "MK_VALANDOVO_temp": -0.0979
+        },
+        {
+          "MK_KOCANI_temp": 0.0919
+        },
+        {
+          "MK_KRUSEVO_temp": -0.0865
+        },
+        {
+          "MK_BEROVO_temp": 0.0778
+        }
+      ],
+      "mae": 0.433
+    },
+    "RS_BG_VRACAR": {
+      "intercept": -0.006,
+      "top_features": [
+        {
+          "RS_BG_KOSUTNJAK_temp": 0.5273
+        },
+        {
+          "RS_BG_SURCIN_temp": 0.4141
+        },
+        {
+          "MK_MAVROVO_temp": 0.0584
+        },
+        {
+          "MK_STRAZA_temp": -0.0562
+        },
+        {
+          "MK_OHRID_AIR_temp": -0.0462
+        },
+        {
+          "RS_NOVI_SAD_temp": 0.038
+        },
+        {
+          "MK_VINICA_temp": 0.0359
+        },
+        {
+          "MK_DELCEVO_temp": -0.0336
+        },
+        {
+          "MK_KOCANI_temp": -0.0317
+        },
+        {
+          "MK_STRUGA_temp": 0.0308
+        }
+      ],
+      "mae": 0.347
+    },
+    "RS_NIS": {
+      "intercept": -1.413,
+      "top_features": [
+        {
+          "MK_SKOPJE_AIR_temp": 0.2551
+        },
+        {
+          "RS_BG_VRACAR_temp": 0.2545
+        },
+        {
+          "MK_MAVROVO_temp": -0.2408
+        },
+        {
+          "RS_BG_SURCIN_temp": 0.2209
+        },
+        {
+          "MK_KRIVA_PALANKA_temp": 0.1367
+        },
+        {
+          "MK_TETOVO_temp": 0.1285
+        },
+        {
+          "MK_PLETVAR_temp": 0.1263
+        },
+        {
+          "MK_KICEVO_temp": 0.1259
+        },
+        {
+          "MK_DELCEVO_temp": 0.1221
+        },
+        {
+          "MK_STRAZA_temp": 0.1181
+        }
+      ],
+      "mae": 0.818
+    },
+    "GR_THESSALONIKI_AIR": {
+      "intercept": 15.0,
+      "top_features": [
+        {
+          "sin_day": 0.0
+        },
+        {
+          "cos_day": 0.0
+        },
+        {
+          "lapse_kop_nis": 0.0
+        },
+        {
+          "lapse_pop_skp": 0.0
+        },
+        {
+          "teleconnection_bg_th": 0.0
+        },
+        {
+          "vardar_gradient": 0.0
+        },
+        {
+          "MK_SKOPJE_temp": 0.0
+        },
+        {
+          "MK_SKOPJE_wind": 0.0
+        },
+        {
+          "MK_SKOPJE_precip": 0.0
+        },
+        {
+          "MK_SKOPJE_u": 0.0
+        }
+      ],
+      "mae": 0.0
+    }
+  }
+}

@@ -1,48 +1,219 @@
 {
-  "timestamp_utc": "2026-11-11T19:54:59.434180Z",
+  "timestamp_utc": "2026-11-11T20:17:58.263028Z",
   "mesh_stations_count": 160,
+  "history_window": "2014-01-01 to 2025-12-31 (12 years)",
   "eval_period": "2025-01-01 to 2025-12-31",
   "hubs_evaluation": {
     "MK_GEVGELIJA": {
       "target_station": "MK_GEVGELIJA",
-      "mae_celsius": 0.03,
-      "rmse_celsius": 0.07,
-      "accuracy_within_1c_percent": 100.0,
+      "mae_celsius": 0.082,
+      "rmse_celsius": 0.158,
+      "accuracy_within_05c_percent": 98.4,
+      "accuracy_within_1c_percent": 99.5,
       "accuracy_within_2c_percent": 100.0,
-      "eval_days": 365
+      "eval_days": 365,
+      "top_influential_features": [
+        {
+          "MK_BOGORODICA_temp": 0.6315
+        },
+        {
+          "vardar_gradient": 0.3537
+        },
+        {
+          "MK_SKOPJE_temp": 0.2401
+        },
+        {
+          "lapse_pop_skp": -0.1126
+        },
+        {
+          "MK_POPOVA_SAPKA_temp": 0.0668
+        },
+        {
+          "RS_BG_SURCIN_temp": 0.0506
+        },
+        {
+          "MK_KRUSEVO_temp": -0.0443
+        },
+        {
+          "MK_DELCEVO_temp": 0.0439
+        },
+        {
+          "RS_BG_VRACAR_temp": -0.0437
+        },
+        {
+          "MK_MAVROVO_temp": -0.0372
+        }
+      ],
+      "ridge_intercept": 0.113
     },
     "MK_SKOPJE": {
       "target_station": "MK_SKOPJE",
-      "mae_celsius": 0.57,
-      "rmse_celsius": 1.06,
-      "accuracy_within_1c_percent": 86.0,
-      "accuracy_within_2c_percent": 99.7,
-      "eval_days": 365
+      "mae_celsius": 0.433,
+      "rmse_celsius": 0.924,
+      "accuracy_within_05c_percent": 71.0,
+      "accuracy_within_1c_percent": 94.8,
+      "accuracy_within_2c_percent": 98.9,
+      "eval_days": 365,
+      "top_influential_features": [
+        {
+          "vardar_gradient": -0.6281
+        },
+        {
+          "lapse_pop_skp": -0.4462
+        },
+        {
+          "MK_GEVGELIJA_temp": 0.3536
+        },
+        {
+          "MK_BOGORODICA_temp": 0.3229
+        },
+        {
+          "MK_POPOVA_SAPKA_temp": 0.2945
+        },
+        {
+          "RS_BG_VRACAR_temp": -0.1193
+        },
+        {
+          "MK_VALANDOVO_temp": -0.0979
+        },
+        {
+          "MK_KOCANI_temp": 0.0919
+        },
+        {
+          "MK_KRUSEVO_temp": -0.0865
+        },
+        {
+          "MK_BEROVO_temp": 0.0778
+        }
+      ],
+      "ridge_intercept": -0.549
     },
     "RS_BG_VRACAR": {
       "target_station": "RS_BG_VRACAR",
-      "mae_celsius": 0.0,
-      "rmse_celsius": 0.0,
-      "accuracy_within_1c_percent": 100.0,
-      "accuracy_within_2c_percent": 100.0,
-      "eval_days": 365
+      "mae_celsius": 0.347,
+      "rmse_celsius": 1.168,
+      "accuracy_within_05c_percent": 84.1,
+      "accuracy_within_1c_percent": 97.3,
+      "accuracy_within_2c_percent": 99.5,
+      "eval_days": 365,
+      "top_influential_features": [
+        {
+          "RS_BG_KOSUTNJAK_temp": 0.5273
+        },
+        {
+          "RS_BG_SURCIN_temp": 0.4141
+        },
+        {
+          "MK_MAVROVO_temp": 0.0584
+        },
+        {
+          "MK_STRAZA_temp": -0.0562
+        },
+        {
+          "MK_OHRID_AIR_temp": -0.0462
+        },
+        {
+          "RS_NOVI_SAD_temp": 0.038
+        },
+        {
+          "MK_VINICA_temp": 0.0359
+        },
+        {
+          "MK_DELCEVO_temp": -0.0336
+        },
+        {
+          "MK_KOCANI_temp": -0.0317
+        },
+        {
+          "MK_STRUGA_temp": 0.0308
+        }
+      ],
+      "ridge_intercept": -0.006
     },
     "RS_NIS": {
       "target_station": "RS_NIS",
-      "mae_celsius": 0.0,
-      "rmse_celsius": 0.0,
-      "accuracy_within_1c_percent": 100.0,
-      "accuracy_within_2c_percent": 100.0,
-      "eval_days": 365
+      "mae_celsius": 0.818,
+      "rmse_celsius": 1.027,
+      "accuracy_within_05c_percent": 36.2,
+      "accuracy_within_1c_percent": 66.6,
+      "accuracy_within_2c_percent": 95.1,
+      "eval_days": 365,
+      "top_influential_features": [
+        {
+          "MK_SKOPJE_AIR_temp": 0.2551
+        },
+        {
+          "RS_BG_VRACAR_temp": 0.2545
+        },
+        {
+          "MK_MAVROVO_temp": -0.2408
+        },
+        {
+          "RS_BG_SURCIN_temp": 0.2209
+        },
+        {
+          "MK_KRIVA_PALANKA_temp": 0.1367
+        },
+        {
+          "MK_TETOVO_temp": 0.1285
+        },
+        {
+          "MK_PLETVAR_temp": 0.1263
+        },
+        {
+          "MK_KICEVO_temp": 0.1259
+        },
+        {
+          "MK_DELCEVO_temp": 0.1221
+        },
+        {
+          "MK_STRAZA_temp": 0.1181
+        }
+      ],
+      "ridge_intercept": -1.413
     },
     "GR_THESSALONIKI_AIR": {
       "target_station": "GR_THESSALONIKI_AIR",
       "mae_celsius": 0.0,
       "rmse_celsius": 0.0,
+      "accuracy_within_05c_percent": 100.0,
       "accuracy_within_1c_percent": 100.0,
       "accuracy_within_2c_percent": 100.0,
-      "eval_days": 365
+      "eval_days": 365,
+      "top_influential_features": [
+        {
+          "sin_day": 0.0
+        },
+        {
+          "cos_day": 0.0
+        },
+        {
+          "lapse_kop_nis": 0.0
+        },
+        {
+          "lapse_pop_skp": 0.0
+        },
+        {
+          "teleconnection_bg_th": 0.0
+        },
+        {
+          "vardar_gradient": 0.0
+        },
+        {
+          "MK_SKOPJE_temp": 0.0
+        },
+        {
+          "MK_SKOPJE_wind": 0.0
+        },
+        {
+          "MK_SKOPJE_precip": 0.0
+        },
+        {
+          "MK_SKOPJE_u": 0.0
+        }
+      ],
+      "ridge_intercept": 15.0
     }
   },
-  "overall_mean_mae": 0.12
+  "overall_mean_mae": 0.336
 }

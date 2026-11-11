@@ -364,28 +364,28 @@
 
     .bottom-sheet {
       position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      left: 12px;
+      right: 12px;
+      bottom: 16px;
       background: #111827;
-      border-top: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 24px 24px 0 0;
-      padding: 14px 18px 24px 18px;
-      z-index: 999;
-      transform: translateY(105%);
-      transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
-      max-height: 88vh;
-      display: none; /* strictly hidden until opened */
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 26px;
+      padding: 16px 18px 20px 18px;
+      z-index: 1000;
+      max-height: 86vh;
+      display: none;
       flex-direction: column;
-      box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.8);
-      will-change: transform;
-      touch-action: pan-y;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+      opacity: 0;
+      transform: translateY(24px) scale(0.97);
+      transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
     .bottom-sheet.open {
       display: flex;
-      transform: translateY(0);
+      opacity: 1;
+      transform: translateY(0) scale(1);
     }
 
     .sheet-handle-wrap {
@@ -935,7 +935,9 @@
     if (tg) {
       tg.ready();
       tg.expand();
-      try { try { tg.disableClosingConfirmation(); } catch(e){} } catch(e){}
+      try { try { tg.disableClosingConfirmation(); } catch(e){}
+      try { tg.disableVerticalSwipes(); } catch(e){}
+      try { if (tg.requestFullscreen) tg.requestFullscreen(); } catch(e){} } catch(e){}
     }
 
     const MACEDONIA_CITIES = [
@@ -1351,15 +1353,101 @@
       openSheetById('weatherSceneSheet');
     }
 
+    
+    function openMetricDetail(type) {
+      if (!cachedWeather) return;
+      const body = document.getElementById('detailModalBody');
+      const title = document.getElementById('detailModalTitle');
+      const { w, aqi } = cachedWeather;
+      const cur = w.current;
+
+      if (type === 'rain') {
+        title.innerText = '🌧 Анализ осадков и облачности';
+        const p = w.daily?.precipitation_probability_max?.[selectedDayIndex] ?? 0;
+        const sum = w.daily?.precipitation_sum?.[selectedDayIndex] ?? 0;
+        body.innerHTML = `
+          <div class="detail-highlight">
+            <div class="detail-big-val">${p}%</div>
+            <div class="detail-big-sub">Вероятность дождя • Осадки: ${sum} мм</div>
+          </div>
+          <div class="detail-text">Прогноз физической модели конвективных осадков ECMWF + ансамбль станций.</div>
+          <div class="detail-row"><span class="label">Осадки за сутки:</span><span class="val">${sum} мм</span></div>
+          <div class="detail-row"><span class="label">Интенсивность:</span><span class="val">${sum > 5 ? 'Умеренный / Сильный' : (sum > 0 ? 'Слабый' : 'Без осадков')}</span></div>
+          <div class="detail-row"><span class="label">Локация:</span><span class="val">${currentCity.name_ru} (${currentCity.ele} м)</span></div>
+        `;
+      } else if (type === 'wind') {
+        title.innerText = '💨 Аэродинамика и безопасность сети';
+        const gusts = Math.round(cur.wind_gusts_10m);
+        body.innerHTML = `
+          <div class="detail-highlight">
+            <div class="detail-big-val">${cur.wind_speed_10m} м/с</div>
+            <div class="detail-big-sub">Порывы до ${gusts} м/с</div>
+          </div>
+          <div class="detail-text">Критический порог схлестывания фазных проводов на столбах на Балканах составляет 17.0 м/с.</div>
+          <div class="detail-row"><span class="label">Текущая скорость:</span><span class="val">${cur.wind_speed_10m} м/с</span></div>
+          <div class="detail-row"><span class="label">Макс. порыв:</span><span class="val">${gusts} м/с</span></div>
+          <div class="detail-row"><span class="label">Угроза 380V:</span><span class="val" style="color: ${gusts >= 17 ? 'var(--danger)' : 'var(--success)'};">${gusts >= 17 ? 'ВЫСОКАЯ (Отключите сеть!)' : 'Безопасно'}</span></div>
+        `;
+      } else if (type === 'aqi') {
+        title.innerText = '🍃 Качество воздуха и смог';
+        const aqiVal = aqi?.current?.european_aqi ?? 20;
+        const pm = aqi?.current?.pm2_5 ?? 10;
+        body.innerHTML = `
+          <div class="detail-highlight">
+            <div class="detail-big-val">${aqiVal} AQI</div>
+            <div class="detail-big-sub">PM2.5: ${pm} мкг/м³</div>
+          </div>
+          <div class="detail-text">В межгорных котловинах Македонии зимой часто образуется температурная инверсия, запирающая дым у земли.</div>
+          <div class="detail-row"><span class="label">Статус:</span><span class="val">${aqiVal <= 25 ? 'Отличное' : (aqiVal <= 50 ? 'Умеренное' : 'Смог')}</span></div>
+          <div class="detail-row"><span class="label">Проветривание:</span><span class="val">${aqiVal <= 40 ? 'Рекомендуется' : 'Ограничить'}</span></div>
+        `;
+      } else if (type === 'hum') {
+        title.innerText = '💧 Влажность, давление и точка росы';
+        const hum = cur.relative_humidity_2m;
+        const pMm = Math.round(cur.surface_pressure * 0.750062);
+        const a = 17.27, b = 237.7;
+        const alpha = ((a * cur.temperature_2m) / (b + cur.temperature_2m)) + Math.log(hum / 100.0);
+        const dew = (b * alpha) / (a - alpha);
+        body.innerHTML = `
+          <div class="detail-highlight">
+            <div class="detail-big-val">${hum}%</div>
+            <div class="detail-big-sub">Точка росы: ${dew.toFixed(1)}°C</div>
+          </div>
+          <div class="detail-text">Точка росы определяет температуру конденсации водяного пара и туманообразования.</div>
+          <div class="detail-row"><span class="label">Относительная влажность:</span><span class="val">${hum}%</span></div>
+          <div class="detail-row"><span class="label">Атмосферное давление:</span><span class="val">${pMm} мм рт. ст.</span></div>
+          <div class="detail-row"><span class="label">Точка росы (Магнус):</span><span class="val">${dew.toFixed(1)}°C</span></div>
+        `;
+      } else if (type === 'temp') {
+        title.innerText = '🌡 Температурный профиль';
+        const t = Math.round(cur.temperature_2m);
+        const app = Math.round(cur.apparent_temperature);
+        body.innerHTML = `
+          <div class="detail-highlight">
+            <div class="detail-big-val">${t > 0 ? '+' : ''}${t}°C</div>
+            <div class="detail-big-sub">Ощущается как: ${app > 0 ? '+' : ''}${app}°C</div>
+          </div>
+          <div class="detail-text">Рассчитано физико-информированным ансамблем с учетом высоты над уровнем моря (${currentCity.ele} м) и теплоемкости долины.</div>
+          <div class="detail-row"><span class="label">Город:</span><span class="val">${currentCity.name_ru}</span></div>
+          <div class="detail-row"><span class="label">Высота над уровнем моря:</span><span class="val">${currentCity.ele} м</span></div>
+          <div class="detail-row"><span class="label">Регион:</span><span class="val">${currentCity.region}</span></div>
+        `;
+      }
+
+      openSheetById('metricDetailSheet');
+    }
+
     function openFrostSheet() {
       openSheetById('frostSheet');
     }
 
-    // Enable Swipe-Down gesture on all bottom sheets (Jitter-Proof & Button-Safe)
+    // Touch & Click Bindings for Modals (Zero Lag, No Stuck Sheets)
     document.addEventListener('DOMContentLoaded', () => {
       // Direct touch and click binding on all close buttons
       document.querySelectorAll('.sheet-close-btn, .sheet-action-close-btn, .sheet-handle-wrap').forEach(btn => {
-        btn.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+        btn.addEventListener('touchstart', e => {
+          e.stopPropagation();
+        }, { passive: true });
         btn.addEventListener('touchend', e => {
           e.preventDefault();
           e.stopPropagation();
@@ -1369,54 +1457,10 @@
           e.stopPropagation();
           closeAllSheets();
         });
-      });
-
-      document.querySelectorAll('.bottom-sheet').forEach(sheet => {
-        let startY = 0;
-        let currentY = 0;
-        let isDragging = false;
-
-        sheet.addEventListener('touchstart', e => {
-          // If touching any close button, action button, input or interactive item, DO NOT initiate swipe!
-          if (e.target.closest('.sheet-close-btn, .sheet-action-close-btn, button, input, .frost-tag, .frost-btn, .city-item, a')) {
-            startY = 0;
-            isDragging = false;
-            return;
-          }
-          if (sheet.scrollTop <= 5) {
-            startY = e.touches[0].clientY;
-            isDragging = false;
-          } else {
-            startY = 0;
-          }
-        }, { passive: true });
-
-        sheet.addEventListener('touchmove', e => {
-          if (startY > 0) {
-            currentY = e.touches[0].clientY;
-            const diff = currentY - startY;
-            // Only start dragging if finger moved down by MORE than 10px (filters out tap tremors!)
-            if (diff > 10) {
-              isDragging = true;
-              sheet.style.transform = `translateY(${diff}px)`;
-            }
-          }
-        }, { passive: true });
-
-        sheet.addEventListener('touchend', e => {
-          if (isDragging && startY > 0 && currentY > 0) {
-            const diff = currentY - startY;
-            if (diff > 70) {
-              sheet.style.transform = '';
-              closeAllSheets();
-            } else {
-              sheet.style.transform = '';
-            }
-          }
-          startY = 0;
-          currentY = 0;
-          isDragging = false;
-        }, { passive: true });
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          closeAllSheets();
+        });
       });
     });
 

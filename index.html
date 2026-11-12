@@ -237,22 +237,34 @@
 
     /* 3-Day Mini Overview Strip */
     .days-overview-strip {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      display: flex;
       gap: 8px;
+      overflow-x: auto;
+      padding: 4px 2px 10px 2px;
       margin-bottom: 12px;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+      contain: layout style;
     }
+    .days-overview-strip::-webkit-scrollbar { display: none; }
+
     .day-card-preview {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 10px 8px;
+      min-width: 90px;
+      max-width: 90px;
+      flex-shrink: 0;
+      scroll-snap-align: start;
       text-align: center;
       cursor: pointer;
-      transition: transform 0.12s ease, border-color 0.12s ease;
+      transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
       contain: content;
       will-change: transform;
     }
+    .day-card-preview:active { transform: scale(0.96); }
     .day-card-preview.active {
       background: rgba(56, 189, 248, 0.16);
       border: 1.5px solid #38bdf8;
@@ -262,11 +274,40 @@
       color: #38bdf8;
       font-weight: 800;
     }
-    .day-card-preview:active { transform: scale(0.96); }
-    .dcp-name { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
-    .dcp-icon { font-size: 22px; margin-bottom: 2px; }
-    .dcp-temps { font-size: 13px; font-weight: 800; color: #fff; }
-    .dcp-rain { font-size: 10px; color: #38bdf8; font-weight: 600; margin-top: 2px; }
+    .dcp-name {
+      font-size: 13px;
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      margin-bottom: 2px;
+      white-space: nowrap;
+    }
+    .dcp-date {
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 4px;
+      white-space: nowrap;
+    }
+    .dcp-icon {
+      font-size: 22px;
+      margin-bottom: 3px;
+      line-height: 1.1;
+    }
+    .dcp-temps {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.3px;
+      white-space: nowrap;
+    }
+    .dcp-rain {
+      font-size: 10px;
+      color: #38bdf8;
+      font-weight: 600;
+      margin-top: 2px;
+      white-space: nowrap;
+    }
 
     /* Hourly Rail (60 FPS Native Momentum Scrolling) */
     .hourly-rail {
@@ -1103,7 +1144,7 @@
 
     async function loadWeatherData(lat, lon) {
       try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_gusts_10m,surface_pressure,weather_code&hourly=temperature_2m,apparent_temperature,precipitation_probability,weather_code,wind_gusts_10m,soil_temperature_0cm,dew_point_2m&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,wind_gusts_10m_max&forecast_days=4&timezone=auto&wind_speed_unit=ms`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_gusts_10m,surface_pressure,weather_code&hourly=temperature_2m,apparent_temperature,precipitation_probability,weather_code,wind_gusts_10m,soil_temperature_0cm,dew_point_2m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,wind_gusts_10m_max&forecast_days=10&timezone=auto&wind_speed_unit=ms`;
         const aqiUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=european_aqi,pm2_5&timezone=auto`;
 
         const [wRes, aRes] = await Promise.all([
@@ -1112,6 +1153,10 @@
         ]);
 
         cachedWeather = { w: wRes, aqi: aRes };
+        // Preserve selectedDayIndex if within valid range, otherwise default to 0 (Today)
+        if (typeof selectedDayIndex !== 'number' || selectedDayIndex < 0 || selectedDayIndex >= (wRes.daily?.time?.length || 1)) {
+          selectedDayIndex = 0;
+        }
         renderMainView();
       } catch(err) {
         console.error(err);
@@ -1158,6 +1203,26 @@
       renderDaysOverviewStrip(daily);
 
       // Hourly Rail for Selected Day
+      const hourlyHead = document.getElementById('hourlyHead');
+      if (hourlyHead && daily && daily.time && daily.time[selectedDayIndex]) {
+        const dateStr = daily.time[selectedDayIndex];
+        const parts = dateStr.split('-');
+        const y = parseInt(parts[0], 10), m = parseInt(parts[1], 10), d = parseInt(parts[2], 10);
+        const monthsRu = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+        const monthsEn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const dateText = `${d} ${curLang === 'en' ? monthsEn[m - 1] : monthsRu[m - 1]}`;
+
+        let dayTitle = '';
+        if (selectedDayIndex === 0) dayTitle = curLang === 'en' ? 'Today' : 'Сегодня';
+        else if (selectedDayIndex === 1) dayTitle = curLang === 'en' ? 'Tomorrow' : 'Завтра';
+        else {
+          const dow = new Date(y, m - 1, d).getDay();
+          const weekdaysRu = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+          const weekdaysEn = ['Sunday', 'Monday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+          dayTitle = curLang === 'en' ? weekdaysEn[dow] : weekdaysRu[dow];
+        }
+        hourlyHead.innerText = `${dayTitle} (${dateText}): часы`;
+      }
       renderHourlyRail(w.hourly, selectedDayIndex);
 
       // Metrics Cards
@@ -1196,38 +1261,81 @@
     }
 
     function renderDaysOverviewStrip(daily) {
-      const names = ['Сегодня', 'Завтра', 'Послезавтра'];
       const strip = document.getElementById('daysOverviewStrip');
-      strip.innerHTML = [0, 1, 2].map(idx => {
-        const max = Math.round(daily.temperature_2m_max[idx] || 0);
-        const min = Math.round(daily.temperature_2m_min[idx] || 0);
-        const rain = daily.precipitation_probability_max[idx] || 0;
+      if (!strip || !daily || !daily.time) return;
+
+      const monthsRu = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+      const monthsEn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const weekdaysRu = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+      const weekdaysEn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+      let html = '';
+      for (let idx = 0; idx < daily.time.length; idx++) {
+        const dateStr = daily.time[idx];
+        const parts = dateStr.split('-');
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10);
+        const day = parseInt(parts[2], 10);
+        const dateObj = new Date(year, month - 1, day);
+
+        // Name / Title
+        let nameText = '';
+        if (idx === 0) {
+          nameText = curLang === 'en' ? 'Today' : 'Сегодня';
+        } else if (idx === 1) {
+          nameText = curLang === 'en' ? 'Tomorrow' : 'Завтра';
+        } else {
+          const dow = dateObj.getDay();
+          nameText = curLang === 'en' ? weekdaysEn[dow] : weekdaysRu[dow];
+        }
+
+        // Calendar date (e.g. "12 ноя")
+        const dateText = `${day} ${curLang === 'en' ? monthsEn[month - 1] : monthsRu[month - 1]}`;
+
+        // Meteorological icon & values
+        const code = daily.weather_code ? daily.weather_code[idx] : 1;
+        const icon = getHourlyIcon(code);
+        const max = Math.round(daily.temperature_2m_max[idx] ?? 0);
+        const min = Math.round(daily.temperature_2m_min[idx] ?? 0);
+        const tempText = `${max > 0 ? '+' : ''}${max}° / ${min > 0 ? '+' : ''}${min}°`;
+        const rain = daily.precipitation_probability_max[idx] ?? 0;
+        const rainText = rain > 0 ? `${rain}% ${curLang === 'en' ? 'rain' : 'дождь'}` : (curLang === 'en' ? 'Dry' : 'Сухо');
+
         const active = idx === selectedDayIndex ? 'active' : '';
-        return `
-          <div class="day-card-preview ${active}" onclick="selectDay(${idx})">
-            <div class="dcp-name">${names[idx]}</div>
-            <div class="dcp-icon">🌤</div>
-            <div class="dcp-temps">${max > 0 ? '+' : ''}${max}° / ${min > 0 ? '+' : ''}${min}°</div>
-            <div class="dcp-rain">${rain}% дождь</div>
+
+        html += `
+          <div class="day-card-preview ${active}" onclick="selectDay(${idx})" id="dayCard-${idx}">
+            <div class="dcp-name">${nameText}</div>
+            <div class="dcp-date">${dateText}</div>
+            <div class="dcp-icon">${icon}</div>
+            <div class="dcp-temps">${tempText}</div>
+            <div class="dcp-rain">${rainText}</div>
           </div>
         `;
-      }).join('');
+      }
+      strip.innerHTML = html;
     }
 
     function selectDay(idx) {
       selectedDayIndex = idx;
       renderMainView();
+      // Smoothly ensure the selected card stays in view
+      const card = document.getElementById(`dayCard-${idx}`);
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
     }
 
     function renderHourlyRail(hourly, dayIdx) {
       const rail = document.getElementById('hourlyRail');
+      if (!rail || !hourly || !hourly.time) return;
       const startIdx = dayIdx * 24;
       const endIdx = startIdx + 24;
       let html = '';
       for (let i = startIdx; i < endIdx && i < hourly.time.length; i++) {
         const timeStr = hourly.time[i].split('T')[1];
         const t = Math.round(hourly.temperature_2m[i]);
-        const r = hourly.precipitation_probability[i] || 0;
+        const r = hourly.precipitation_probability ? (hourly.precipitation_probability[i] || 0) : 0;
         const icon = getHourlyIcon(hourly.weather_code[i]);
         html += `
           <div class="hourly-box">
@@ -1239,6 +1347,7 @@
         `;
       }
       rail.innerHTML = html;
+      rail.scrollLeft = 0;
     }
 
     function updateFrostEngine(hourly) {

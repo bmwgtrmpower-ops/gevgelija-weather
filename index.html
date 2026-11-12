@@ -31,8 +31,8 @@
       --safe-top: var(--tg-content-safe-area-inset-top, var(--tg-safe-area-inset-top, env(safe-area-inset-top, 0px)));
       --safe-bottom: var(--tg-content-safe-area-inset-bottom, var(--tg-safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)));
       --page-pad-x: 16px;
-      --page-pad-top: calc(var(--safe-top, 0px) + 14px);
-      --page-pad-bottom: calc(var(--safe-bottom, 0px) + 36px);
+      --page-pad-top: calc(var(--safe-top, 0px) + 12px);
+      --page-pad-bottom: calc(var(--safe-bottom, 0px) + 32px);
       --card-radius: 20px;
       --card-gap: 12px;
     }
@@ -388,7 +388,7 @@
       width: 100dvw;
       height: 100vh;
       height: 100dvh;
-      background: #090e17; /* rich luxury dark */
+      background: #090e17; /* deep luxury dark matching main screen */
       z-index: 9999;
       display: none;
       flex-direction: column;
@@ -400,7 +400,7 @@
       -webkit-overflow-scrolling: touch;
       box-sizing: border-box;
       opacity: 0;
-      transform: translateY(16px);
+      transform: translateY(14px);
       transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -437,21 +437,21 @@
       line-height: 1.3;
     }
 
-    /* Refined, Compact 36x36px Close Button - Clears Telegram Native Header Controls */
+    /* Refined, Compact 32x32px Close Button - Positioned cleanly below Telegram controls */
     .sheet-close-btn {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.16);
       color: #94a3b8;
       border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      min-width: 36px;
-      min-height: 36px;
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 600;
       line-height: 1;
       touch-action: manipulation;
@@ -960,36 +960,21 @@
     // -------------------------------------------------------------
     const tg = window.Telegram?.WebApp;
 
-    // Dynamic Telegram Safe Area & Fullscreen Adaptation
-    function updateTelegramSafeArea() {
+    // Dynamic Telegram Safe Area & Layout Sync (Standard tg.expand architecture)
+    function syncTelegramLayout() {
       let topInset = 0;
       let bottomInset = 0;
 
       if (tg) {
-        // 1. Content Safe Area (inside fullscreen or expanded mode)
-        if (tg.contentSafeAreaInset) {
-          if (typeof tg.contentSafeAreaInset.top === 'number' && tg.contentSafeAreaInset.top > 0) {
-            topInset = tg.contentSafeAreaInset.top;
-          }
-          if (typeof tg.contentSafeAreaInset.bottom === 'number' && tg.contentSafeAreaInset.bottom > 0) {
-            bottomInset = tg.contentSafeAreaInset.bottom;
-          }
+        if (tg.contentSafeAreaInset && typeof tg.contentSafeAreaInset.top === 'number' && tg.contentSafeAreaInset.top > 0) {
+          topInset = tg.contentSafeAreaInset.top;
+        } else if (tg.safeAreaInset && typeof tg.safeAreaInset.top === 'number' && tg.safeAreaInset.top > 0) {
+          topInset = tg.safeAreaInset.top;
         }
-        // 2. Hardware Safe Area Inset (notch / status bar)
-        if (topInset === 0 && tg.safeAreaInset) {
-          if (typeof tg.safeAreaInset.top === 'number' && tg.safeAreaInset.top > 0) {
-            topInset = tg.safeAreaInset.top;
-          }
-          if (typeof tg.safeAreaInset.bottom === 'number' && tg.safeAreaInset.bottom > 0) {
-            bottomInset = tg.safeAreaInset.bottom;
-          }
-        }
-
-        // 3. Fallback for Telegram Fullscreen Mode if client does not report insets
-        if (tg.isFullscreen && topInset < 44) {
-          topInset = 48; // safe clearance below Telegram native header
-        } else if (topInset === 0) {
-          topInset = 4; // standard gentle clearance
+        if (tg.contentSafeAreaInset && typeof tg.contentSafeAreaInset.bottom === 'number' && tg.contentSafeAreaInset.bottom > 0) {
+          bottomInset = tg.contentSafeAreaInset.bottom;
+        } else if (tg.safeAreaInset && typeof tg.safeAreaInset.bottom === 'number' && tg.safeAreaInset.bottom > 0) {
+          bottomInset = tg.safeAreaInset.bottom;
         }
       }
 
@@ -999,21 +984,20 @@
 
     if (tg) {
       try { tg.ready(); } catch(e){}
-      try { tg.expand(); } catch(e){}
+      try { tg.expand(); } catch(e){} // 100% full height cleanly below Telegram header
       try { tg.disableClosingConfirmation(); } catch(e){}
       try { tg.disableVerticalSwipes(); } catch(e){}
-      try { if (tg.requestFullscreen) tg.requestFullscreen(); } catch(e){}
       
-      updateTelegramSafeArea();
-      try { tg.onEvent('safeAreaChanged', updateTelegramSafeArea); } catch(e){}
-      try { tg.onEvent('contentSafeAreaChanged', updateTelegramSafeArea); } catch(e){}
-      try { tg.onEvent('fullscreenChanged', updateTelegramSafeArea); } catch(e){}
+      syncTelegramLayout();
+      try { tg.onEvent('safeAreaChanged', syncTelegramLayout); } catch(e){}
+      try { tg.onEvent('contentSafeAreaChanged', syncTelegramLayout); } catch(e){}
+      try { tg.onEvent('viewportChanged', syncTelegramLayout); } catch(e){}
     } else {
-      updateTelegramSafeArea();
+      syncTelegramLayout();
     }
 
-    window.addEventListener('resize', updateTelegramSafeArea);
-    window.addEventListener('orientationchange', updateTelegramSafeArea);
+    window.addEventListener('resize', syncTelegramLayout);
+    window.addEventListener('orientationchange', syncTelegramLayout);
 
     const MACEDONIA_CITIES = [
       { id: "gevgelija", name_ru: "Гевгелия", name_en: "Gevgelija", lat: 41.1465, lon: 22.5042, ele: 60, region: "Юг / Вардар" },

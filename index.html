@@ -678,6 +678,36 @@
     }
   
     /* Weather Stage & Atmospheric Animations */
+    /* Weather Scene Stage Integrated Header Badge */
+    .stage-header-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 10;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: rgba(11, 16, 27, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 20px;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      pointer-events: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    .stage-pin {
+      font-size: 13px;
+    }
+    .stage-badge-text {
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
     .weather-stage {
       width: 100%;
       height: 240px;
@@ -943,12 +973,8 @@
     <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()">✕ Вернуться к прогнозу</button>
   </div>
 
-  <!-- Sheet 4: Weather Scene Animated Modal Full Screen -->
+  <!-- Sheet 4: Weather Scene Animated Modal Full Screen (Header Integrated Inside Card) -->
   <div class="bottom-sheet" id="weatherSceneSheet">
-    <div class="sheet-header">
-      <div class="sheet-title" id="weatherSceneTitle">Атмосферная визуализация</div>
-      <button type="button" class="sheet-close-btn" onclick="closeAllSheets()" aria-label="Закрыть">✕</button>
-    </div>
     <div class="weather-stage" id="weatherStage"></div>
     <div class="detail-body" id="weatherSceneBody"></div>
     <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()">✕ Вернуться к прогнозу</button>
@@ -1328,7 +1354,17 @@
       const title = document.getElementById('weatherSceneTitle');
       const body = document.getElementById('weatherSceneBody');
 
-      title.innerText = `${desc} в г. ${currentCity.name_ru}`;
+      if (title) {
+        title.innerText = `${desc} в г. ${currentCity.name_ru}`;
+      }
+
+      // Elegant Header Badge placed directly inside the atmospheric card
+      const badgeHtml = `
+        <div class="stage-header-badge">
+          <span style="font-size: 14px;">📍</span>
+          <span>${desc} • г. ${currentCity.name_ru}</span>
+        </div>
+      `;
 
       // Determine weather type: 'rain', 'clouds', 'sun', 'thunder', 'snow'
       let type = 'clouds';
@@ -1344,7 +1380,7 @@
         type = 'clouds';
       }
 
-      // Render animated scene
+      // Render animated scene with top location badge safely integrated
       stage.className = `weather-stage ${type}-scene`;
       if (type === 'rain') {
         let drops = '';
@@ -1355,6 +1391,7 @@
           drops += `<div class="raindrop" style="left: ${left}%; animation-delay: ${delay}s; animation-duration: ${dur}s;"></div>`;
         }
         stage.innerHTML = `
+          ${badgeHtml}
           ${drops}
           <div style="position: absolute; bottom: 14px; left: 16px; font-size: 26px; z-index: 2;">🌧</div>
           <div style="position: absolute; bottom: 12px; right: 16px; font-size: 13px; color: #7dd3fc; font-weight: 700; z-index: 2;">Идут осадки • Дождь льётся</div>
@@ -1368,12 +1405,14 @@
           drops += `<div class="raindrop" style="left: ${left}%; animation-delay: ${delay}s; animation-duration: ${dur}s;"></div>`;
         }
         stage.innerHTML = `
+          ${badgeHtml}
           ${drops}
           <div style="position: absolute; bottom: 14px; left: 16px; font-size: 26px; z-index: 2;">⛈</div>
           <div style="position: absolute; bottom: 12px; right: 16px; font-size: 13px; color: #c084fc; font-weight: 700; z-index: 2;">Грозовой фронт • Вспышки</div>
         `;
       } else if (type === 'sun') {
         stage.innerHTML = `
+          ${badgeHtml}
           <div class="sun-core"></div>
           <div style="position: absolute; bottom: 12px; left: 16px; font-size: 13px; color: #fde047; font-weight: 700;">${isNight ? '🌙 Ясная ночь' : '☀️ Ясно и солнечно'}</div>
         `;
@@ -1386,15 +1425,17 @@
           flakes += `<div class="snowflake" style="left: ${left}%; animation-delay: ${delay}s; animation-duration: ${dur}s;">❄</div>`;
         }
         stage.innerHTML = `
+          ${badgeHtml}
           ${flakes}
           <div style="position: absolute; bottom: 12px; left: 16px; font-size: 13px; color: #fff; font-weight: 700;">Снегопад</div>
         `;
       } else {
-        // Clouds animation
+        // Clouds / Fog animation - positioned comfortably below the top badge
         stage.innerHTML = `
-          <div class="cloud-shape" style="top: 25px; left: 10px; width: 140px; height: 45px; animation-duration: 9s;"></div>
-          <div class="cloud-shape" style="top: 65px; left: 40px; width: 180px; height: 55px; animation-duration: 13s; animation-delay: 2s; background: rgba(148, 163, 184, 0.35);"></div>
-          <div class="cloud-shape" style="top: 105px; left: 20px; width: 130px; height: 42px; animation-duration: 8s; animation-delay: 4s;"></div>
+          ${badgeHtml}
+          <div class="cloud-shape" style="top: 55px; left: 10px; width: 140px; height: 45px; animation-duration: 9s;"></div>
+          <div class="cloud-shape" style="top: 95px; left: 40px; width: 180px; height: 55px; animation-duration: 13s; animation-delay: 2s; background: rgba(148, 163, 184, 0.35);"></div>
+          <div class="cloud-shape" style="top: 140px; left: 20px; width: 130px; height: 42px; animation-duration: 8s; animation-delay: 4s;"></div>
           <div style="position: absolute; bottom: 14px; left: 16px; font-size: 26px; z-index: 2;">☁️</div>
           <div style="position: absolute; bottom: 12px; right: 16px; font-size: 13px; color: #cbd5e1; font-weight: 700; z-index: 2;">Пасмурно • Движение облаков</div>
         `;
@@ -1419,7 +1460,6 @@
       openSheetById('weatherSceneSheet');
     }
 
-    
     function openMetricDetail(type) {
       if (!cachedWeather) return;
       const body = document.getElementById('detailModalBody');

@@ -57,7 +57,6 @@
       overflow-x: hidden;
       touch-action: pan-y;
       -webkit-font-smoothing: antialiased;
-      transform: translateZ(0);
     }
 
     /* Top Nav: Location Selector with Search Lens & Language */
@@ -400,14 +399,12 @@
       -webkit-overflow-scrolling: touch;
       box-sizing: border-box;
       opacity: 0;
-      transform: translateY(14px);
-      transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.16s ease;
     }
 
     .bottom-sheet.open {
       display: flex !important;
       opacity: 1 !important;
-      transform: translateY(0) !important;
     }
 
     .sheet-handle-wrap {
@@ -574,9 +571,7 @@
 
     /* Detail Modal Specifics */
     .detail-body {
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      padding-right: 4px;
+      padding-right: 0;
     }
     .detail-highlight {
       background: #1e293b;
@@ -1583,13 +1578,21 @@
     }
 
     // Robust Full-Screen Modal Management (Zero Latency, Bulletproof Closing)
+    let savedScrollY = 0;
+
     function openSheetById(id) {
-      closeAllSheets();
+      // Remember scroll position before closing/opening
+      savedScrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+
+      closeAllSheets(false);
       const sheet = document.getElementById(id);
       const backdrop = document.getElementById('sheetBackdrop');
       if (!sheet) return;
 
+      // Lock body scroll and align viewport
       document.body.style.overflow = 'hidden';
+      window.scrollTo(0, 0);
+
       if (backdrop) {
         backdrop.style.display = 'block';
         void backdrop.offsetWidth;
@@ -1611,7 +1614,7 @@
       } catch (e) {}
     }
 
-    function closeAllSheets() {
+    function closeAllSheets(restoreScroll = true) {
       document.body.style.overflow = '';
       const backdrop = document.getElementById('sheetBackdrop');
       if (backdrop) {
@@ -1622,7 +1625,13 @@
       document.querySelectorAll('.bottom-sheet').forEach(s => {
         s.classList.remove('open');
         s.style.display = 'none';
+        s.scrollTop = 0;
       });
+
+      // Restore scroll position
+      if (restoreScroll && typeof savedScrollY === 'number') {
+        window.scrollTo(0, savedScrollY);
+      }
 
       // Hide Telegram Native Back Button
       try {

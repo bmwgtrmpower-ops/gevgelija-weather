@@ -765,12 +765,12 @@
 
   <!-- Top Bar -->
   <div class="top-nav">
-    <div class="city-picker-btn" id="cityPickerBtn" onclick="openCitySearch()">
+    <div class="city-picker-btn" id="cityPickerBtn" onclick="openCitySearch(false)" title="Выбрать город из списка">
       <span>📍</span>
       <span class="city-name-text" id="cityNameDisplay">Гевгелия</span>
       <span style="font-size: 11px; color: var(--muted); margin-left: auto;">▼</span>
     </div>
-    <div class="search-lens-btn" onclick="openCitySearch()" title="Поиск города">🔍</div>
+    <div class="search-lens-btn" onclick="openCitySearch(true)" title="Поиск города (открыть поиск)">🔍</div>
     <div class="lang-pill-btn" id="langBtn" onclick="toggleLanguage()">EN</div>
   </div>
 
@@ -1252,15 +1252,22 @@
     }
 
     // Modal Sheet Controllers
-    function openCitySearch() {
+    function openCitySearch(focusSearch = false) {
       openSheetById('citySearchSheet');
-      setTimeout(() => {
-        const inp = document.getElementById('citySearchInput');
-        if (inp) inp.focus();
-      }, 100);
+      const inp = document.getElementById('citySearchInput');
+      if (inp) {
+        if (focusSearch) {
+          // Open search mode: focus input and bring up keyboard
+          setTimeout(() => {
+            inp.focus();
+            try { inp.select(); } catch(e) {}
+          }, 60);
+        } else {
+          // Open city list mode: do not force keyboard, keep all cities visible
+          inp.blur();
+        }
+      }
     }
-
-    
     function openWeatherScene() {
       if (!cachedWeather) return;
       const { w } = cachedWeather;

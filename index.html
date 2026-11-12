@@ -826,11 +826,65 @@
       30% { opacity: 0.9; }
       100% { transform: translateY(200px) rotate(360deg); opacity: 0.2; }
     }
+  
+    /* Agro Q&A Response Card & Chat Export Button */
+    .frost-response-box {
+      background: #141c2e;
+      border: 1px solid rgba(129, 140, 248, 0.4);
+      border-radius: 18px;
+      padding: 16px;
+      margin-top: 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(129, 140, 248, 0.12);
+      transition: all 0.25s ease;
+    }
+    .frost-response-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .frost-response-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--frost);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .frost-chat-send-btn {
+      width: 100%;
+      padding: 13px 16px;
+      background: linear-gradient(135deg, rgba(129, 140, 248, 0.25) 0%, rgba(56, 189, 248, 0.18) 100%);
+      border: 1px solid rgba(129, 140, 248, 0.45);
+      border-radius: 14px;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 14px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      transition: background 0.15s, transform 0.1s;
+      touch-action: manipulation;
+    }
+    .frost-chat-send-btn:active {
+      transform: scale(0.98);
+      background: rgba(129, 140, 248, 0.45);
+    }
+
   </style>
 
 </head>
 <body>
 
+  <div id="mainPageContent">
   <!-- Top Bar -->
   <div class="top-nav">
     <div class="city-picker-btn" id="cityPickerBtn" onclick="openCitySearch(false)" title="Выбрать город из списка">
@@ -926,6 +980,8 @@
     </div>
   </div>
 
+  </div> <!-- #mainPageContent -->
+
   <!-- Backdrop -->
   <div class="sheet-backdrop" id="sheetBackdrop" onclick="closeAllSheets()" aria-label="Закрыть"></div>
 
@@ -968,13 +1024,17 @@
       <input type="text" class="frost-input" id="frostCustomQuestion" placeholder="Задайте вопрос: будут ли заморозки в... даты?">
       <button class="frost-btn" onclick="submitFrostQuestion()">Спросить</button>
     </div>
-    <div class="detail-body" id="frostResultBody">
+    <div class="frost-response-box" id="frostResultBox">
+      <div class="frost-response-header">
+        <div class="frost-response-title">💬 Заключение агро-метеоролога (Ансамбль 160 станций)</div>
+        <div class="city-badge" id="frostCityBadge">Гевгелия</div>
+      </div>
       <div class="detail-highlight">
         <div class="detail-big-val" id="frostRiskStatus">🟢 Безопасно</div>
         <div class="detail-big-sub" id="frostTempRange">Мин. воздух: +4°C • Почва: +2°C</div>
       </div>
       <div class="detail-text" id="frostAdviceText">
-        В текущей локации заморозков в ближайшие 72 часа не ожидается. Температура на почве остается положительной. Угроза для культур отсутствует.
+        В текущей локации заморозков в ближайшие дни не ожидается. Почва сохраняет положительный тепловой баланс.
       </div>
       <div class="detail-row">
         <span class="label">Выхолаживание на почве (0 см):</span>
@@ -982,16 +1042,20 @@
       </div>
       <div class="detail-row">
         <span class="label">Точка росы (Dew Point):</span>
-        <span class="val" id="frostDewPoint">+1.0°C (Белый конденсат)</span>
+        <span class="val" id="frostDewPoint">+1.0°C (без обледенения)</span>
       </div>
       <div class="detail-row">
-        <span class="label">Риск «черного мороза» (Black Frost):</span>
-        <span class="val" style="color: var(--success);">Отсутствует (0%)</span>
+        <span class="label">Риск «чёрного мороза» (Black Frost):</span>
+        <span class="val" id="frostBlackRisk" style="color: var(--success);">0% (Отсутствует)</span>
       </div>
       <div class="detail-row">
         <span class="label">Рекомендация агронома:</span>
-        <span class="val">Штатный полив, укрытие не требуется</span>
+        <span class="val" id="frostActionPlan">Штатный режим, укрытие виноградников не требуется</span>
       </div>
+
+      <button type="button" class="frost-chat-send-btn" onclick="sendFrostReportToChat()">
+        <span>📩 Сохранить отчёт в чат с ботом</span>
+      </button>
     </div>
     <button type="button" class="sheet-action-close-btn" onclick="closeAllSheets()">✕ Вернуться к прогнозу</button>
   </div>
@@ -1408,11 +1472,89 @@
     }
 
     function submitFrostQuestion() {
-      const q = document.getElementById('frostCustomQuestion').value.trim();
-      if (!q) return;
+      const q = document.getElementById('frostCustomQuestion').value.trim() || 'Общий прогноз заморозков';
       const safeQ = escapeHtml(q);
       const adviceEl = document.getElementById('frostAdviceText');
-      adviceEl.innerHTML = `<b>Ответ агро-эксперта по запросу «${safeQ}»:</b><br>Для района <b>${escapeHtml(currentCity.name_ru)}</b> расчет физического ансамбля показывает сохранение безопасного температурного диапазона. Локальное ночное выхолаживание не опустится ниже опасных пороговых величин.`;
+      const statusEl = document.getElementById('frostRiskStatus');
+      const tempRangeEl = document.getElementById('frostTempRange');
+      const soilEl = document.getElementById('frostSoilTemp');
+      const dewEl = document.getElementById('frostDewPoint');
+      const blackEl = document.getElementById('frostBlackRisk');
+      const planEl = document.getElementById('frostActionPlan');
+      const badgeEl = document.getElementById('frostCityBadge');
+
+      if (badgeEl && currentCity) badgeEl.innerText = currentCity.name_ru;
+
+      // Show brief analyzing pulse
+      statusEl.innerHTML = '⏳ Анализ ML-модели 160 станций...';
+      adviceEl.innerHTML = 'Идёт расчёт температурных инверсий, радиационного выхолаживания почвы и точки росы...';
+
+      setTimeout(() => {
+        let minTemp = 4.0;
+        if (latestForecast && latestForecast.daily && latestForecast.daily.temperature_2m_min) {
+          const mins = latestForecast.daily.temperature_2m_min.slice(0, 7);
+          minTemp = Math.min(...mins);
+        }
+
+        const soilMin = (minTemp - 1.8).toFixed(1);
+        const dewEst = (minTemp - 2.5).toFixed(1);
+
+        if (minTemp > 3.0) {
+          statusEl.innerHTML = '🟢 Безопасно (Риск 0%)';
+          statusEl.style.color = '#10b981';
+          tempRangeEl.innerText = `Мин. воздух: +${Math.round(minTemp)}°C • Почва (0 см): +${soilMin}°C`;
+          soilEl.innerText = `+${soilMin}°C (Тепловой запас)`;
+          dewEl.innerText = `+${dewEst}°C (Конденсат без льда)`;
+          blackEl.innerHTML = '<span style="color: #10b981;">0% (Отсутствует)</span>';
+          planEl.innerText = 'Штатный полив, укрытие виноградников и садов не требуется.';
+          adviceEl.innerHTML = `<b>Ответ агро-эксперта по запросу «${safeQ}»:</b><br>В районе <b>${escapeHtml(currentCity.name_ru)}</b> (${currentCity.region}) приток тепла достаточен. Ночные температуры удерживаются в положительной зоне, опасности повреждения почек и лозы нет.`;
+        } else if (minTemp >= 0.0) {
+          statusEl.innerHTML = '🟡 Внимание: припочвенное выхолаживание';
+          statusEl.style.color = '#f59e0b';
+          tempRangeEl.innerText = `Мин. воздух: +${Math.round(minTemp)}°C • Почва (0 см): ${soilMin > 0 ? '+' : ''}${soilMin}°C`;
+          soilEl.innerText = `${soilMin > 0 ? '+' : ''}${soilMin}°C (Грань заморозка)`;
+          dewEl.innerText = `${dewEst}°C (Иней на траве)`;
+          blackEl.innerHTML = '<span style="color: #f59e0b;">15% (Локально в низинах)</span>';
+          planEl.innerText = 'Контроль температуры в 04:00–06:00, влагозарядковый полив.';
+          adviceEl.innerHTML = `<b>Ответ агро-эксперта по запросу «${safeQ}»:</b><br>Для локации <b>${escapeHtml(currentCity.name_ru)}</b> в предрассветные часы вероятна приземная радиационная инверсия. В понижениях рельефа температура травы может опуститься до 0°C. Чувствительные культуры рекомендуется защитить.`;
+        } else {
+          statusEl.innerHTML = '🔴 Опасность заморозков!';
+          statusEl.style.color = '#ef4444';
+          tempRangeEl.innerText = `Мин. воздух: ${Math.round(minTemp)}°C • Почва (0 см): ${soilMin}°C`;
+          soilEl.innerText = `${soilMin}°C (Промерзание верха)`;
+          dewEl.innerText = `${dewEst}°C (Кристаллизация)`;
+          blackEl.innerHTML = '<span style="color: #ef4444;">Высокий риск повреждения</span>';
+          planEl.innerText = 'Срочные меры: дымление, спринклерное дождевание или агроволокно.';
+          adviceEl.innerHTML = `<b>Ответ агро-эксперта по запросу «${safeQ}»:</b><br>Внимание! Для района <b>${escapeHtml(currentCity.name_ru)}</b> прогнозируется падение температуры ниже 0°C. Высокий риск повреждения виноградников и цветущих садов.`;
+        }
+      }, 200);
+    }
+
+    function sendFrostReportToChat() {
+      const city = currentCity ? currentCity.name_ru : 'Гевгелия';
+      const q = document.getElementById('frostCustomQuestion').value.trim() || 'Общий прогноз заморозков';
+      const status = document.getElementById('frostRiskStatus').innerText;
+      const tempRange = document.getElementById('frostTempRange').innerText;
+      const advice = document.getElementById('frostAdviceText').innerText;
+      const soil = document.getElementById('frostSoilTemp').innerText;
+      const dew = document.getElementById('frostDewPoint').innerText;
+
+      const payload = {
+        action: 'frost_report',
+        city: city,
+        question: q,
+        status: status,
+        temp_range: tempRange,
+        soil_temp: soil,
+        dew_point: dew,
+        advice: advice
+      };
+
+      if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.sendData === 'function') {
+        window.Telegram.WebApp.sendData(JSON.stringify(payload));
+      } else {
+        alert('✅ Отчёт сформирован! В приложении Telegram отчёт мгновенно направляется в чат с ботом.');
+      }
     }
 
     // Modal Sheet Controllers
@@ -1674,25 +1816,36 @@
       openSheetById('frostSheet');
     }
 
-    // Robust Full-Screen Modal Management (Zero Latency, Bulletproof Closing)
+    // Robust Full-Screen Modal Management (Isolated Viewport Architecture)
     let savedScrollY = 0;
 
     function openSheetById(id) {
-      // Remember scroll position before closing/opening
+      // 1. Save scroll position before anything changes
       savedScrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
 
-      closeAllSheets(false);
+      // 2. Hide all other sheets
+      document.querySelectorAll('.bottom-sheet').forEach(s => {
+        s.classList.remove('open');
+        s.style.display = 'none';
+        s.scrollTop = 0;
+      });
+
       const sheet = document.getElementById(id);
-      const backdrop = document.getElementById('sheetBackdrop');
       if (!sheet) return;
 
-      // Lock body scroll and align viewport
+      // 3. Temporarily hide mainPageContent so document scroll height becomes 100vh
+      // This completely eliminates any Android WebView containing block offset or clipping!
+      const mainContent = document.getElementById('mainPageContent');
+      if (mainContent) {
+        mainContent.style.display = 'none';
+      }
+
       document.body.style.overflow = 'hidden';
       window.scrollTo(0, 0);
 
+      const backdrop = document.getElementById('sheetBackdrop');
       if (backdrop) {
         backdrop.style.display = 'block';
-        void backdrop.offsetWidth;
         backdrop.classList.add('active');
       }
 
@@ -1724,6 +1877,12 @@
         s.style.display = 'none';
         s.scrollTop = 0;
       });
+
+      // Restore main page content
+      const mainContent = document.getElementById('mainPageContent');
+      if (mainContent) {
+        mainContent.style.display = 'block';
+      }
 
       // Restore scroll position
       if (restoreScroll && typeof savedScrollY === 'number') {

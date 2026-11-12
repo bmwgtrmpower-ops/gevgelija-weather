@@ -14,6 +14,7 @@
        - contain: content for layout isolation
        ------------------------------------------------------------- */
     :root {
+      /* Theme Palette (100% Preserved) */
       --bg: #0b101b;
       --card-bg: #141c2e;
       --card-hover: #19243b;
@@ -25,6 +26,15 @@
       --warning: #f59e0b;
       --danger: #ef4444;
       --frost: #818cf8;
+
+      /* Unified Telegram Mini App Safe Area & Geometry */
+      --safe-top: var(--tg-content-safe-area-inset-top, var(--tg-safe-area-inset-top, env(safe-area-inset-top, 0px)));
+      --safe-bottom: var(--tg-content-safe-area-inset-bottom, var(--tg-safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)));
+      --page-pad-x: 16px;
+      --page-pad-top: calc(var(--safe-top, 0px) + 14px);
+      --page-pad-bottom: calc(var(--safe-bottom, 0px) + 36px);
+      --card-radius: 20px;
+      --card-gap: 12px;
     }
 
     * {
@@ -40,8 +50,10 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 12px;
-      padding-bottom: 40px;
+      min-height: 100dvh;
+      margin: 0;
+      padding: var(--page-pad-top) var(--page-pad-x) var(--page-pad-bottom) var(--page-pad-x);
+      box-sizing: border-box;
       overflow-x: hidden;
       touch-action: pan-y;
       -webkit-font-smoothing: antialiased;
@@ -344,7 +356,7 @@
     }
 
     /* Modal / Bottom Sheet Framework (Hardware Accelerated) */
-    /* NATIVE FULL-SCREEN PAGE MODAL ARCHITECTURE */
+    /* NATIVE FULL-SCREEN PAGE MODAL ARCHITECTURE (SAFE AREA AWARE) */
     .sheet-backdrop {
       position: fixed;
       top: 0;
@@ -376,11 +388,11 @@
       width: 100dvw;
       height: 100vh;
       height: 100dvh;
-      background: #090e17; /* deep luxury dark */
+      background: #090e17; /* rich luxury dark */
       z-index: 9999;
       display: none;
       flex-direction: column;
-      padding: max(16px, env(safe-area-inset-top, 16px)) 18px max(24px, env(safe-area-inset-bottom, 24px)) 18px;
+      padding: var(--page-pad-top) var(--page-pad-x) var(--page-pad-bottom) var(--page-pad-x);
       border-radius: 0 !important;
       border: none !important;
       box-shadow: none !important;
@@ -388,7 +400,7 @@
       -webkit-overflow-scrolling: touch;
       box-sizing: border-box;
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(16px);
       transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -398,60 +410,62 @@
       transform: translateY(0) !important;
     }
 
-    /* Remove drag handle completely for full-screen pages */
     .sheet-handle-wrap {
       display: none !important;
     }
 
-    /* Full-Screen Page Header */
+    /* Unified Modal Header */
     .sheet-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 0 16px 0;
-      margin-bottom: 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0 0 12px 0;
+      margin-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       flex-shrink: 0;
+      min-height: 40px;
     }
 
     .sheet-title {
-      font-size: 19px;
-      font-weight: 800;
+      font-size: 17px;
+      font-weight: 700;
       color: #ffffff;
-      letter-spacing: -0.3px;
+      letter-spacing: -0.2px;
       display: flex;
       align-items: center;
       gap: 8px;
+      line-height: 1.3;
     }
 
-    /* Huge 50x50px Touch Target Close Button */
+    /* Refined, Compact 36x36px Close Button - Clears Telegram Native Header Controls */
     .sheet-close-btn {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #94a3b8;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      min-width: 50px;
-      min-height: 50px;
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      min-height: 36px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26px;
-      font-weight: 700;
+      font-size: 17px;
+      font-weight: 600;
       line-height: 1;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
-      transition: background 0.15s, transform 0.1s;
+      transition: background 0.15s, color 0.15s, transform 0.1s;
       flex-shrink: 0;
+      margin-left: 12px;
     }
 
     .sheet-close-btn:active {
-      transform: scale(0.9);
-      background: #ef4444 !important;
+      transform: scale(0.92);
+      background: rgba(239, 68, 68, 0.25) !important;
       border-color: #ef4444 !important;
       color: #ffffff !important;
     }
@@ -459,23 +473,23 @@
     /* Full-width Friendly Bottom Action Button */
     .sheet-action-close-btn {
       width: 100%;
-      padding: 16px 20px;
+      padding: 14px 18px;
       background: #1e293b;
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 16px;
       color: #ffffff;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       cursor: pointer;
-      margin-top: 24px;
-      margin-bottom: 20px;
+      margin-top: 20px;
+      margin-bottom: 16px;
       flex-shrink: 0;
       touch-action: manipulation;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
       transition: background 0.15s, transform 0.1s;
     }
 
@@ -945,13 +959,61 @@
     // ZERO-LAG CLIENT LOGIC (Ultra-Fast Vanilla JS)
     // -------------------------------------------------------------
     const tg = window.Telegram?.WebApp;
-    if (tg) {
-      tg.ready();
-      tg.expand();
-      try { try { tg.disableClosingConfirmation(); } catch(e){}
-      try { tg.disableVerticalSwipes(); } catch(e){}
-      try { if (tg.requestFullscreen) tg.requestFullscreen(); } catch(e){} } catch(e){}
+
+    // Dynamic Telegram Safe Area & Fullscreen Adaptation
+    function updateTelegramSafeArea() {
+      let topInset = 0;
+      let bottomInset = 0;
+
+      if (tg) {
+        // 1. Content Safe Area (inside fullscreen or expanded mode)
+        if (tg.contentSafeAreaInset) {
+          if (typeof tg.contentSafeAreaInset.top === 'number' && tg.contentSafeAreaInset.top > 0) {
+            topInset = tg.contentSafeAreaInset.top;
+          }
+          if (typeof tg.contentSafeAreaInset.bottom === 'number' && tg.contentSafeAreaInset.bottom > 0) {
+            bottomInset = tg.contentSafeAreaInset.bottom;
+          }
+        }
+        // 2. Hardware Safe Area Inset (notch / status bar)
+        if (topInset === 0 && tg.safeAreaInset) {
+          if (typeof tg.safeAreaInset.top === 'number' && tg.safeAreaInset.top > 0) {
+            topInset = tg.safeAreaInset.top;
+          }
+          if (typeof tg.safeAreaInset.bottom === 'number' && tg.safeAreaInset.bottom > 0) {
+            bottomInset = tg.safeAreaInset.bottom;
+          }
+        }
+
+        // 3. Fallback for Telegram Fullscreen Mode if client does not report insets
+        if (tg.isFullscreen && topInset < 44) {
+          topInset = 48; // safe clearance below Telegram native header
+        } else if (topInset === 0) {
+          topInset = 4; // standard gentle clearance
+        }
+      }
+
+      document.documentElement.style.setProperty('--safe-top', `${topInset}px`);
+      document.documentElement.style.setProperty('--safe-bottom', `${bottomInset}px`);
     }
+
+    if (tg) {
+      try { tg.ready(); } catch(e){}
+      try { tg.expand(); } catch(e){}
+      try { tg.disableClosingConfirmation(); } catch(e){}
+      try { tg.disableVerticalSwipes(); } catch(e){}
+      try { if (tg.requestFullscreen) tg.requestFullscreen(); } catch(e){}
+      
+      updateTelegramSafeArea();
+      try { tg.onEvent('safeAreaChanged', updateTelegramSafeArea); } catch(e){}
+      try { tg.onEvent('contentSafeAreaChanged', updateTelegramSafeArea); } catch(e){}
+      try { tg.onEvent('fullscreenChanged', updateTelegramSafeArea); } catch(e){}
+    } else {
+      updateTelegramSafeArea();
+    }
+
+    window.addEventListener('resize', updateTelegramSafeArea);
+    window.addEventListener('orientationchange', updateTelegramSafeArea);
 
     const MACEDONIA_CITIES = [
       { id: "gevgelija", name_ru: "Гевгелия", name_en: "Gevgelija", lat: 41.1465, lon: 22.5042, ele: 60, region: "Юг / Вардар" },

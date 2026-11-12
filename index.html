@@ -114,20 +114,8 @@
     }
     .search-lens-btn:active { transform: scale(0.92); }
 
-    .lang-pill-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 18px;
-      padding: 8px 12px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--muted);
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: transform 0.12s ease;
-      will-change: transform;
-    }
-    .lang-pill-btn:active { transform: scale(0.92); color: #fff; }
+    
+    
 
     /* Quick Popular Cities Horizontal Chips Rail */
     /* Quick cities rail removed for clean modern UI */
@@ -810,7 +798,6 @@
       <span style="font-size: 11px; color: var(--muted); margin-left: auto;">▼</span>
     </div>
     <div class="search-lens-btn" onclick="openCitySearch(true)" title="Поиск города (открыть поиск)">🔍</div>
-    <div class="lang-pill-btn" id="langBtn" onclick="toggleLanguage()">EN</div>
   </div>
 
 
@@ -1056,7 +1043,8 @@
     ];
 
     let currentCity = MACEDONIA_CITIES[0]; // Gevgelija
-    let curLang = localStorage.getItem('balkan_lang') || 'ru';
+    const urlParams = new URLSearchParams(window.location.search);
+    let curLang = urlParams.get('lang') || localStorage.getItem('balkan_lang') || 'ru';
     let cachedWeather = null;
     let selectedDayIndex = 0; // 0=Сегодня, 1=Завтра, 2=Послезавтра
 
@@ -1675,15 +1663,7 @@
       });
     });
 
-    function toggleLanguage() {
-      curLang = curLang === 'ru' ? 'en' : 'ru';
-      localStorage.setItem('balkan_lang', curLang);
-      document.getElementById('langBtn').innerText = curLang === 'ru' ? 'EN' : 'RU';
-      document.getElementById('cityNameDisplay').innerText = curLang === 'en' ? currentCity.name_en : currentCity.name_ru;
-      renderQuickChips();
-      renderCitiesList(MACEDONIA_CITIES);
-      renderMainView();
-    }
+    // Language managed seamlessly via Telegram Bot settings
 
     function getWeatherDesc(code) {
       if (code === 0) return 'Ясно';

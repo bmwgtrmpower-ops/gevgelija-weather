@@ -1,15 +1,20 @@
 {
-  "timestamp_utc": "2026-11-25T11:52:30.759865Z",
-  "mesh_stations_count": 20,
+  "timestamp_utc": "2026-11-26T11:59:25.538119Z",
+  "mesh_stations_count": 40,
   "history_window": "2014-01-01 to 2025-12-31 (12 years, 4380 days)",
   "eval_period": "2025-01-01 to 2025-12-31 (Unseen blind exam)",
-  "overall_mean_mae_celsius": 0.414,
-  "overall_within_1c_percent": 92.8,
+  "overall_mean_mae_celsius": 0.421,
+  "overall_within_1c_percent": 92.6,
   "regional_breakdown": {
     "MK": {
-      "stations_count": 20,
-      "mean_mae_celsius": 0.414,
-      "best_station_mae": 0.045
+      "stations_count": 35,
+      "mean_mae_celsius": 0.406,
+      "best_station_mae": 0.05
+    },
+    "RS": {
+      "stations_count": 5,
+      "mean_mae_celsius": 0.528,
+      "best_station_mae": 0.255
     }
   },
   "key_hubs": {
@@ -19,15 +24,15 @@
       "elevation_m": 0,
       "t_mean_eval": {
         "mae": 0.088,
-        "within_1c": 99.5,
+        "within_1c": 99.7,
         "within_2c": 100.0,
-        "ridge_intercept": 0.07
+        "ridge_intercept": 0.13
       },
       "t_max_eval": {
-        "mae": 0.083,
-        "within_1c": 100.0,
+        "mae": 0.086,
+        "within_1c": 99.7,
         "within_2c": 100.0,
-        "ridge_intercept": -0.003
+        "ridge_intercept": 0.001
       }
     },
     "Skopje": {
@@ -35,20 +40,52 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.332,
-        "within_1c": 97.3,
-        "within_2c": 99.7,
-        "ridge_intercept": 0.247
+        "mae": 0.323,
+        "within_1c": 97.5,
+        "within_2c": 99.5,
+        "ridge_intercept": -0.539
       },
       "t_max_eval": {
-        "mae": 0.63,
-        "within_1c": 81.6,
-        "within_2c": 97.0,
-        "ridge_intercept": -0.36
+        "mae": 0.623,
+        "within_1c": 82.2,
+        "within_2c": 97.5,
+        "ridge_intercept": -1.303
       }
     },
-    "Belgrade": {},
-    "Nis": {},
+    "Belgrade": {
+      "name": "Belgrade Vracar Obs",
+      "country": "RS",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.36,
+        "within_1c": 97.3,
+        "within_2c": 99.5,
+        "ridge_intercept": 0.076
+      },
+      "t_max_eval": {
+        "mae": 0.405,
+        "within_1c": 94.2,
+        "within_2c": 99.2,
+        "ridge_intercept": 0.368
+      }
+    },
+    "Nis": {
+      "name": "Nis Fortress",
+      "country": "RS",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.877,
+        "within_1c": 62.7,
+        "within_2c": 93.7,
+        "ridge_intercept": -1.461
+      },
+      "t_max_eval": {
+        "mae": 1.138,
+        "within_1c": 56.4,
+        "within_2c": 84.1,
+        "ridge_intercept": -0.808
+      }
+    },
     "Thessaloniki": {}
   },
   "all_stations": {
@@ -57,16 +94,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.332,
-        "within_1c": 97.3,
-        "within_2c": 99.7,
-        "ridge_intercept": 0.247
+        "mae": 0.323,
+        "within_1c": 97.5,
+        "within_2c": 99.5,
+        "ridge_intercept": -0.539
       },
       "t_max_eval": {
-        "mae": 0.63,
-        "within_1c": 81.6,
-        "within_2c": 97.0,
-        "ridge_intercept": -0.36
+        "mae": 0.623,
+        "within_1c": 82.2,
+        "within_2c": 97.5,
+        "ridge_intercept": -1.303
       }
     },
     "MK_SKOPJE_AIR": {
@@ -74,16 +111,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.587,
-        "within_1c": 83.6,
-        "within_2c": 98.4,
-        "ridge_intercept": 0.405
+        "mae": 0.559,
+        "within_1c": 84.7,
+        "within_2c": 99.2,
+        "ridge_intercept": -1.043
       },
       "t_max_eval": {
-        "mae": 0.544,
-        "within_1c": 83.8,
+        "mae": 0.525,
+        "within_1c": 84.4,
         "within_2c": 99.7,
-        "ridge_intercept": 0.143
+        "ridge_intercept": -0.36
       }
     },
     "MK_GEVGELIJA": {
@@ -92,15 +129,15 @@
       "elevation_m": 0,
       "t_mean_eval": {
         "mae": 0.088,
-        "within_1c": 99.5,
+        "within_1c": 99.7,
         "within_2c": 100.0,
-        "ridge_intercept": 0.07
+        "ridge_intercept": 0.13
       },
       "t_max_eval": {
-        "mae": 0.083,
-        "within_1c": 100.0,
+        "mae": 0.086,
+        "within_1c": 99.7,
         "within_2c": 100.0,
-        "ridge_intercept": -0.003
+        "ridge_intercept": 0.001
       }
     },
     "MK_BOGORODICA": {
@@ -108,16 +145,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.045,
+        "mae": 0.05,
         "within_1c": 100.0,
         "within_2c": 100.0,
-        "ridge_intercept": 0.023
+        "ridge_intercept": 0.051
       },
       "t_max_eval": {
-        "mae": 0.08,
+        "mae": 0.084,
         "within_1c": 99.7,
         "within_2c": 100.0,
-        "ridge_intercept": 0.022
+        "ridge_intercept": 0.045
       }
     },
     "MK_BITOLA": {
@@ -125,16 +162,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.551,
-        "within_1c": 86.0,
-        "within_2c": 98.6,
-        "ridge_intercept": -0.951
+        "mae": 0.509,
+        "within_1c": 87.4,
+        "within_2c": 99.2,
+        "ridge_intercept": 0.263
       },
       "t_max_eval": {
-        "mae": 0.933,
-        "within_1c": 64.1,
-        "within_2c": 90.1,
-        "ridge_intercept": -1.333
+        "mae": 0.832,
+        "within_1c": 71.8,
+        "within_2c": 94.2,
+        "ridge_intercept": 0.574
       }
     },
     "MK_OHRID": {
@@ -142,16 +179,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.568,
-        "within_1c": 85.2,
-        "within_2c": 97.5,
-        "ridge_intercept": 1.436
+        "mae": 0.299,
+        "within_1c": 97.3,
+        "within_2c": 99.2,
+        "ridge_intercept": 0.754
       },
       "t_max_eval": {
-        "mae": 0.944,
-        "within_1c": 61.9,
-        "within_2c": 93.7,
-        "ridge_intercept": 1.584
+        "mae": 0.578,
+        "within_1c": 86.3,
+        "within_2c": 98.9,
+        "ridge_intercept": 0.385
       }
     },
     "MK_OHRID_AIR": {
@@ -159,16 +196,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.391,
-        "within_1c": 95.9,
-        "within_2c": 99.7,
-        "ridge_intercept": 0.576
+        "mae": 0.379,
+        "within_1c": 97.3,
+        "within_2c": 99.2,
+        "ridge_intercept": -1.123
       },
       "t_max_eval": {
-        "mae": 0.499,
-        "within_1c": 89.0,
-        "within_2c": 99.7,
-        "ridge_intercept": 0.357
+        "mae": 0.445,
+        "within_1c": 94.0,
+        "within_2c": 100.0,
+        "ridge_intercept": -0.883
       }
     },
     "MK_PRILEP": {
@@ -176,16 +213,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.475,
-        "within_1c": 94.2,
-        "within_2c": 99.5,
-        "ridge_intercept": -0.719
+        "mae": 0.431,
+        "within_1c": 93.2,
+        "within_2c": 98.9,
+        "ridge_intercept": 0.669
       },
       "t_max_eval": {
-        "mae": 0.696,
-        "within_1c": 78.1,
-        "within_2c": 97.3,
-        "ridge_intercept": -0.504
+        "mae": 0.51,
+        "within_1c": 90.7,
+        "within_2c": 98.1,
+        "ridge_intercept": 0.71
       }
     },
     "MK_TETOVO": {
@@ -193,16 +230,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.459,
-        "within_1c": 93.7,
-        "within_2c": 99.5,
-        "ridge_intercept": -0.015
+        "mae": 0.429,
+        "within_1c": 94.2,
+        "within_2c": 99.7,
+        "ridge_intercept": -0.584
       },
       "t_max_eval": {
-        "mae": 0.636,
-        "within_1c": 83.3,
-        "within_2c": 97.5,
-        "ridge_intercept": -0.067
+        "mae": 0.621,
+        "within_1c": 84.1,
+        "within_2c": 97.3,
+        "ridge_intercept": -2.074
       }
     },
     "MK_KUMANOVO": {
@@ -210,16 +247,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.511,
-        "within_1c": 87.9,
+        "mae": 0.457,
+        "within_1c": 92.1,
         "within_2c": 98.6,
-        "ridge_intercept": -0.486
+        "ridge_intercept": 0.425
       },
       "t_max_eval": {
-        "mae": 0.654,
-        "within_1c": 79.2,
-        "within_2c": 97.5,
-        "ridge_intercept": 0.046
+        "mae": 0.618,
+        "within_1c": 79.7,
+        "within_2c": 98.4,
+        "ridge_intercept": 1.174
       }
     },
     "MK_VELES": {
@@ -227,16 +264,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.36,
-        "within_1c": 95.3,
-        "within_2c": 98.6,
-        "ridge_intercept": 0.179
+        "mae": 0.387,
+        "within_1c": 94.5,
+        "within_2c": 98.4,
+        "ridge_intercept": -0.181
       },
       "t_max_eval": {
-        "mae": 0.498,
-        "within_1c": 87.1,
+        "mae": 0.49,
+        "within_1c": 87.7,
         "within_2c": 99.5,
-        "ridge_intercept": 0.226
+        "ridge_intercept": 0.208
       }
     },
     "MK_STRUMICA": {
@@ -244,16 +281,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.548,
-        "within_1c": 87.1,
-        "within_2c": 98.1,
-        "ridge_intercept": 0.34
+        "mae": 0.588,
+        "within_1c": 85.2,
+        "within_2c": 98.4,
+        "ridge_intercept": 0.583
       },
       "t_max_eval": {
-        "mae": 0.487,
-        "within_1c": 89.6,
-        "within_2c": 98.9,
-        "ridge_intercept": -0.083
+        "mae": 0.409,
+        "within_1c": 93.4,
+        "within_2c": 99.5,
+        "ridge_intercept": -0.026
       }
     },
     "MK_KAVADARCI": {
@@ -261,16 +298,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.351,
-        "within_1c": 97.8,
-        "within_2c": 99.7,
-        "ridge_intercept": -0.009
+        "mae": 0.343,
+        "within_1c": 97.5,
+        "within_2c": 100.0,
+        "ridge_intercept": 0.082
       },
       "t_max_eval": {
-        "mae": 0.364,
-        "within_1c": 97.3,
+        "mae": 0.362,
+        "within_1c": 97.0,
         "within_2c": 99.7,
-        "ridge_intercept": -0.803
+        "ridge_intercept": -1.455
       }
     },
     "MK_NEGOTINO": {
@@ -278,16 +315,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.264,
-        "within_1c": 98.1,
+        "mae": 0.266,
+        "within_1c": 98.6,
         "within_2c": 100.0,
-        "ridge_intercept": -0.099
+        "ridge_intercept": -0.766
       },
       "t_max_eval": {
-        "mae": 0.346,
+        "mae": 0.344,
         "within_1c": 97.3,
         "within_2c": 100.0,
-        "ridge_intercept": 0.276
+        "ridge_intercept": 0.79
       }
     },
     "MK_DEMIR_KAPIJA": {
@@ -295,16 +332,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.35,
+        "mae": 0.348,
         "within_1c": 96.4,
-        "within_2c": 98.9,
-        "ridge_intercept": 0.817
+        "within_2c": 99.5,
+        "ridge_intercept": 0.942
       },
       "t_max_eval": {
-        "mae": 0.339,
-        "within_1c": 97.5,
+        "mae": 0.337,
+        "within_1c": 98.9,
         "within_2c": 100.0,
-        "ridge_intercept": 0.913
+        "ridge_intercept": 0.297
       }
     },
     "MK_VALANDOVO": {
@@ -312,16 +349,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.335,
-        "within_1c": 98.4,
+        "mae": 0.316,
+        "within_1c": 98.1,
         "within_2c": 100.0,
-        "ridge_intercept": -0.508
+        "ridge_intercept": -0.946
       },
       "t_max_eval": {
-        "mae": 0.47,
-        "within_1c": 92.3,
+        "mae": 0.43,
+        "within_1c": 94.2,
         "within_2c": 100.0,
-        "ridge_intercept": -0.141
+        "ridge_intercept": -0.224
       }
     },
     "MK_STIP": {
@@ -329,16 +366,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.513,
-        "within_1c": 93.7,
-        "within_2c": 98.4,
-        "ridge_intercept": -0.521
+        "mae": 0.532,
+        "within_1c": 92.3,
+        "within_2c": 98.6,
+        "ridge_intercept": -1.736
       },
       "t_max_eval": {
-        "mae": 0.526,
-        "within_1c": 89.0,
+        "mae": 0.513,
+        "within_1c": 89.3,
         "within_2c": 97.8,
-        "ridge_intercept": -0.115
+        "ridge_intercept": -1.12
       }
     },
     "MK_KOCANI": {
@@ -346,16 +383,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.504,
-        "within_1c": 92.1,
-        "within_2c": 99.5,
-        "ridge_intercept": -0.077
+        "mae": 0.321,
+        "within_1c": 99.2,
+        "within_2c": 99.7,
+        "ridge_intercept": 0.639
       },
       "t_max_eval": {
-        "mae": 0.637,
-        "within_1c": 80.8,
-        "within_2c": 97.8,
-        "ridge_intercept": 0.211
+        "mae": 0.39,
+        "within_1c": 94.8,
+        "within_2c": 99.2,
+        "ridge_intercept": 0.314
       }
     },
     "MK_GOSTIVAR": {
@@ -363,16 +400,16 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.538,
-        "within_1c": 87.7,
-        "within_2c": 97.5,
-        "ridge_intercept": 0.24
+        "mae": 0.424,
+        "within_1c": 91.5,
+        "within_2c": 98.4,
+        "ridge_intercept": 2.194
       },
       "t_max_eval": {
-        "mae": 0.85,
-        "within_1c": 69.3,
-        "within_2c": 89.6,
-        "ridge_intercept": 0.383
+        "mae": 0.576,
+        "within_1c": 84.1,
+        "within_2c": 96.2,
+        "ridge_intercept": 3.054
       }
     },
     "MK_KICEVO": {
@@ -380,16 +417,356 @@
       "country": "MK",
       "elevation_m": 0,
       "t_mean_eval": {
-        "mae": 0.508,
-        "within_1c": 85.5,
-        "within_2c": 100.0,
-        "ridge_intercept": 0.188
+        "mae": 0.487,
+        "within_1c": 89.0,
+        "within_2c": 99.2,
+        "ridge_intercept": 2.763
       },
       "t_max_eval": {
-        "mae": 0.866,
-        "within_1c": 66.0,
-        "within_2c": 92.9,
-        "ridge_intercept": 0.447
+        "mae": 0.751,
+        "within_1c": 73.7,
+        "within_2c": 95.9,
+        "ridge_intercept": 2.901
+      }
+    },
+    "MK_STRUGA": {
+      "name": "Struga Drim",
+      "country": "MK",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.336,
+        "within_1c": 96.4,
+        "within_2c": 99.5,
+        "ridge_intercept": 0.4
+      },
+      "t_max_eval": {
+        "mae": 0.439,
+        "within_1c": 91.8,
+        "within_2c": 99.2,
+        "ridge_intercept": 0.737
+      }
+    },
+    "MK_RADOVIS": {
+      "name": "Radovis",
+      "country": "MK",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.631,
+        "within_1c": 83.6,
+        "within_2c": 99.2,
+        "ridge_intercept": -0.341
+      },
+      "t_max_eval": {
+        "mae": 0.508,
+        "within_1c": 86.6,
+        "within_2c": 99.5,
+        "ridge_intercept": 0.436
+      }
+    },
+    "MK_BEROVO": {
+      "name": "Berovo Malesevo",
+      "country": "MK",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.554,
+        "within_1c": 90.7,
+        "within_2c": 98.6,
+        "ridge_intercept": 1.476
+      },
+      "t_max_eval": {
+        "mae": 0.542,
+        "within_1c": 86.0,
+        "within_2c": 98.9,
+        "ridge_intercept": 0.254
+      }
+    },
+    "MK_KRIVA_PALANKA": {
+      "name": "Kriva Palanka",
+      "country": "MK",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.49,
+        "within_1c": 87.1,
+        "within_2c": 98.6,
+        "ridge_intercept": 0.252
+      },
+      "t_max_eval": {
+        "mae": 0.607,
+        "within_1c": 81.6,
+        "within_2c": 97.8,
+        "ridge_intercept": 1.735
+      }
+    },
+    "MK_DELCEVO": {
+      "name": "Delcevo Pijanec",
+      "country": "MK",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.469,
+        "within_1c": 94.5,
+        "within_2c": 98.6,
+        "ridge_intercept": -0.454
+      },
+      "t_max_eval": {
+        "mae": 0.542,
+        "within_1c": 84.1,
+        "within_2c": 98.9,
+        "ridge_intercept": 0.203
+      }
+    },
+    "MK_VINICA": {
+      "name": "Vinica",
+      "country": "MK",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.345,
+        "within_1c": 98.4,
+        "within_2c": 100.0,
+        "ridge_intercept": 0.068
+      },
+      "t_max_eval": {
+        "mae": 0.421,
+        "within_1c": 94.2,
+        "within_2c": 98.9,
+        "ridge_intercept": -0.282
+      }
+    },
+    "MK_RESEN": {
+      "name": "Resen Prespa",
+      "country": "MK",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.251,
+        "within_1c": 97.8,
+        "within_2c": 99.7,
+        "ridge_intercept": -0.9
+      },
+      "t_max_eval": {
+        "mae": 0.285,
+        "within_1c": 99.2,
+        "within_2c": 99.7,
+        "ridge_intercept": -0.281
+      }
+    },
+    "MK_DEBAR": {
+      "name": "Debar Radika",
+      "country": "MK",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.57,
+        "within_1c": 88.2,
+        "within_2c": 98.9,
+        "ridge_intercept": -0.56
+      },
+      "t_max_eval": {
+        "mae": 0.862,
+        "within_1c": 63.8,
+        "within_2c": 93.4,
+        "ridge_intercept": -1.384
+      }
+    },
+    "MK_KRUSEVO": {
+      "name": "Krusevo Summit",
+      "country": "MK",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.436,
+        "within_1c": 96.2,
+        "within_2c": 99.5,
+        "ridge_intercept": -2.739
+      },
+      "t_max_eval": {
+        "mae": 0.551,
+        "within_1c": 85.2,
+        "within_2c": 98.4,
+        "ridge_intercept": -2.21
+      }
+    },
+    "MK_POPOVA_SAPKA": {
+      "name": "Popova Sapka Peak",
+      "country": "MK",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.684,
+        "within_1c": 85.5,
+        "within_2c": 96.2,
+        "ridge_intercept": 0.522
+      },
+      "t_max_eval": {
+        "mae": 0.762,
+        "within_1c": 74.2,
+        "within_2c": 94.2,
+        "ridge_intercept": -0.893
+      }
+    },
+    "MK_MAVROVO": {
+      "name": "Mavrovo Lake",
+      "country": "MK",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.266,
+        "within_1c": 97.0,
+        "within_2c": 99.2,
+        "ridge_intercept": 0.318
+      },
+      "t_max_eval": {
+        "mae": 0.166,
+        "within_1c": 99.5,
+        "within_2c": 99.5,
+        "ridge_intercept": 1.219
+      }
+    },
+    "MK_STRAZA": {
+      "name": "Straza Pass",
+      "country": "MK",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.22,
+        "within_1c": 98.1,
+        "within_2c": 99.5,
+        "ridge_intercept": -1.447
+      },
+      "t_max_eval": {
+        "mae": 0.151,
+        "within_1c": 99.5,
+        "within_2c": 99.7,
+        "ridge_intercept": -1.504
+      }
+    },
+    "MK_PLETVAR": {
+      "name": "Pletvar Pass",
+      "country": "MK",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.368,
+        "within_1c": 97.0,
+        "within_2c": 99.7,
+        "ridge_intercept": -0.13
+      },
+      "t_max_eval": {
+        "mae": 0.393,
+        "within_1c": 94.0,
+        "within_2c": 99.7,
+        "ridge_intercept": 0.175
+      }
+    },
+    "MK_BUKOVO": {
+      "name": "Bukovo Pass",
+      "country": "MK",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.33,
+        "within_1c": 97.0,
+        "within_2c": 98.9,
+        "ridge_intercept": 0.692
+      },
+      "t_max_eval": {
+        "mae": 0.357,
+        "within_1c": 95.9,
+        "within_2c": 99.5,
+        "ridge_intercept": 0.834
+      }
+    },
+    "MK_KOZUF": {
+      "name": "Kozuf Mountain",
+      "country": "MK",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.711,
+        "within_1c": 83.6,
+        "within_2c": 96.4,
+        "ridge_intercept": -5.845
+      },
+      "t_max_eval": {
+        "mae": 0.835,
+        "within_1c": 72.3,
+        "within_2c": 92.1,
+        "ridge_intercept": -4.855
+      }
+    },
+    "RS_BG_VRACAR": {
+      "name": "Belgrade Vracar Obs",
+      "country": "RS",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.36,
+        "within_1c": 97.3,
+        "within_2c": 99.5,
+        "ridge_intercept": 0.076
+      },
+      "t_max_eval": {
+        "mae": 0.405,
+        "within_1c": 94.2,
+        "within_2c": 99.2,
+        "ridge_intercept": 0.368
+      }
+    },
+    "RS_BG_SURCIN": {
+      "name": "Belgrade Airport",
+      "country": "RS",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.255,
+        "within_1c": 98.6,
+        "within_2c": 100.0,
+        "ridge_intercept": 0.126
+      },
+      "t_max_eval": {
+        "mae": 0.374,
+        "within_1c": 95.3,
+        "within_2c": 100.0,
+        "ridge_intercept": -0.147
+      }
+    },
+    "RS_BG_KOSUTNJAK": {
+      "name": "Belgrade Kosutnjak",
+      "country": "RS",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.321,
+        "within_1c": 97.0,
+        "within_2c": 99.5,
+        "ridge_intercept": -0.007
+      },
+      "t_max_eval": {
+        "mae": 0.362,
+        "within_1c": 94.8,
+        "within_2c": 98.9,
+        "ridge_intercept": -0.319
+      }
+    },
+    "RS_NOVI_SAD": {
+      "name": "Novi Sad Rimski Sancevi",
+      "country": "RS",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.828,
+        "within_1c": 70.7,
+        "within_2c": 92.3,
+        "ridge_intercept": -0.226
+      },
+      "t_max_eval": {
+        "mae": 0.964,
+        "within_1c": 61.1,
+        "within_2c": 87.7,
+        "ridge_intercept": 1.435
+      }
+    },
+    "RS_NIS": {
+      "name": "Nis Fortress",
+      "country": "RS",
+      "elevation_m": 0,
+      "t_mean_eval": {
+        "mae": 0.877,
+        "within_1c": 62.7,
+        "within_2c": 93.7,
+        "ridge_intercept": -1.461
+      },
+      "t_max_eval": {
+        "mae": 1.138,
+        "within_1c": 56.4,
+        "within_2c": 84.1,
+        "ridge_intercept": -0.808
       }
     }
   }
